@@ -1,12 +1,12 @@
 {
   "drive": {
     "type": "krakenx60",
-    "id": 0,
+    "id": 2,
     "canbus": null
   },
   "angle": {
     "type": "sparkmax_minion",
-    "id": 0,
+    "id": 3,
     "canbus": null
   },
   "encoder": {

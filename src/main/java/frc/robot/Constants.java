@@ -51,6 +51,6 @@ public final class Constants {
 
   public static class HardwareConstants {
     // REV Power Distribution Hub CAN ID
-    public static final int REV_PDH_ID = 1;
+    public static final int REV_PDH_ID = 10;
   }
 }

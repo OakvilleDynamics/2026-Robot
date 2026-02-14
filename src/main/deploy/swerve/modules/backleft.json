@@ -1,17 +1,17 @@
 {
   "drive": {
     "type": "krakenx60",
-    "id": 0,
+    "id": 6,
     "canbus": null
   },
   "angle": {
     "type": "sparkmax_minion",
-    "id": 0,
+    "id": 7,
     "canbus": null
   },
   "encoder": {
     "type": "thrifty",
-    "id": 0,
+    "id": 2,
     "canbus": null
   },
   "inverted": {
