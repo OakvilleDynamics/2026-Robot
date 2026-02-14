@@ -5,7 +5,7 @@
     "canbus": null
   },
   "angle": {
-    "type": "krakenx60",
+    "type": "sparkmax_minion",
     "id": 0,
     "canbus": null
   },
