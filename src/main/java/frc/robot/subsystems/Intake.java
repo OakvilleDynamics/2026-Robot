@@ -18,6 +18,10 @@ public class Intake extends SubsystemBase {
     IntakeMotor.set(MechanismConstants.Intake_Speed);
   }
 
+  public void IntakeSpit() {
+    IntakeMotor.set(-MechanismConstants.Intake_Speed);
+  }
+
   public void IntakeUp() {
     IntakeHinge.set(MechanismConstants.Intake_Hinge_Speed);
   }
