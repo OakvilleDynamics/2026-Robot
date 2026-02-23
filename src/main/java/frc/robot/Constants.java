@@ -13,7 +13,33 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static class OperatorConstants {
+  
+public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
+    public static final int DRIVER_CONTROLLER = 0;
+    public static final int COPILOT_CONTROLLER = 1;
+
+    // Joystick Deadband ~~ Temporary placeholders until testing
+    public static final double kDEADBAND = 0.1;
+    public static final double kLEFT_Y_DEADBAND = 0.1;
+    public static final double kRIGHT_X_DEADBAND = 0.1;
+    public static final double kTURN_CONSTANT = 6;
+  }
+
+  public static class MechanismConstants {
+    // Subsystem CAN IDs ~~ May change in the future
+    public static final int ShooterMotor = 13;
+    public static final int IntakeMotor = 14;
+    public static final int IntakeHinge = 15;
+
+    // Inverts
+    public static final boolean ShooterMotor_Inverted = false;
+    public static final boolean IntakeMotor_Inverted = false;
+    public static final boolean IntakeHinge_Inverted = false;
+
+    // Motor speeds ~~ Change as needed
+    public static final double Shooter_Speed = 0.5;
+    public static final double Intake_Speed = 0.5;
+    public static final double Intake_Hinge_Speed = 0.5;
   }
 }
