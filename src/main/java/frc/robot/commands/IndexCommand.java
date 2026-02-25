@@ -20,7 +20,7 @@ public class IndexCommand extends Command {
 
   @Override
   public void execute() {
-    // Button 1 is simply a placeholder button, probably will be changed
+
     if (IndexJoystick.getRawButton(5)) {
       m_IndexSubsystem.IndexMove();
     } else if (IndexJoystick.getRawButton(6)) {
