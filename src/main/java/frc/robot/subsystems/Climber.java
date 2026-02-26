@@ -8,6 +8,10 @@ public class Climber extends SubsystemBase {
   private final Relay Relay1 = new Relay(0);
 
   public void RelayOn() {
+    Relay1.set(Relay.Value.kReverse);
+  }
+
+  public void RelayBack() {
     Relay1.set(Relay.Value.kForward);
   }
 

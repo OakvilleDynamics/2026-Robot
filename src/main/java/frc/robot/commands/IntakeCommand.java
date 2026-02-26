@@ -26,7 +26,7 @@ public class IntakeCommand extends Command {
     } else if (IntakeJoystick.getRawButton(3)) {
       m_IntakeSubsystem.IntakeUp();
     } else if (IntakeJoystick.getRawButton(4)) {
-      m_IntakeSubsystem.IntakeUp();
+      m_IntakeSubsystem.IntakeDown();
     } else {
       m_IntakeSubsystem.IntakeStop();
     }

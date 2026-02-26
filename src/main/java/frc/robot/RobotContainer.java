@@ -9,8 +9,16 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.Autos;
+import frc.robot.commands.ClimberCommand;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.IndexCommand;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.ShooterCommand;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.Index;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -21,6 +29,10 @@ import frc.robot.subsystems.ExampleSubsystem;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  private final Shooter m_Shooter = new Shooter();
+  private final Climber m_Climber = new Climber();
+  private final Index m_Index = new Index();
+  private final Intake m_Intake = new Intake();
 
   CommandXboxController driverXbox = new CommandXboxController(0);
   CommandJoystick driverController = new CommandJoystick(1);
@@ -29,6 +41,10 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+    m_Shooter.setDefaultCommand(new ShooterCommand(m_Shooter));
+    m_Climber.setDefaultCommand(new ClimberCommand(m_Climber));
+    m_Index.setDefaultCommand(new IndexCommand(m_Index));
+    m_Intake.setDefaultCommand(new IntakeCommand(m_Intake));
   }
 
   /**
