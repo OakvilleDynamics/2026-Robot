@@ -41,7 +41,7 @@ public class RobotContainer {
       new CommandXboxController(OperatorConstants.CO_DRIVER_CONTROLLER_PORT);
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem drivebase =
-      new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
+      new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/kenobi"));
 
   // Establish a Sendable Chooser that will be able to be sent to the SmartDashboard, allowing
   // selection of desired auto
