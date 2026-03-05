@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.HardwareConstants.RioState;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.SwerveSubsystem;
 import java.io.File;
@@ -39,9 +40,13 @@ public class RobotContainer {
       new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT);
   final CommandXboxController coDriverXbox =
       new CommandXboxController(OperatorConstants.CO_DRIVER_CONTROLLER_PORT);
-  // The robot's subsystems and commands are defined here...
+
+  // The path to the drivetrain configuration json file, selected based on the RoboRIO serial number
+  // of
+  // the robot. This allows us to use the same codebase for both the competition robot and the
+  // practice robot, which have different swerve configurations.
   private final SwerveSubsystem drivebase =
-      new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/kenobi"));
+      new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), selectDrivetrain()));
 
   // Establish a Sendable Chooser that will be able to be sent to the SmartDashboard, allowing
   // selection of desired auto
@@ -198,7 +203,26 @@ public class RobotContainer {
     return autoChooser.getSelected();
   }
 
+  /** Sets the motor brake mode. */
   public void setMotorBrake(boolean brake) {
     drivebase.setMotorBrake(brake);
+  }
+
+  /**
+   * Selects the drivetrain configuration json file based on the RoboRIO serial number of the robot.
+   * This allows us to use the same codebase for both the competition robot and the practice robot,
+   * which have different swerve configurations.
+   *
+   * @return the path to the drivetrain configuration JSON path
+   */
+  public String selectDrivetrain() {
+    if (RioState.getRioSerial() == RioState.RioSerials.VADER_RIO_SERIAL) {
+      return "swerve/vader";
+    } else if (RioState.getRioSerial() == RioState.RioSerials.KENOBI_RIO_SERIAL) {
+      return "swerve/kenobi";
+    } else {
+      // If not found, default to the Kenobi configuration
+      return "swerve/kenobi";
+    }
   }
 }

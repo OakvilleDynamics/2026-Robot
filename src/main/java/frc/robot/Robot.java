@@ -4,17 +4,21 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.SignalLogger;
+import com.revrobotics.util.StatusLogger;
+
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.HardwareConstants;
-import frc.robot.misc.Alerts;
-import java.nio.file.Paths;
+import frc.robot.Constants.HardwareConstants.RioState;
+import frc.robot.Constants.RuntimeConstants;
+import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedPowerDistribution;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.littletonrobotics.urcl.URCL;
 
@@ -45,41 +49,44 @@ public class Robot extends LoggedRobot {
     Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
     Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
     // Determine if the git repo is dirty
-    switch (BuildConstants.DIRTY) {
-      case 0:
-        Logger.recordMetadata("GitDirty", "Clean");
+    Logger.recordMetadata(
+        "GitDirty",
+        switch (BuildConstants.DIRTY) {
+          case 0 -> "All changes committed";
+          case 1 -> "Uncommitted changes";
+          default -> "Unknown";
+        });
+
+    // Set up data receivers & replay source
+    switch (RuntimeConstants.currentMode) {
+      case REAL:
+        // Running on a real robot, log to a local file and to NT
+        Logger.addDataReceiver(new WPILOGWriter());
+        Logger.addDataReceiver(new NT4Publisher());
+        LoggedPowerDistribution.getInstance(HardwareConstants.REV_PDH_ID, ModuleType.kRev);
+        DataLogManager.start();
+        URCL.start();
+        StatusLogger.stop(); // Utilize exclusively URCL for logging REV status frames
+
+      case SIM:
+        // Running a physics simulator, log to NT
+        Logger.addDataReceiver(new NT4Publisher());
         break;
-      case 1:
-        Logger.recordMetadata("GitDirty", "Uncommitted changes");
-        break;
-      default:
-        Logger.recordMetadata("GitDirty", "Unknown");
+
+      case REPLAY:
+        // Replaying a log, set up replay source
+        setUseTiming(false); // Run as fast as possible
+        String logPath = LogFileUtil.findReplayLog();
+        Logger.setReplaySource(new WPILOGReader(logPath));
+        Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
         break;
     }
 
-    // Check if the robot is real or simulated for logging purposes.
-    if (isReal()) {
-      LoggedPowerDistribution.getInstance(HardwareConstants.REV_PDH_ID, ModuleType.kRev);
-      // Publish data to NetworkTables
-      Logger.addDataReceiver(new NT4Publisher());
-      if (Paths.get("/U").getParent() != null) {
-        if (Paths.get("/U").getParent().toFile().getUsableSpace() < 1e9) {
-          // Output driver station alerts if the storage device is critically low
-          Alerts.storageLowAlert.set(true);
-        }
-        // Log data to U:/Logs
-        Logger.addDataReceiver(new WPILOGWriter());
-
-        // Start CTRE and REV hardware signal logging
-        SignalLogger.start();
-        Logger.registerURCL(URCL.startExternal());
-      } else {
-        // Output driver station alerts if the storage device is missing
-        Alerts.storageMissingAlert.set(true);
-      }
-    } else {
-      // Run as fast as possible in simulation
-      setUseTiming(false);
+    // Log the drivetrain configuration based on the detected RoboRIO Serial Number
+    switch (RioState.getRioSerial()) {
+      case KENOBI_RIO_SERIAL -> Logger.recordMetadata("DrivetrainConfig", "Kenobi");
+      case VADER_RIO_SERIAL -> Logger.recordMetadata("DrivetrainConfig", "Vader");
+      case UNKNOWN -> Logger.recordMetadata("DrivetrainConfig", "Kenobi*");
     }
 
     // Start logging! No more data receivers, replay sources, or metadata values may be added.
