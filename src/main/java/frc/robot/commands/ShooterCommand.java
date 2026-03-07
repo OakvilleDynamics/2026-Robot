@@ -22,9 +22,11 @@ public class ShooterCommand extends Command {
   public void execute() {
     // Button 1 is simply a placeholder button, probably will be changed
     if (ShootJoystick.getRawButton(1)) {
-      m_ShooterSubsystem.Shoot();
+      m_ShooterSubsystem.ShootStart();
       System.out.println("Shooting!");
-    } else {
+      withTimeout(2);
+      m_ShooterSubsystem.Shoot();
+    } else if (ShootJoystick.getRawButton(12)) {
       m_ShooterSubsystem.StopShoot();
     }
   }
