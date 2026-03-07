@@ -69,7 +69,7 @@ public final class Constants {
   public static class HardwareConstants {
 
     public static class RioState {
-      public static final String KENOBI_RIO_SERIAL = "00000000";
+      public static final String KENOBI_RIO_SERIAL = "0332053D";
       public static final String VADER_RIO_SERIAL = "033205CD";
 
       /**
