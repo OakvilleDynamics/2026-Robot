@@ -23,6 +23,6 @@ public class Shooter extends SubsystemBase {
   }
 
   public void StopShoot() {
-    ShooterMotor.set(0);
+    ShooterMotor.set(MechanismConstants.Shooter_Speed);
   }
 }

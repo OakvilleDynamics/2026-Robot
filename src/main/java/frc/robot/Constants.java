@@ -40,10 +40,10 @@ public final class Constants {
     public static final boolean Index_Inverted = false;
 
     // Motor speeds ~~ Change as needed
-    public static final double Shooter_Speed = 0.5;
+    public static final double Shooter_Speed = 0.8;
     public static final double Intake_Speed = 0.5;
     public static final double Intake_Hinge_Speed = 0.5;
-    public static final double Index_Speed = 0.1;
+    public static final double Index_Speed = 0.3;
   }
 }
 // REV PHD 10
