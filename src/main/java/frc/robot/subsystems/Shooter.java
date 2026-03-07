@@ -18,11 +18,15 @@ public class Shooter extends SubsystemBase {
 
   private final TalonFX ShooterMotor = new TalonFX(MechanismConstants.ShooterMotor);
 
+  public void ShootStart() {
+    ShooterMotor.set(MechanismConstants.Shooter_Speed2);
+  }
+
   public void Shoot() {
-    ShooterMotor.set(MechanismConstants.Shooter_Speed);
+    ShooterMotor.set(MechanismConstants.Shooter_Speed1);
   }
 
   public void StopShoot() {
-    ShooterMotor.set(MechanismConstants.Shooter_Speed);
+    ShooterMotor.set(0);
   }
 }
