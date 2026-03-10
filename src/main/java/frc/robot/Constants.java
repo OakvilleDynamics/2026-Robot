@@ -48,5 +48,3 @@ public final class Constants {
   }
 }
 // REV PHD 10
-// Hopper / Index 14
-// Climber 15

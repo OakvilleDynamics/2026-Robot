@@ -24,7 +24,6 @@ public class ShooterCommand extends Command {
     if (ShootJoystick.getRawButton(1)) {
       m_ShooterSubsystem.ShootStart();
       System.out.println("Shooting!");
-      withTimeout(2);
       m_ShooterSubsystem.Shoot();
     } else if (ShootJoystick.getRawButton(12)) {
       m_ShooterSubsystem.StopShoot();
