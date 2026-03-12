@@ -62,7 +62,7 @@ public class Robot extends LoggedRobot {
         // Running on a real robot, log to a local file and to NT
         Logger.addDataReceiver(new WPILOGWriter());
         Logger.addDataReceiver(new NT4Publisher());
-        LoggedPowerDistribution.getInstance(HardwareConstants.REV_PDH_ID, ModuleType.kRev);
+        LoggedPowerDistribution.getInstance(HardwareConstants.kREV_PDH_ID, ModuleType.kRev);
         DataLogManager.start();
         URCL.start();
         StatusLogger.stop(); // Utilize exclusively URCL for logging REV status frames

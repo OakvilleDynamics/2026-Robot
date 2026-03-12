@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -19,11 +22,11 @@ import swervelib.math.Matter;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
-  public static final Matter CHASSIS =
-      new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
-  public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
-  public static final double MAX_SPEED = Units.feetToMeters(14.5);
+  public static final double kROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
+  public static final Matter kCHASSIS =
+      new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), kROBOT_MASS);
+  public static final double kLOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
+  public static final double kMAX_SPEED = Units.feetToMeters(14.5);
 
   // Maximum speed of the robot in meters per second, used to limit acceleration.
 
@@ -37,7 +40,7 @@ public final class Constants {
   /** Constants related to the drivebase, such as dimensions */
   public static final class DrivebaseConstants {
     // Hold time on motor brakes when disabled
-    public static final double WHEEL_LOCK_TIME = 10; // seconds
+    public static final double kWHEEL_LOCK_TIME = 10; // seconds
   }
 
   /**
@@ -69,8 +72,8 @@ public final class Constants {
   public static class HardwareConstants {
 
     public static class RioState {
-      public static final String KENOBI_RIO_SERIAL = "0332053D";
-      public static final String VADER_RIO_SERIAL = "033205CD";
+      public static final String kKENOBI_RIO_SERIAL = "0332053D";
+      public static final String kVADER_RIO_SERIAL = "033205CD";
 
       /**
        * Gets the RoboRIO serial number and returns an enum representing which RoboRIO is currently
@@ -82,9 +85,9 @@ public final class Constants {
        */
       public static RioSerials getRioSerial() {
         String serial = RobotController.getSerialNumber();
-        if (serial.equals(KENOBI_RIO_SERIAL)) {
+        if (serial.equals(kKENOBI_RIO_SERIAL)) {
           return RioSerials.KENOBI_RIO_SERIAL;
-        } else if (serial.equals(VADER_RIO_SERIAL)) {
+        } else if (serial.equals(kVADER_RIO_SERIAL)) {
           return RioSerials.VADER_RIO_SERIAL;
         } else {
           return RioSerials.UNKNOWN;
@@ -102,7 +105,7 @@ public final class Constants {
     }
 
     // REV Power Distribution Hub CAN ID
-    public static final int REV_PDH_ID = 10;
+    public static final int kREV_PDH_ID = 10;
   }
 
   public static class RuntimeConstants {
@@ -121,25 +124,88 @@ public final class Constants {
     }
   }
 
+  /** Constants related to mechanisms, such as CAN IDs, motor speeds, and PID constants */
   public static class MechanismConstants {
     // Subsystem CAN IDs
-    public static final int IntakeMotor = 11;
-    public static final int IntakeHinge = 12;
-    public static final int ShooterMotor = 13;
-    public static final int IndexMotor = 14;
+    public static final int kIntakeMotor = 11;
+    public static final int kIntakeHinge = 12;
+    public static final int kShooterMotor = 13;
+    public static final int kIndexMotor = 14;
 
-    // Inverts
-    public static final boolean ShooterMotor_Inverted = false;
-    public static final boolean IntakeMotor_Inverted = false;
-    public static final boolean IntakeHinge_Inverted = false;
-    public static final boolean Index_Inverted = false;
+    /**
+     * Constants for the shooter mechanism. These should be tuned to the specific shooter mechanism
+     * and may need to be adjusted based on the physical robot.
+     */
+    public static class ShooterConstants {
+      public static final double kShooter_Speed1 = 0.8;
+      public static final double kShooter_Speed2 = 0.4;
+      public static final InvertedValue kShooterMotor_Inverted = InvertedValue.Clockwise_Positive;
 
-    // Motor speeds ~~ Change as needed
-    public static final double Shooter_Speed1 = 0.8;
-    public static final double Shooter_Speed2 = 0.4;
-    public static final double Intake_Speed = 0.5;
-    public static final double Intake_Hinge_Speed = 0.5;
-    public static final double Index_Speed = 0.3;
+      public static final double kShooter_kS =
+          0.2; // Static gain, the minimum voltage needed to overcome friction and start the motor
+      // moving
+      public static final double kShooter_kV =
+          0.1; // Velocity gain, the voltage needed to maintain a certain velocity (V = kV *
+      // velocity)
+      public static final double kShooter_kP =
+          0.5; // Proportional gain, the voltage added based on the error between the target
+      // velocity and the actual velocity (V = kP * error)
+      public static final double kShooter_kI =
+          0.001; // Integral gain, the voltage added based on the accumulated error over time (V =
+      // kI * integral of error)
+      public static final double kShooter_kD =
+          5; // Derivative gain, the voltage added based on the rate of change of the error (V = kD
+      // * derivative of error)
+    }
+
+    /**
+     * Constants for the indexer mechanism. These should be tuned to the specific indexer mechanism
+     * and may need to be adjusted based on the physical robot.
+     */
+    public static class IndexerConstants {
+      public static final double kIndex_Speed = 0.3;
+      public static final boolean kIndex_Inverted = false;
+
+      public static final SparkFlexConfig kIndexerConfig = new SparkFlexConfig();
+
+      static {
+        kIndexerConfig
+            .idleMode(IdleMode.kBrake)
+            .smartCurrentLimit(20)
+            .voltageCompensation(12)
+            .openLoopRampRate(0.5);
+      }
+    }
+
+    /**
+     * Constants for the intake mechanism. These should be tuned to the specific intake mechanism
+     * and may need to be adjusted based on the physical robot.
+     */
+    public static class IntakeConstants {
+      public static final double kIntake_Speed = 0.5;
+      public static final double kIntake_Hinge_Speed = 0.5;
+      public static final boolean kIntakeMotor_Inverted = false;
+      public static final boolean kIntakeHinge_Inverted = false;
+
+      public static final SparkFlexConfig kIntakeMotorConfig = new SparkFlexConfig();
+
+      static {
+        kIntakeMotorConfig
+            .idleMode(IdleMode.kBrake)
+            .smartCurrentLimit(20)
+            .voltageCompensation(12)
+            .openLoopRampRate(0.5);
+      }
+
+      public static final SparkFlexConfig kIntakeHingeConfig = new SparkFlexConfig();
+
+      static {
+        kIntakeHingeConfig
+            .idleMode(IdleMode.kBrake)
+            .smartCurrentLimit(20)
+            .voltageCompensation(12)
+            .openLoopRampRate(0.5);
+      }
+    }
   }
 }
-// REV PHD 10
