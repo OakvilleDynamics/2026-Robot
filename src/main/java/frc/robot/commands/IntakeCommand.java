@@ -8,7 +8,7 @@ import frc.robot.subsystems.Intake;
 public class IntakeCommand extends Command {
   private final Intake m_IntakeSubsystem;
 
-  private final Joystick IntakeJoystick = new Joystick(OperatorConstants.COPILOT_CONTROLLER);
+  private final Joystick IntakeJoystick = new Joystick(OperatorConstants.kCOPILOT_CONTROLLER);
 
   public IntakeCommand(Intake subsystem) {
     m_IntakeSubsystem = subsystem;

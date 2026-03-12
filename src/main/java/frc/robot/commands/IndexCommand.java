@@ -8,7 +8,7 @@ import frc.robot.subsystems.Index;
 public class IndexCommand extends Command {
   private final Index m_IndexSubsystem;
 
-  private final Joystick IndexJoystick = new Joystick(OperatorConstants.COPILOT_CONTROLLER);
+  private final Joystick IndexJoystick = new Joystick(OperatorConstants.kCOPILOT_CONTROLLER);
 
   public IndexCommand(Index subsystem) {
     m_IndexSubsystem = subsystem;

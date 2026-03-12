@@ -8,7 +8,7 @@ import frc.robot.subsystems.Shooter;
 public class ShooterCommand extends Command {
   private final Shooter m_ShooterSubsystem;
 
-  private final Joystick ShootJoystick = new Joystick(OperatorConstants.COPILOT_CONTROLLER);
+  private final Joystick ShootJoystick = new Joystick(OperatorConstants.kCOPILOT_CONTROLLER);
 
   public ShooterCommand(Shooter subsystem) {
     m_ShooterSubsystem = subsystem;

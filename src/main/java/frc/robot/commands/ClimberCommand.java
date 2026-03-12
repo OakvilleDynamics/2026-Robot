@@ -9,7 +9,7 @@ public class ClimberCommand extends Command {
 
   private final Climber m_RelaySubsystem;
 
-  private final Joystick RelayJoystick = new Joystick(OperatorConstants.COPILOT_CONTROLLER);
+  private final Joystick RelayJoystick = new Joystick(OperatorConstants.kCOPILOT_CONTROLLER);
 
   public ClimberCommand(Climber subsystem) {
     m_RelaySubsystem = subsystem;
