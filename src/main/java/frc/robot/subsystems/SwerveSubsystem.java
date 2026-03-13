@@ -102,6 +102,10 @@ public class SwerveSubsystem extends SubsystemBase {
     // periodically when they are not moving.
     // swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal
     // encoder and push the offsets onto it. Throws warning if not possible
+
+    // From YAGSL Discord to assist with debugging
+    swerveDrive.setModuleStateOptimization(true);
+
     if (visionDriveTest) {
       setupPhotonVision();
       // Stop the odometry thread if we are using vision that way we can synchronize updates better.

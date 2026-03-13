@@ -99,6 +99,15 @@ public class RobotContainer {
           .translationHeadingOffset(true)
           .translationHeadingOffset(Rotation2d.fromDegrees(0));
 
+  // Test input stream for debugging
+  SwerveInputStream test =
+      SwerveInputStream.of(
+              drivebase.getSwerveDrive(), () -> driverXbox.getLeftX(), () -> driverXbox.getLeftY())
+          .withControllerRotationAxis(() -> driverXbox.getRightY())
+          .deadband(OperatorConstants.DEADBAND)
+          .scaleTranslation(0.9)
+          .allianceRelativeControl(true);
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
@@ -142,10 +151,12 @@ public class RobotContainer {
     Command driveSetpointGenKeyboard =
         drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngleKeyboard);
 
+    Command driveTestCommand = drivebase.driveFieldOriented(test);
+
     if (RobotBase.isSimulation()) {
       drivebase.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
     } else {
-      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+      drivebase.setDefaultCommand(driveTestCommand);
     }
 
     if (Robot.isSimulation()) {
