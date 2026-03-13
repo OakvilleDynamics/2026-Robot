@@ -88,20 +88,23 @@ public class SwerveSubsystem extends SubsystemBase {
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
-    swerveDrive.setHeadingCorrection(
-        false); // Heading correction should only be used while controlling the robot via angle.
-    swerveDrive.setCosineCompensator(
-        false); // !SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for
-    // simulations since it causes discrepancies not seen in real life.
-    swerveDrive.setAngularVelocityCompensation(
-        true, true,
-        0.1); // Correct for skew that gets worse as angular velocity increases. Start with a
-    // coefficient of 0.1.
-    swerveDrive.setModuleEncoderAutoSynchronize(
-        false, 1); // Enable if you want to resynchronize your absolute encoders and motor encoders
-    // periodically when they are not moving.
-    // swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal
-    // encoder and push the offsets onto it. Throws warning if not possible
+    // Heading correction should only be used while controlling the robot via angle.
+    swerveDrive.setHeadingCorrection(false);
+    // Disables cosine compensation for simulations since it causes discrepancies not seen in real
+    // life.
+    swerveDrive.setCosineCompensator(false);
+
+    // Correct for skew that gets worse as angular velocity increases. Start with a coefficient of
+    // 0.1.
+    swerveDrive.setAngularVelocityCompensation(true, true, 0.1);
+
+    // Enable if you want to resynchronize your absolute encoders and motor encoders periodically
+    // when they are not moving.
+    swerveDrive.setModuleEncoderAutoSynchronize(false, 1);
+
+    // Set the absolute encoder to be used over the internal encoder and push the offsets onto it.
+    // Throws warning if not possible
+    // swerveDrive.pushOffsetsToEncoders();
 
     // From YAGSL Discord to assist with debugging
     swerveDrive.setModuleStateOptimization(true);
@@ -149,8 +152,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
   /** Setup AutoBuilder for PathPlanner. */
   public void setupPathPlanner() {
-    // Load the RobotConfig from the GUI settings. You should probably
-    // store this in your Constants file
+    // Load the RobotConfig from the GUI settings. You should probably store this in your Constants
+    // file
     RobotConfig config;
     try {
       config = RobotConfig.fromGUISettings();
@@ -218,21 +221,14 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public Command aimAtTarget(Cameras camera) {
 
+    // Not sure if this will work, more math may be required.
     return run(
         () -> {
           Optional<PhotonPipelineResult> resultO = camera.getBestResult();
           if (resultO.isPresent()) {
             var result = resultO.get();
             if (result.hasTargets()) {
-              drive(
-                  getTargetSpeeds(
-                      0,
-                      0,
-                      Rotation2d.fromDegrees(
-                          result
-                              .getBestTarget()
-                              .getYaw()))); // Not sure if this will work, more math may be
-              // required.
+              drive(getTargetSpeeds(0, 0, Rotation2d.fromDegrees(result.getBestTarget().getYaw())));
             }
           }
         });
@@ -425,8 +421,8 @@ public class SwerveSubsystem extends SubsystemBase {
       DoubleSupplier translationY,
       DoubleSupplier headingX,
       DoubleSupplier headingY) {
-    // swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for
-    // this kind of control.
+    // swerveDrive.setHeadingCorrection(true);
+    // Normally you would want heading correction for this kind of control.
     return run(
         () -> {
           Translation2d scaledInputs =

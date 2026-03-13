@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -42,8 +43,7 @@ public class RobotContainer {
       new CommandXboxController(OperatorConstants.CO_DRIVER_CONTROLLER_PORT);
 
   // The path to the drivetrain configuration json file, selected based on the RoboRIO serial number
-  // of
-  // the robot. This allows us to use the same codebase for both the competition robot and the
+  // of the robot. This allows us to use the same codebase for both the competition robot and the
   // practice robot, which have different swerve configurations.
   private final SwerveSubsystem drivebase =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), selectDrivetrain()));
@@ -107,6 +107,14 @@ public class RobotContainer {
           .deadband(OperatorConstants.DEADBAND)
           .scaleTranslation(0.9)
           .allianceRelativeControl(true);
+
+  // YAGSL 8 steps debugging swerve input stream
+  Command drive8StepsConfig =
+      drivebase.driveCommand(
+          () -> MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.DEADBAND),
+          () -> MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.DEADBAND),
+          () -> driverXbox.getRightX(),
+          () -> driverXbox.getRightY());
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -179,11 +187,11 @@ public class RobotContainer {
                   () -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
                   () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
 
-      //      driverXbox.b().whileTrue(
-      //          drivebase.driveToPose(
-      //              new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
-      //                              );
-
+      driverXbox
+          .b()
+          .whileTrue(
+              drivebase.driveToPose(
+                  new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
     }
     if (DriverStation.isTest()) {
       drivebase.setDefaultCommand(
