@@ -102,8 +102,8 @@ public class RobotContainer {
   // Test input stream for debugging
   SwerveInputStream test =
       SwerveInputStream.of(
-              drivebase.getSwerveDrive(), () -> driverXbox.getLeftX(), () -> driverXbox.getLeftY())
-          .withControllerRotationAxis(() -> driverXbox.getRightY())
+              drivebase.getSwerveDrive(), () -> driverXbox.getLeftY(), () -> driverXbox.getLeftX())
+          .withControllerRotationAxis(() -> driverXbox.getRightX())
           .deadband(OperatorConstants.DEADBAND)
           .scaleTranslation(0.9)
           .allianceRelativeControl(true);
