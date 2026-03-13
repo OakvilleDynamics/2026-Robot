@@ -136,6 +136,29 @@ public class RobotContainer {
 
     // Put the autoChooser on the SmartDashboard
     SmartDashboard.putData("Auto Chooser", autoChooser);
+
+    // For testing: put the PIDF values of the first module's angle controller on the
+    // SmartDashboard, as we are not setting per-module PIDs
+    SmartDashboard.putNumber(
+        "YAGSL Angle PID P", drivebase.getSwerveDrive().getModules()[0].getAnglePIDF().p);
+    SmartDashboard.putNumber(
+        "YAGSL Angle PID I", drivebase.getSwerveDrive().getModules()[0].getAnglePIDF().i);
+    SmartDashboard.putNumber(
+        "YAGSL Angle PID D", drivebase.getSwerveDrive().getModules()[0].getAnglePIDF().d);
+    SmartDashboard.putNumber(
+        "YAGSL Angle PID F", drivebase.getSwerveDrive().getModules()[0].getAnglePIDF().f);
+    SmartDashboard.putNumber(
+        "YAGSL Angle PID IZ", drivebase.getSwerveDrive().getModules()[0].getAnglePIDF().iz);
+    SmartDashboard.putNumber(
+        "YAGSL Drive PID P", drivebase.getSwerveDrive().getModules()[0].getDrivePIDF().p);
+    SmartDashboard.putNumber(
+        "YAGSL Drive PID I", drivebase.getSwerveDrive().getModules()[0].getDrivePIDF().i);
+    SmartDashboard.putNumber(
+        "YAGSL Drive PID D", drivebase.getSwerveDrive().getModules()[0].getDrivePIDF().d);
+    SmartDashboard.putNumber(
+        "YAGSL Drive PID F", drivebase.getSwerveDrive().getModules()[0].getDrivePIDF().f);
+    SmartDashboard.putNumber(
+        "YAGSL Drive PID IZ", drivebase.getSwerveDrive().getModules()[0].getDrivePIDF().iz);
   }
 
   /**
