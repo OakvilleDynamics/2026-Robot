@@ -127,12 +127,14 @@ public final class Constants {
     public static final int IntakeHinge = 12;
     public static final int ShooterMotor = 13;
     public static final int IndexMotor = 14;
+    public static final int ClimberMotor = 21;
 
     // Inverts
     public static final boolean ShooterMotor_Inverted = false;
     public static final boolean IntakeMotor_Inverted = false;
     public static final boolean IntakeHinge_Inverted = false;
     public static final boolean Index_Inverted = false;
+    public static final boolean ClimberMotor_Inverted = false;
 
     // Motor speeds ~~ Change as needed
     public static final double Shooter_Speed1 = 0.8;
@@ -140,6 +142,7 @@ public final class Constants {
     public static final double Intake_Speed = 0.5;
     public static final double Intake_Hinge_Speed = 0.5;
     public static final double Index_Speed = 0.3;
+    public static final double Climber_Speed = 1.0;
   }
 }
 // REV PHD 10
