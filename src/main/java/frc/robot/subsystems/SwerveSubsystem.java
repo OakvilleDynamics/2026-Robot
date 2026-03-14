@@ -107,7 +107,7 @@ public class SwerveSubsystem extends SubsystemBase {
     // swerveDrive.pushOffsetsToEncoders();
 
     // From YAGSL Discord to assist with debugging
-    swerveDrive.setModuleStateOptimization(true);
+    swerveDrive.setModuleStateOptimization(false);
 
     if (visionDriveTest) {
       setupPhotonVision();

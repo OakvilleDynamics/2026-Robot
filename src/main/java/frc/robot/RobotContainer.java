@@ -26,6 +26,7 @@ import frc.robot.Constants.HardwareConstants.RioState;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.SwerveSubsystem;
 import java.io.File;
+import org.littletonrobotics.junction.Logger;
 import swervelib.SwerveInputStream;
 
 /**
@@ -102,7 +103,9 @@ public class RobotContainer {
   // Test input stream for debugging
   SwerveInputStream test =
       SwerveInputStream.of(
-              drivebase.getSwerveDrive(), () -> driverXbox.getLeftY(), () -> driverXbox.getLeftX())
+              drivebase.getSwerveDrive(),
+              () -> driverXbox.getLeftY() * -1,
+              () -> driverXbox.getLeftX() * -1)
           .withControllerRotationAxis(() -> driverXbox.getRightX())
           .deadband(OperatorConstants.DEADBAND)
           .scaleTranslation(0.9)
@@ -111,8 +114,8 @@ public class RobotContainer {
   // YAGSL 8 steps debugging swerve input stream
   Command drive8StepsConfig =
       drivebase.driveCommand(
-          () -> MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.DEADBAND),
-          () -> MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.DEADBAND),
+          () -> MathUtil.applyDeadband((driverXbox.getLeftY() * -1), OperatorConstants.DEADBAND),
+          () -> MathUtil.applyDeadband((driverXbox.getLeftX() * -1), OperatorConstants.DEADBAND),
           () -> driverXbox.getRightX(),
           () -> driverXbox.getRightY());
 
@@ -159,6 +162,19 @@ public class RobotContainer {
         "YAGSL Drive PID F", drivebase.getSwerveDrive().getModules()[0].getDrivePIDF().f);
     SmartDashboard.putNumber(
         "YAGSL Drive PID IZ", drivebase.getSwerveDrive().getModules()[0].getDrivePIDF().iz);
+
+    Logger.recordOutput("Angle PID P", drivebase.getSwerveDrive().getModules()[0].getAnglePIDF().p);
+    Logger.recordOutput("Angle PID I", drivebase.getSwerveDrive().getModules()[0].getAnglePIDF().i);
+    Logger.recordOutput("Angle PID D", drivebase.getSwerveDrive().getModules()[0].getAnglePIDF().d);
+    Logger.recordOutput("Angle PID F", drivebase.getSwerveDrive().getModules()[0].getAnglePIDF().f);
+    Logger.recordOutput(
+        "Angle PID IZ", drivebase.getSwerveDrive().getModules()[0].getAnglePIDF().iz);
+    Logger.recordOutput("Drive PID P", drivebase.getSwerveDrive().getModules()[0].getDrivePIDF().p);
+    Logger.recordOutput("Drive PID I", drivebase.getSwerveDrive().getModules()[0].getDrivePIDF().i);
+    Logger.recordOutput("Drive PID D", drivebase.getSwerveDrive().getModules()[0].getDrivePIDF().d);
+    Logger.recordOutput("Drive PID F", drivebase.getSwerveDrive().getModules()[0].getDrivePIDF().f);
+    Logger.recordOutput(
+        "Drive PID IZ", drivebase.getSwerveDrive().getModules()[0].getDrivePIDF().iz);
   }
 
   /**
