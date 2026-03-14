@@ -105,7 +105,7 @@ public final class Constants {
     public static final int REV_PDH_ID = 10;
 
     // CTRE Power Distribution Panel CAN ID, this is only used for the Vader drivebase.
-    public static final int CTRE_PDP_ID = 10;
+    public static final int CTRE_PDP_ID = 20;
   }
 
   public static class RuntimeConstants {
