@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -14,9 +13,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.DrivebaseConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.swerve.Drivetrain;
-import frc.robot.subsystems.swerve.constants.Generated;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -32,12 +31,17 @@ public class RobotContainer {
   final CommandXboxController coDriverXbox =
       new CommandXboxController(OperatorConstants.CO_DRIVER_CONTROLLER_PORT);
 
+  // Gyro supplier created via factory and constants
+  private final GyroSupplier m_gyro =
+      GyroFactory.createGyro(
+          DrivebaseConstants.GyroConstants.GYRO_TYPE, DrivebaseConstants.GyroConstants.GYRO_PARAMS);
+
   // Establish a Sendable Chooser that will be able to be sent to the SmartDashboard, allowing
   // selection of desired auto
   //   private final SendableChooser<Command> autoChooser;
   // Driver controller
   // Swerve drivetrain subsystem
-  private final Drivetrain m_swerve = new Drivetrain(new Pose2d());
+  private final Drivetrain m_swerve = new Drivetrain(m_gyro::getRotation2d, new Pose2d());
   // private final SimDrivetrain m_simSwerve = new SimDrivetrain(new Pose2d());
 
   // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
@@ -85,14 +89,14 @@ public class RobotContainer {
               // negative values when we push forward.
               final var xSpeed =
                   -m_xspeedLimiter.calculate(MathUtil.applyDeadband(m_Controller.getLeftY(), 0.05))
-                      * Generated.TOP_SPEED_METERS_PER_SEC;
+                      * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC;
 
               // Get the y speed or sideways/strafe speed. We are inverting this because
               // we want a positive value when we pull to the left. Xbox controllers
               // return positive values when you pull to the right by default.
               final var ySpeed =
                   -m_yspeedLimiter.calculate(MathUtil.applyDeadband(m_Controller.getLeftX(), 0.05))
-                      * Generated.TOP_SPEED_METERS_PER_SEC;
+                      * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC;
 
               // Get the rate of angular rotation. We are inverting this because we want a
               // positive value when we pull to the left (remember, CCW is positive in

@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.swerve;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.thethriftybot.devices.ThriftyNova;
@@ -16,9 +17,9 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.subsystems.swerve.constants.*;
-import frc.robot.subsystems.swerve.constants.Generated;
-import frc.robot.subsystems.swerve.constants.Generated.ModuleConstants;
+import frc.robot.Constants.DrivebaseConstants;
+import frc.robot.Constants.DrivebaseConstants.*;
+import frc.robot.Constants.DrivebaseConstants.ModuleConstants;
 
 public class SwerveModule {
   // Motors
@@ -50,8 +51,8 @@ public class SwerveModule {
   private static final int NEO_ENCODER_TICKS_PER_REV = 42;
 
   private static final double DRIVE_TICKS_TO_METERS =
-      (Generated.WHEEL_DIAMETER_METERS * Math.PI)
-          / (NEO_ENCODER_TICKS_PER_REV * Generated.DRIVE_GEAR_RATIO);
+      (DrivebaseConstants.WHEEL_DIAMETER_METERS * Math.PI)
+          / (NEO_ENCODER_TICKS_PER_REV * DrivebaseConstants.DRIVE_GEAR_RATIO);
 
   public SwerveModule(
       int driveMotorId,
@@ -69,7 +70,7 @@ public class SwerveModule {
     m_azimuthInverted = azimuthInverted;
 
     // Initialize motors
-    m_driveMotor = new TalonFX(driveMotorId, "rio");
+    m_driveMotor = new TalonFX(driveMotorId, CANBus.roboRIO());
     m_azimuthMotor = new ThriftyNova(azimuthMotorId, MotorType.MINION);
     // Set full range and expected zero so ticks map 1:1 with the configured encoder
     m_thriftyEncoder = new AnalogEncoder(encoderPort, m_encoderTicksPerRevolution, 0.0);
@@ -93,9 +94,12 @@ public class SwerveModule {
     // m_driveMotor.pid0.setPID(new PIDController(0.0042, 0.0, 0.0));
     // Set feedforward based on mechanism characteristics:
     // FF = 1.0 / maxRevPerSec (for velocity control in rotations/sec)
-    double estimatedMaxMps = Generated.TOP_SPEED_METERS_PER_SEC;
+    double estimatedMaxMps = DrivebaseConstants.TOP_SPEED_METERS_PER_SEC;
     double maxRevPerSec =
-        estimatedMaxMps / (Generated.WHEEL_DIAMETER_METERS * Math.PI / Generated.DRIVE_GEAR_RATIO);
+        estimatedMaxMps
+            / (DrivebaseConstants.WHEEL_DIAMETER_METERS
+                * Math.PI
+                / DrivebaseConstants.DRIVE_GEAR_RATIO);
     // m_driveMotor.pid0.setFF(1.0 / maxRevPerSec);
     // m_driveMotor.usePIDSlot(PIDSlot.SLOT0);
     // m_driveMotor.setInversion(m_driveInverted);
@@ -146,14 +150,16 @@ public class SwerveModule {
     }
 
     // For controller-handled encoders (Redux/SRX/REV), invert motor direction.
-    if (ModuleConstants.ENCODER_SELECTED != Generated.EncoderType.THRIFTY_ABSOLUTE_ENCODER) {
+    if (ModuleConstants.ENCODER_SELECTED
+        != DrivebaseConstants.EncoderType.THRIFTY_ABSOLUTE_ENCODER) {
       m_azimuthMotor.setInversion(m_azimuthInverted);
     }
   }
 
   /** Initialize the encoder offset, prioritizing saved values over constants */
   private void initializeOffset(double constantsOffsetTicks) {
-    if (ModuleConstants.ENCODER_SELECTED == Generated.EncoderType.THRIFTY_ABSOLUTE_ENCODER) {
+    if (ModuleConstants.ENCODER_SELECTED
+        == DrivebaseConstants.EncoderType.THRIFTY_ABSOLUTE_ENCODER) {
       // Thrifty encoder: Use constants for initial setup, will check saved values
       // later in periodic
       m_encoderOffsetTicks = constantsOffsetTicks;
@@ -184,14 +190,15 @@ public class SwerveModule {
   /** Get raw encoder reading in ticks */
   private double getRawEncoderTicks() {
     double raw;
-    if (ModuleConstants.ENCODER_SELECTED == Generated.EncoderType.THRIFTY_ABSOLUTE_ENCODER) {
+    if (ModuleConstants.ENCODER_SELECTED
+        == DrivebaseConstants.EncoderType.THRIFTY_ABSOLUTE_ENCODER) {
       raw = m_thriftyEncoder.get();
     } else {
       raw = m_azimuthMotor.getPositionAbs() * m_encoderTicksPerRevolution;
     }
     // For THRIFTY_ABSOLUTE_ENCODER, use azimuthInverted to invert
     // sensor phase when required; otherwise, motor controller manages this.
-    if (ModuleConstants.ENCODER_SELECTED == Generated.EncoderType.THRIFTY_ABSOLUTE_ENCODER
+    if (ModuleConstants.ENCODER_SELECTED == DrivebaseConstants.EncoderType.THRIFTY_ABSOLUTE_ENCODER
         && m_azimuthInverted) {
       return -raw;
     }
@@ -202,7 +209,8 @@ public class SwerveModule {
   public double getEncoderPosition() {
     double rawTicks = getRawEncoderTicks();
 
-    if (ModuleConstants.ENCODER_SELECTED == Generated.EncoderType.THRIFTY_ABSOLUTE_ENCODER) {
+    if (ModuleConstants.ENCODER_SELECTED
+        == DrivebaseConstants.EncoderType.THRIFTY_ABSOLUTE_ENCODER) {
       // Thrifty encoder: motor controller doesn't apply offset, so we do it in
       // software
       double adjustedTicks = rawTicks - m_encoderOffsetTicks;
@@ -217,8 +225,8 @@ public class SwerveModule {
     double velocityRevPerSec = m_driveMotor.getVelocity().getValueAsDouble();
     double velocityMPS =
         velocityRevPerSec
-            * (Generated.WHEEL_DIAMETER_METERS * Math.PI)
-            / Generated.DRIVE_GEAR_RATIO;
+            * (DrivebaseConstants.WHEEL_DIAMETER_METERS * Math.PI)
+            / DrivebaseConstants.DRIVE_GEAR_RATIO;
     return new SwerveModuleState(velocityMPS, new Rotation2d(getEncoderPosition()));
   }
 
@@ -227,8 +235,8 @@ public class SwerveModule {
     double positionRotations = m_driveMotor.getPosition().getValueAsDouble();
     double positionMeters =
         positionRotations
-            * (Generated.WHEEL_DIAMETER_METERS * Math.PI)
-            / Generated.DRIVE_GEAR_RATIO;
+            * (DrivebaseConstants.WHEEL_DIAMETER_METERS * Math.PI)
+            / DrivebaseConstants.DRIVE_GEAR_RATIO;
     return new SwerveModulePosition(positionMeters, new Rotation2d(getEncoderPosition()));
   }
 
@@ -245,8 +253,8 @@ public class SwerveModule {
 
     double targetRevPerSec =
         desiredState.speedMetersPerSecond
-            / (Generated.WHEEL_DIAMETER_METERS * Math.PI)
-            * Generated.DRIVE_GEAR_RATIO;
+            / (DrivebaseConstants.WHEEL_DIAMETER_METERS * Math.PI)
+            * DrivebaseConstants.DRIVE_GEAR_RATIO;
     m_driveMotor.setControl(new VelocityVoltage(targetRevPerSec));
 
     m_desiredAngle = desiredState.angle;
@@ -255,7 +263,8 @@ public class SwerveModule {
 
   /** Set azimuth motor to target angle in radians */
   private void setAzimuthPosition(double targetAngleRadians) {
-    if (ModuleConstants.ENCODER_SELECTED == Generated.EncoderType.THRIFTY_ABSOLUTE_ENCODER) {
+    if (ModuleConstants.ENCODER_SELECTED
+        == DrivebaseConstants.EncoderType.THRIFTY_ABSOLUTE_ENCODER) {
       double currentAngle = getEncoderPosition();
       double output = m_turningPID.calculate(currentAngle, targetAngleRadians);
       m_azimuthMotor.set(output);
@@ -274,7 +283,8 @@ public class SwerveModule {
   public void setZeroOffset() {
     double currentRawTicks = getRawEncoderTicks();
 
-    if (ModuleConstants.ENCODER_SELECTED == Generated.EncoderType.THRIFTY_ABSOLUTE_ENCODER) {
+    if (ModuleConstants.ENCODER_SELECTED
+        == DrivebaseConstants.EncoderType.THRIFTY_ABSOLUTE_ENCODER) {
       // Thrifty encoder: Read through RoboRIO AnalogEncoder, not Nova
       // Java does "position = raw - offset"
       // To make current position = 0: 0 = raw - offset, so offset = raw
@@ -334,29 +344,39 @@ public class SwerveModule {
     SmartDashboard.putNumber(m_moduleName + " desired angle (rad)", m_desiredAngle.getRadians());
 
     // Display offset info based on encoder type
-    if (frc.robot.subsystems.swerve.constants.Generated.ModuleConstants.ENCODER_SELECTED
-        == Generated.EncoderType.THRIFTY_ABSOLUTE_ENCODER) {
+    if (ModuleConstants.ENCODER_SELECTED
+        == DrivebaseConstants.EncoderType.THRIFTY_ABSOLUTE_ENCODER) {
       SmartDashboard.putNumber(m_moduleName + " Java Offset (ticks)", m_encoderOffsetTicks);
       SmartDashboard.putNumber(
           m_moduleName + " Java Offset (deg)", ticksToDegrees(m_encoderOffsetTicks));
     }
 
-    // // Raw encoder readings from ThriftyNova (in rotations, 0-1 range)
-    // SmartDashboard.putNumber(
-    //     m_moduleName + " Raw getPositionAbs (rotations)", m_azimuthMotor.getPositionAbs());
-    // SmartDashboard.putNumber(
-    //     m_moduleName + " Raw getPosition (rotations)", m_azimuthMotor.getPosition());
-    // SmartDashboard.putNumber(
-    //     m_moduleName + " Raw getPositionInternal (rotations)",
-    //     m_azimuthMotor.getPositionInternal());
-    // SmartDashboard.putNumber(
-    //     m_moduleName + " Raw as Ticks (x4096)",
-    //     m_azimuthMotor.getPositionAbs() * m_encoderTicksPerRevolution);
+    // Raw encoder readings from ThriftyNova (in rotations, 0-1 range)
+    SmartDashboard.putNumber(
+        m_moduleName + " Raw getPositionAbs (rotations)", m_azimuthMotor.getPositionAbs());
+    SmartDashboard.putNumber(
+        m_moduleName + " Raw getPosition (rotations)", m_azimuthMotor.getPosition());
+    SmartDashboard.putNumber(
+        m_moduleName + " Raw getPositionInternal (rotations)",
+        m_azimuthMotor.getPositionInternal());
+    SmartDashboard.putNumber(
+        m_moduleName + " Raw as Ticks (x4096)",
+        m_azimuthMotor.getPositionAbs() * m_encoderTicksPerRevolution);
 
     // Display drive motor info
     SmartDashboard.putNumber(
         m_moduleName + " Drive Velocity", getSwerveState().speedMetersPerSecond);
     SmartDashboard.putNumber(m_moduleName + " Drive Position", getSwervePosition().distanceMeters);
+
+    // Display motor controller health
+    SmartDashboard.putNumber(
+        m_moduleName + " Drive Current Output", m_driveMotor.getTorqueCurrent().getValueAsDouble());
+    SmartDashboard.putNumber(
+        m_moduleName + " Drive Temperature", m_driveMotor.getDeviceTemp().getValueAsDouble());
+    SmartDashboard.putNumber(
+        m_moduleName + " Azimuth Current Output", m_azimuthMotor.getStatorCurrent());
+    SmartDashboard.putNumber(
+        m_moduleName + " Azimuth Current Output", m_azimuthMotor.getTemperature());
   }
 
   // Utility methods for unit conversions

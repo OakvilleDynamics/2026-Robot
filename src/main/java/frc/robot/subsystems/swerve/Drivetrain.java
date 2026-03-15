@@ -14,9 +14,14 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.swerve.constants.*;
-import frc.robot.subsystems.swerve.constants.Generated;
-import frc.robot.subsystems.swerve.constants.Generated.ModuleConstants;
+import frc.robot.Constants.DrivebaseConstants;
+import frc.robot.Constants.DrivebaseConstants.ModuleConstants;
+import frc.robot.Constants.DrivebaseConstants.ModuleConstants.BackLeftModule;
+import frc.robot.Constants.DrivebaseConstants.ModuleConstants.BackRightModule;
+import frc.robot.Constants.DrivebaseConstants.ModuleConstants.FrontLeftModule;
+import frc.robot.Constants.DrivebaseConstants.ModuleConstants.FrontRightModule;
+import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 
 /** Represents a swerve drive style drivetrain. */
 public class Drivetrain extends SubsystemBase {
@@ -25,72 +30,77 @@ public class Drivetrain extends SubsystemBase {
 
   private final SwerveModule m_frontLeft =
       new SwerveModule(
-          ModuleConstants.FRONT_LEFT_DRIVE_MOTOR_ID,
-          ModuleConstants.FRONT_LEFT_AZIMUTH_MOTOR_ID,
-          ModuleConstants.FRONT_LEFT_ENCODER_PORT,
+          FrontLeftModule.FRONT_LEFT_DRIVE_MOTOR_ID,
+          FrontLeftModule.FRONT_LEFT_AZIMUTH_MOTOR_ID,
+          FrontLeftModule.FRONT_LEFT_ENCODER_PORT,
           ModuleConstants.ENCODER_TICKS_PER_ROTATION,
-          ModuleConstants.FRONT_LEFT_ENCODER_OFFSET,
+          FrontLeftModule.FRONT_LEFT_ENCODER_OFFSET,
           "Front Left",
-          ModuleConstants.FRONT_LEFT_DRIVE_MOTOR_INVERTED,
-          ModuleConstants.FRONT_LEFT_AZIMUTH_MOTOR_INVERTED);
+          FrontLeftModule.FRONT_LEFT_DRIVE_MOTOR_INVERTED,
+          FrontLeftModule.FRONT_LEFT_AZIMUTH_MOTOR_INVERTED);
 
   private final SwerveModule m_frontRight =
       new SwerveModule(
-          ModuleConstants.FRONT_RIGHT_DRIVE_MOTOR_ID,
-          ModuleConstants.FRONT_RIGHT_AZIMUTH_MOTOR_ID,
-          ModuleConstants.FRONT_RIGHT_ENCODER_PORT,
+          FrontRightModule.FRONT_RIGHT_DRIVE_MOTOR_ID,
+          FrontRightModule.FRONT_RIGHT_AZIMUTH_MOTOR_ID,
+          FrontRightModule.FRONT_RIGHT_ENCODER_PORT,
           ModuleConstants.ENCODER_TICKS_PER_ROTATION,
-          ModuleConstants.FRONT_RIGHT_ENCODER_OFFSET,
+          FrontRightModule.FRONT_RIGHT_ENCODER_OFFSET,
           "Front Right",
-          ModuleConstants.FRONT_RIGHT_DRIVE_MOTOR_INVERTED,
-          ModuleConstants.FRONT_RIGHT_AZIMUTH_MOTOR_INVERTED);
+          FrontRightModule.FRONT_RIGHT_DRIVE_MOTOR_INVERTED,
+          FrontRightModule.FRONT_RIGHT_AZIMUTH_MOTOR_INVERTED);
 
   private final SwerveModule m_backLeft =
       new SwerveModule(
-          ModuleConstants.BACK_LEFT_DRIVE_MOTOR_ID,
-          ModuleConstants.BACK_LEFT_AZIMUTH_MOTOR_ID,
-          ModuleConstants.BACK_LEFT_ENCODER_PORT,
+          BackLeftModule.BACK_LEFT_DRIVE_MOTOR_ID,
+          BackLeftModule.BACK_LEFT_AZIMUTH_MOTOR_ID,
+          BackLeftModule.BACK_LEFT_ENCODER_PORT,
           ModuleConstants.ENCODER_TICKS_PER_ROTATION,
-          ModuleConstants.BACK_LEFT_ENCODER_OFFSET,
+          BackLeftModule.BACK_LEFT_ENCODER_OFFSET,
           "Back Left",
-          ModuleConstants.BACK_LEFT_DRIVE_MOTOR_INVERTED,
-          ModuleConstants.BACK_LEFT_AZIMUTH_MOTOR_INVERTED);
+          BackLeftModule.BACK_LEFT_DRIVE_MOTOR_INVERTED,
+          BackLeftModule.BACK_LEFT_AZIMUTH_MOTOR_INVERTED);
 
   private final SwerveModule m_backRight =
       new SwerveModule(
-          ModuleConstants.BACK_RIGHT_DRIVE_MOTOR_ID,
-          ModuleConstants.BACK_RIGHT_AZIMUTH_MOTOR_ID,
-          ModuleConstants.BACK_RIGHT_ENCODER_PORT,
+          BackRightModule.BACK_RIGHT_DRIVE_MOTOR_ID,
+          BackRightModule.BACK_RIGHT_AZIMUTH_MOTOR_ID,
+          BackRightModule.BACK_RIGHT_ENCODER_PORT,
           ModuleConstants.ENCODER_TICKS_PER_ROTATION,
-          ModuleConstants.BACK_RIGHT_ENCODER_OFFSET,
+          BackRightModule.BACK_RIGHT_ENCODER_OFFSET,
           "Back Right",
-          ModuleConstants.BACK_RIGHT_DRIVE_MOTOR_INVERTED,
-          ModuleConstants.BACK_RIGHT_AZIMUTH_MOTOR_INVERTED);
+          BackRightModule.BACK_RIGHT_DRIVE_MOTOR_INVERTED,
+          BackRightModule.BACK_RIGHT_AZIMUTH_MOTOR_INVERTED);
+
+  private final Supplier<Rotation2d> m_gyroSupplier;
 
   private final SwerveDriveKinematics m_kinematics =
       new SwerveDriveKinematics(
-          Generated.FRONT_LEFT_LOCATION, Generated.FRONT_RIGHT_LOCATION,
-          Generated.BACK_LEFT_LOCATION, Generated.BACK_RIGHT_LOCATION);
+          DrivebaseConstants.FRONT_LEFT_LOCATION, DrivebaseConstants.FRONT_RIGHT_LOCATION,
+          DrivebaseConstants.BACK_LEFT_LOCATION, DrivebaseConstants.BACK_RIGHT_LOCATION);
 
   private final SwerveDriveOdometry m_odometry;
 
   /**
    * Constructs the Drivetrain with a supplier that returns the current robot heading.
    *
+   * @param gyroSupplier A lambda or method reference that returns current heading as Rotation2d
    * @param initialPose The initial pose of the robot
    */
-  public Drivetrain(Pose2d initialPose) {
+  public Drivetrain(Supplier<Rotation2d> gyroSupplier, Pose2d initialPose) {
+    this.m_gyroSupplier = gyroSupplier;
 
     m_odometry =
         new SwerveDriveOdometry(
             m_kinematics,
-            pigeon.getRotation2d(),
+            m_gyroSupplier.get(),
             new SwerveModulePosition[] {
               m_frontLeft.getSwervePosition(),
               m_frontRight.getSwervePosition(),
               m_backLeft.getSwervePosition(),
               m_backRight.getSwervePosition()
-            });
+            },
+            initialPose);
   }
 
   /**
@@ -114,7 +124,7 @@ public class Drivetrain extends SubsystemBase {
 
     // Prevent over-speed by scaling wheel speeds to the configured maximum
     SwerveDriveKinematics.desaturateWheelSpeeds(
-        swerveModuleStates, Generated.TOP_SPEED_METERS_PER_SEC);
+        swerveModuleStates, DrivebaseConstants.TOP_SPEED_METERS_PER_SEC);
 
     m_frontLeft.setDesiredState(swerveModuleStates[0]);
     m_frontRight.setDesiredState(swerveModuleStates[1]);
@@ -195,6 +205,7 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("Robot Rotation (deg)", currentPose.getRotation().getDegrees());
 
     // Gyro information
+    SmartDashboard.putNumber("Gyro Angle (deg)", m_gyroSupplier.get().getDegrees());
 
     // Current chassis speeds
     ChassisSpeeds speeds = getChassisSpeeds();
@@ -252,5 +263,9 @@ public class Drivetrain extends SubsystemBase {
       SmartDashboard.putBoolean("Stop All Modules", false);
       System.out.println("All modules stopped");
     }
+  }
+
+  private void logDrivetrain() {
+    Logger.recordOutput("", "");
   }
 }

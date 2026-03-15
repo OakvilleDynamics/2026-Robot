@@ -89,13 +89,6 @@ public class Robot extends LoggedRobot {
         break;
     }
 
-    // Log the drivetrain configuration based on the detected RoboRIO Serial Number
-    switch (RioState.getRioSerial()) {
-      case KENOBI_RIO_SERIAL -> Logger.recordMetadata("DrivetrainConfig", "Kenobi");
-      case VADER_RIO_SERIAL -> Logger.recordMetadata("DrivetrainConfig", "Vader");
-      case UNKNOWN -> Logger.recordMetadata("DrivetrainConfig", "Kenobi*");
-    }
-
     // Start logging! No more data receivers, replay sources, or metadata values may be added.
     Logger.start();
   }
