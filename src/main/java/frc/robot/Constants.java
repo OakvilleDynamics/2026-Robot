@@ -46,14 +46,14 @@ public final class Constants {
    */
   public static class OperatorConstants {
     // Controller ports
-    public static final int DRIVER_CONTROLLER_PORT = 0;
-    public static final int CO_DRIVER_CONTROLLER_PORT = 1;
+    public static final int kDRIVER_CONTROLLER = 0;
+    public static final int kCOPILOT_CONTROLLER = 1;
 
     // Joystick Deadband
-    public static final double DEADBAND = 0.1;
-    public static final double LEFT_Y_DEADBAND = 0.1;
-    public static final double RIGHT_X_DEADBAND = 0.1;
-    public static final double TURN_CONSTANT = 6;
+    public static final double kDEADBAND = 0.1;
+    public static final double kLEFT_Y_DEADBAND = 0.1;
+    public static final double kRIGHT_X_DEADBAND = 0.1;
+    public static final double kTURN_CONSTANT = 6;
   }
 
   /**
@@ -120,4 +120,29 @@ public final class Constants {
       REPLAY
     }
   }
+
+  public static class MechanismConstants {
+    // Subsystem CAN IDs
+    public static final int IntakeMotor = 11;
+    public static final int IntakeHinge = 12;
+    public static final int ShooterMotor = 13;
+    public static final int IndexMotor = 14;
+    public static final int ClimberMotor = 21;
+
+    // Inverts
+    public static final boolean ShooterMotor_Inverted = false;
+    public static final boolean IntakeMotor_Inverted = false;
+    public static final boolean IntakeHinge_Inverted = false;
+    public static final boolean Index_Inverted = false;
+    public static final boolean ClimberMotor_Inverted = false;
+
+    // Motor speeds ~~ Change as needed
+    public static final double Shooter_Speed1 = 0.8;
+    public static final double Shooter_Speed2 = 0.4;
+    public static final double Intake_Speed = 0.5;
+    public static final double Intake_Hinge_Speed = 0.5;
+    public static final double Index_Speed = 0.3;
+    public static final double Climber_Speed = 1.0;
+  }
 }
+// REV PHD 10
