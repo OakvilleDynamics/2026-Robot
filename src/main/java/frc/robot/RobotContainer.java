@@ -17,8 +17,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DrivebaseConstants;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.subsystems.swerve.Drivetrain;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import frc.robot.commands.ClimberCommand;
 import frc.robot.commands.IndexCommand;
 import frc.robot.commands.IntakeCommand;
@@ -27,6 +25,8 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Index;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.swerve.Drivetrain;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
