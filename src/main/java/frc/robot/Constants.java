@@ -197,5 +197,11 @@ public final class Constants {
             .openLoopRampRate(0.5);
       }
     }
+
+    /** Constants for the climber mechanism. */
+    public static class ClimberConstants {
+      public static final boolean ClimberMotor_Inverted = false;
+      public static final double Climber_Speed = 1.0;
+    }
   }
 }
