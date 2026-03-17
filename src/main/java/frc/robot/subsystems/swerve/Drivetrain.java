@@ -5,6 +5,13 @@
 package frc.robot.subsystems.swerve;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -12,6 +19,9 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DrivebaseConstants;
@@ -81,6 +91,10 @@ public class Drivetrain extends SubsystemBase {
 
   private final SwerveDriveOdometry m_odometry;
 
+  private final SwerveModulePosition[] m_lastPos;
+
+  private final SwerveDrivePoseEstimator poseEstimator;
+
   /**
    * Constructs the Drivetrain with a supplier that returns the current robot heading.
    *
@@ -90,17 +104,55 @@ public class Drivetrain extends SubsystemBase {
   public Drivetrain(Supplier<Rotation2d> gyroSupplier, Pose2d initialPose) {
     this.m_gyroSupplier = gyroSupplier;
 
+    m_lastPos =
+        new SwerveModulePosition[] {
+          m_frontLeft.getSwervePosition(),
+          m_frontRight.getSwervePosition(),
+          m_backLeft.getSwervePosition(),
+          m_backRight.getSwervePosition()
+        };
+
     m_odometry =
-        new SwerveDriveOdometry(
-            m_kinematics,
-            m_gyroSupplier.get(),
-            new SwerveModulePosition[] {
-              m_frontLeft.getSwervePosition(),
-              m_frontRight.getSwervePosition(),
-              m_backLeft.getSwervePosition(),
-              m_backRight.getSwervePosition()
+        new SwerveDriveOdometry(m_kinematics, m_gyroSupplier.get(), m_lastPos, initialPose);
+
+    poseEstimator =
+        new SwerveDrivePoseEstimator(m_kinematics, m_gyroSupplier.get(), m_lastPos, getPose());
+
+    // Load the RobotConfig from the GUI settings. You should probably
+    // store this in your Constants file
+    RobotConfig config;
+    
+    try{
+      config = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      // Handle exception as needed
+      e.printStackTrace();
+    }
+
+    // Configure AutoBuilder last
+    AutoBuilder.configure(
+            this::getPose, // Robot pose supplier
+            this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
+            this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            (speeds, feedforwards) -> driveVelocity(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+            ),
+            config, // The robot configuration
+            () -> {
+              // Boolean supplier that controls when the path will be mirrored for the red alliance
+              // This will flip the path being followed to the red side of the field.
+              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+              var alliance = DriverStation.getAlliance();
+              if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+              }
+              return false;
             },
-            initialPose);
+            this // Reference to this subsystem to set requirements
+    );
   }
 
   /**
@@ -198,33 +250,53 @@ public class Drivetrain extends SubsystemBase {
     m_backLeft.updateSmartDashboard();
     m_backRight.updateSmartDashboard();
 
+    m_frontLeft.logSwerveModule();
+    m_frontRight.logSwerveModule();
+    m_backLeft.logSwerveModule();
+    m_backRight.logSwerveModule();
+
     // Robot pose information
     Pose2d currentPose = getPose();
     SmartDashboard.putNumber("Robot X (m)", currentPose.getX());
     SmartDashboard.putNumber("Robot Y (m)", currentPose.getY());
     SmartDashboard.putNumber("Robot Rotation (deg)", currentPose.getRotation().getDegrees());
+    Logger.recordOutput("Robot X (m)", currentPose.getX());
+    Logger.recordOutput("Robot Y (m)", currentPose.getY());
+    Logger.recordOutput("Robot Rotation (deg)", currentPose.getRotation().getDegrees());
 
     // Gyro information
     SmartDashboard.putNumber("Gyro Angle (deg)", m_gyroSupplier.get().getDegrees());
+    Logger.recordOutput("Gyro Angle (deg)", m_gyroSupplier.get().getDegrees());
 
     // Current chassis speeds
     ChassisSpeeds speeds = getChassisSpeeds();
     SmartDashboard.putNumber("Chassis X Speed (m/s)", speeds.vxMetersPerSecond);
     SmartDashboard.putNumber("Chassis Y Speed (m/s)", speeds.vyMetersPerSecond);
     SmartDashboard.putNumber("Chassis Angular Speed (rad/s)", speeds.omegaRadiansPerSecond);
+    Logger.recordOutput("Chassis X Speed (m/s)", speeds.vxMetersPerSecond);
+    Logger.recordOutput("Chassis Y Speed (m/s)", speeds.vyMetersPerSecond);
+    Logger.recordOutput("Chassis Angular Speed (rad/s)", speeds.omegaRadiansPerSecond);
 
     // Module states for debugging
     SmartDashboard.putNumber("FL Speed (m/s)", m_frontLeft.getSwerveState().speedMetersPerSecond);
     SmartDashboard.putNumber("FL Angle (deg)", m_frontLeft.getSwerveState().angle.getDegrees());
+    Logger.recordOutput("FL Speed (m/s)", m_frontLeft.getSwerveState().speedMetersPerSecond);
+    Logger.recordOutput("FL Angle (deg)", m_frontLeft.getSwerveState().angle.getDegrees());
 
     SmartDashboard.putNumber("FR Speed (m/s)", m_frontRight.getSwerveState().speedMetersPerSecond);
     SmartDashboard.putNumber("FR Angle (deg)", m_frontRight.getSwerveState().angle.getDegrees());
+    Logger.recordOutput("FL Speed (m/s)", m_frontLeft.getSwerveState().speedMetersPerSecond);
+    Logger.recordOutput("FL Angle (deg)", m_frontLeft.getSwerveState().angle.getDegrees());
 
     SmartDashboard.putNumber("BL Speed (m/s)", m_backLeft.getSwerveState().speedMetersPerSecond);
     SmartDashboard.putNumber("BL Angle (deg)", m_backLeft.getSwerveState().angle.getDegrees());
+    Logger.recordOutput("BL Speed (m/s)", m_backLeft.getSwerveState().speedMetersPerSecond);
+    Logger.recordOutput("BL Angle (deg)", m_backLeft.getSwerveState().angle.getDegrees());
 
     SmartDashboard.putNumber("BR Speed (m/s)", m_backRight.getSwerveState().speedMetersPerSecond);
     SmartDashboard.putNumber("BR Angle (deg)", m_backRight.getSwerveState().angle.getDegrees());
+    Logger.recordOutput("BR Speed (m/s)", m_backRight.getSwerveState().speedMetersPerSecond);
+    Logger.recordOutput("BR Angle (deg)", m_backRight.getSwerveState().angle.getDegrees());
 
     // Control buttons
     handleSmartDashboardButtons();
@@ -265,7 +337,35 @@ public class Drivetrain extends SubsystemBase {
     }
   }
 
-  private void logDrivetrain() {
-    Logger.recordOutput("", "");
+  /**
+   * Adds a vision measurement to update the robot's pose
+   *
+   * @param visionMeasurement Adds a measurement from a vision coprocessor
+   * @param timestamp The timestamp of the vision measurement in seconds
+   * @param stdDevs Standard deviations of the pose estimate (x position in meters, y position in
+   *     meters, and heading in radians).
+   */
+  public void addVisionMeasurement(
+      Pose2d visionMeasurement, double timestamp, Matrix<N3, N1> stdDevs) {
+    poseEstimator.addVisionMeasurement(visionMeasurement, timestamp, stdDevs);
+  }
+
+  public void driveVelocity(ChassisSpeeds speeds){
+        // Calculate module setpoints
+    ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
+    SwerveModuleState[] setpointStates = m_kinematics.toSwerveModuleStates(discreteSpeeds);
+
+    // Log unoptimized setpoints and setpoint speeds
+    Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
+    Logger.recordOutput("SwerveChassisSpeeds/Setpoints", discreteSpeeds);
+
+    // Send setpoints to modules
+    m_frontLeft.setDesiredState(setpointStates[0]);
+    m_frontRight.setDesiredState(setpointStates[1]);
+    m_backLeft.setDesiredState(setpointStates[2]);
+    m_backRight.setDesiredState(setpointStates[3]);
+
+    // Log optimized setpoints (runSetpoint mutates each state)
+    Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
   }
 }

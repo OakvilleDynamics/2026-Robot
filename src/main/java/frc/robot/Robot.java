@@ -5,7 +5,9 @@
 package frc.robot;
 
 import com.revrobotics.util.StatusLogger;
+import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -73,8 +75,11 @@ public class Robot extends LoggedRobot {
         ;
         DataLogManager.start();
         URCL.start();
-        StatusLogger.stop(); // Utilize exclusively URCL for logging REV status frames
+        // Utilize exclusively URCL for logging REV status frames
+        StatusLogger.stop();
 
+        // Download layout from robot for Elastic
+        WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
       case SIM:
         // Running a physics simulator, log to NT
         Logger.addDataReceiver(new NT4Publisher());
@@ -119,7 +124,7 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

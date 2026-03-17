@@ -4,11 +4,13 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -16,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DrivebaseConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.swerve.Drivetrain;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -26,9 +29,9 @@ import frc.robot.subsystems.swerve.Drivetrain;
 public class RobotContainer {
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  final CommandXboxController m_Controller =
+  final CommandXboxController m_Driver_Controller =
       new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT);
-  final CommandXboxController coDriverXbox =
+  final CommandXboxController m_Copilot_Controller =
       new CommandXboxController(OperatorConstants.CO_DRIVER_CONTROLLER_PORT);
 
   // Gyro supplier created via factory and constants
@@ -48,6 +51,7 @@ public class RobotContainer {
   private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(20);
   private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(20);
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(20);
+  private LoggedDashboardChooser<Command> autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -60,13 +64,11 @@ public class RobotContainer {
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
 
     // Have the autoChooser pull in all PathPlanner autos as options
-    // autoChooser = AutoBuilder.buildAutoChooser();
+    autoChooser =
+        new LoggedDashboardChooser<Command>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set the default auto (do nothing)
-    // autoChooser.setDefaultOption("Do Nothing", Commands.none());
-
-    // Put the autoChooser on the SmartDashboard
-    // SmartDashboard.putData("Auto Chooser", autoChooser);
+    autoChooser.addDefaultOption("Do Nothing", Commands.none());
   }
 
   /**
@@ -78,8 +80,14 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  private void configureBindings() {}
+  private void configureBindings() {
+    m_Driver_Controller.a().whileTrue(Commands.runOnce(m_swerve::setX, m_swerve).repeatedly());
+    m_Driver_Controller.b().whileTrue(Commands.none());
+    m_Driver_Controller.x().whileTrue(Commands.none());
+    m_Driver_Controller.y().whileTrue(Commands.none());
+  }
 
+  /** This method sets subsystem commands */
   private void configureDefaultCommands() {
     // Default drive command: run every scheduler cycle in teleop
     m_swerve.setDefaultCommand(
@@ -88,14 +96,16 @@ public class RobotContainer {
               // Get the x speed. We are inverting this because Xbox controllers return
               // negative values when we push forward.
               final var xSpeed =
-                  -m_xspeedLimiter.calculate(MathUtil.applyDeadband(m_Controller.getLeftY(), 0.05))
+                  -m_xspeedLimiter.calculate(
+                          MathUtil.applyDeadband(m_Driver_Controller.getLeftY(), 0.05))
                       * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC;
 
               // Get the y speed or sideways/strafe speed. We are inverting this because
               // we want a positive value when we pull to the left. Xbox controllers
               // return positive values when you pull to the right by default.
               final var ySpeed =
-                  -m_yspeedLimiter.calculate(MathUtil.applyDeadband(m_Controller.getLeftX(), 0.05))
+                  -m_yspeedLimiter.calculate(
+                          MathUtil.applyDeadband(m_Driver_Controller.getLeftX(), 0.05))
                       * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC;
 
               // Get the rate of angular rotation. We are inverting this because we want a
@@ -103,7 +113,8 @@ public class RobotContainer {
               // mathematics). Xbox controllers return positive values when you pull to
               // the right by default.
               final var rot =
-                  -m_rotLimiter.calculate(MathUtil.applyDeadband(m_Controller.getRightX(), 0.05))
+                  -m_rotLimiter.calculate(
+                          MathUtil.applyDeadband(m_Driver_Controller.getRightX(), 0.05))
                       * Drivetrain.kMaxAngularSpeed;
 
               // Command the drivetrain. 0.02 is the nominal TimedRobot loop period (20 ms).
@@ -118,8 +129,8 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  //   public Command getAutonomousCommand() {
-  //     // Pass in the selected auto from the SmartDashboard as our desired autnomous commmand
-  //     // return autoChooser.getSelected();
-  //   }
+  public Command getAutonomousCommand() {
+    // Pass in the selected auto from the SmartDashboard as our desired autonomous command
+    return autoChooser.get();
+  }
 }
