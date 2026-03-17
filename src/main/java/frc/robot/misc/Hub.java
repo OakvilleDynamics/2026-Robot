@@ -3,6 +3,7 @@ package frc.robot.misc;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import java.util.Optional;
+import org.littletonrobotics.junction.AutoLogOutput;
 
 public class Hub {
   /**
@@ -21,6 +22,7 @@ public class Hub {
    *
    * @return true if the hub is active for your alliance, false otherwise
    */
+  @AutoLogOutput(key = "Hub/Active")
   public boolean isHubActive() {
     Optional<Alliance> alliance = DriverStation.getAlliance();
     // If we have no alliance, we cannot be enabled, therefore no hub.
