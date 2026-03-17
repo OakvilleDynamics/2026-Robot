@@ -133,36 +133,28 @@ public final class Constants {
     public static final int kIndexMotor = 14;
     public static final int ClimberMotor = 21;
 
-    /**
-     * Constants for the shooter mechanism. These should be tuned to the specific shooter mechanism
-     * and may need to be adjusted based on the physical robot.
-     */
+    /** Constants for the shooter mechanism. */
     public static class ShooterConstants {
       public static final double kShooter_Speed1 = 0.8;
       public static final double kShooter_Speed2 = 0.4;
       public static final InvertedValue kShooterMotor_Inverted = InvertedValue.Clockwise_Positive;
 
-      public static final double kShooter_kS =
-          0.2; // Static gain, the minimum voltage needed to overcome friction and start the motor
-      // moving
-      public static final double kShooter_kV =
-          0.1; // Velocity gain, the voltage needed to maintain a certain velocity (V = kV *
-      // velocity)
-      public static final double kShooter_kP =
-          0.5; // Proportional gain, the voltage added based on the error between the target
+      // Static gain, the minimum voltage needed to overcome friction and start the motor moving
+      public static final double kShooter_kS = 0.2;
+      // Velocity gain, the voltage needed to maintain a certain velocity (V = kV * velocity)
+      public static final double kShooter_kV = 0.1;
+      // Proportional gain, the voltage added based on the error between the target
       // velocity and the actual velocity (V = kP * error)
-      public static final double kShooter_kI =
-          0.001; // Integral gain, the voltage added based on the accumulated error over time (V =
-      // kI * integral of error)
-      public static final double kShooter_kD =
-          5; // Derivative gain, the voltage added based on the rate of change of the error (V = kD
-      // * derivative of error)
+      public static final double kShooter_kP = 0.5;
+      // Integral gain, the voltage added based on the accumulated error over time (V = kI *
+      // integral of error)
+      public static final double kShooter_kI = 0.001;
+      // Derivative gain, the voltage added based on the rate of change of the error (V = kD *
+      // derivative of error)
+      public static final double kShooter_kD = 5;
     }
 
-    /**
-     * Constants for the indexer mechanism. These should be tuned to the specific indexer mechanism
-     * and may need to be adjusted based on the physical robot.
-     */
+    /** Constants for the indexer mechanism. */
     public static class IndexerConstants {
       public static final double kIndex_Speed = 0.3;
       public static final boolean kIndex_Inverted = false;
@@ -178,10 +170,7 @@ public final class Constants {
       }
     }
 
-    /**
-     * Constants for the intake mechanism. These should be tuned to the specific intake mechanism
-     * and may need to be adjusted based on the physical robot.
-     */
+    /** Constants for the intake mechanism. */
     public static class IntakeConstants {
       public static final double kIntake_Speed = 0.5;
       public static final double kIntake_Hinge_Speed = 0.5;
