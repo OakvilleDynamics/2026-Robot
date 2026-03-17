@@ -131,6 +131,7 @@ public final class Constants {
     public static final int kIntakeHinge = 12;
     public static final int kShooterMotor = 13;
     public static final int kIndexMotor = 14;
+    public static final int ClimberMotor = 21;
 
     /**
      * Constants for the shooter mechanism. These should be tuned to the specific shooter mechanism
