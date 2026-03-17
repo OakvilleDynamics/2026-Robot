@@ -36,7 +36,6 @@ import frc.robot.subsystems.Shooter;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final Shooter m_Shooter = new Shooter();
   private final Climber m_Climber = new Climber();
   private final Index m_Index = new Index();
@@ -44,9 +43,9 @@ public class RobotContainer {
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final CommandXboxController m_Driver_Controller =
-      new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT);
+      new CommandXboxController(OperatorConstants.kDRIVER_CONTROLLER);
   final CommandXboxController m_Copilot_Controller =
-      new CommandXboxController(OperatorConstants.CO_DRIVER_CONTROLLER_PORT);
+      new CommandXboxController(OperatorConstants.kCOPILOT_CONTROLLER);
 
   // Gyro supplier created via factory and constants
   private final GyroSupplier m_gyro =
