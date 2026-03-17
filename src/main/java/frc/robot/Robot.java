@@ -5,7 +5,9 @@
 package frc.robot;
 
 import com.revrobotics.util.StatusLogger;
+import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -62,11 +64,22 @@ public class Robot extends LoggedRobot {
         // Running on a real robot, log to a local file and to NT
         Logger.addDataReceiver(new WPILOGWriter());
         Logger.addDataReceiver(new NT4Publisher());
-        LoggedPowerDistribution.getInstance(HardwareConstants.REV_PDH_ID, ModuleType.kRev);
+        switch (RioState.getRioSerial()) {
+          case KENOBI_RIO_SERIAL ->
+              LoggedPowerDistribution.getInstance(HardwareConstants.REV_PDH_ID, ModuleType.kRev);
+          case VADER_RIO_SERIAL ->
+              LoggedPowerDistribution.getInstance(HardwareConstants.CTRE_PDP_ID, ModuleType.kCTRE);
+          case UNKNOWN ->
+              LoggedPowerDistribution.getInstance(HardwareConstants.REV_PDH_ID, ModuleType.kRev);
+        }
+        ;
         DataLogManager.start();
         URCL.start();
-        StatusLogger.stop(); // Utilize exclusively URCL for logging REV status frames
+        // Utilize exclusively URCL for logging REV status frames
+        StatusLogger.stop();
 
+        // Download layout from robot for Elastic
+        WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
       case SIM:
         // Running a physics simulator, log to NT
         Logger.addDataReceiver(new NT4Publisher());
@@ -79,13 +92,6 @@ public class Robot extends LoggedRobot {
         Logger.setReplaySource(new WPILOGReader(logPath));
         Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
         break;
-    }
-
-    // Log the drivetrain configuration based on the detected RoboRIO Serial Number
-    switch (RioState.getRioSerial()) {
-      case KENOBI_RIO_SERIAL -> Logger.recordMetadata("DrivetrainConfig", "Kenobi");
-      case VADER_RIO_SERIAL -> Logger.recordMetadata("DrivetrainConfig", "Vader");
-      case UNKNOWN -> Logger.recordMetadata("DrivetrainConfig", "Kenobi*");
     }
 
     // Start logging! No more data receivers, replay sources, or metadata values may be added.

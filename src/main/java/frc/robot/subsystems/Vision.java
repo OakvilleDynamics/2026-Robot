@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Robot;
+import frc.robot.subsystems.swerve.Drivetrain;
 import java.awt.Desktop;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,18 +38,16 @@ import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
-import swervelib.SwerveDrive;
-import swervelib.telemetry.SwerveDriveTelemetry;
 
 /**
  * Example PhotonVision class to aid in the pursuit of accurate odometry. Taken from
- * https://gitlab.com/ironclad_code/ironclad-2024/-/blob/master/src/main/java/frc/robot/vision/Vision.java?ref_type=heads
+ *
+ * <p>https://gitlab.com/ironclad_code/ironclad-2024/-/blob/master/src/main/java/frc/robot/vision/Vision.java?ref_type=heads
  */
 public class Vision {
-
   /** April Tag Field Layout of the year. */
   public static final AprilTagFieldLayout fieldLayout =
-      AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
+      AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
 
   /** Ambiguity defined as a value between (0,1). Used in {@link Vision#filterPose}. */
   private final double maximumAmbiguity = 0.25;
@@ -74,15 +73,12 @@ public class Vision {
   public Vision(Supplier<Pose2d> currentPose, Field2d field) {
     this.currentPose = currentPose;
     this.field2d = field;
-
     if (Robot.isSimulation()) {
       visionSim = new VisionSystemSim("Vision");
       visionSim.addAprilTags(fieldLayout);
-
       for (Cameras c : Cameras.values()) {
         c.addToVisionSim(visionSim);
       }
-
       openSimCameraViews();
     }
   }
@@ -110,23 +106,13 @@ public class Vision {
    *
    * @param swerveDrive {@link SwerveDrive} instance.
    */
-  public void updatePoseEstimation(SwerveDrive swerveDrive) {
-    if (SwerveDriveTelemetry.isSimulation
-        && swerveDrive.getSimulationDriveTrainPose().isPresent()) {
-      /*
-       * In the maple-sim, odometry is simulated using encoder values, accounting for factors like skidding and drifting.
-       * As a result, the odometry may not always be 100% accurate.
-       * However, the vision system should be able to provide a reasonably accurate pose estimation, even when odometry is incorrect.
-       * (This is why teams implement vision system to correct odometry.)
-       * Therefore, we must ensure that the actual robot pose is provided in the simulator when updating the vision simulation during the simulation.
-       */
-      visionSim.update(swerveDrive.getSimulationDriveTrainPose().get());
-    }
+  public void updatePoseEstimation(Drivetrain drivetrain) {
+
     for (Cameras camera : Cameras.values()) {
       Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
       if (poseEst.isPresent()) {
         var pose = poseEst.get();
-        swerveDrive.addVisionMeasurement(
+        drivetrain.addVisionMeasurement(
             pose.estimatedPose.toPose2d(), pose.timestampSeconds, camera.curStdDevs);
       }
     }
@@ -178,12 +164,10 @@ public class Vision {
       if (bestTargetAmbiguity > maximumAmbiguity) {
         return Optional.empty();
       }
-
       // est pose is very far from recorded robot pose
       if (PhotonUtils.getDistanceToPose(currentPose.get(), pose.get().estimatedPose.toPose2d())
           > 1) {
         longDistangePoseEstimationCount++;
-
         // if it calculates that were 10 meter away for more than 10 times in a row its probably
         // right
         if (longDistangePoseEstimationCount < 10) {
@@ -259,7 +243,6 @@ public class Vision {
 
   /** Update the {@link Field2d} to include tracked targets/ */
   public void updateVisionField() {
-
     List<PhotonTrackedTarget> targets = new ArrayList<PhotonTrackedTarget>();
     for (Cameras c : Cameras.values()) {
       if (!c.resultsList.isEmpty()) {
@@ -269,7 +252,6 @@ public class Vision {
         }
       }
     }
-
     List<Pose2d> poses = new ArrayList<>();
     for (PhotonTrackedTarget target : targets) {
       if (fieldLayout.getTagPose(target.getFiducialId()).isPresent()) {
@@ -277,7 +259,6 @@ public class Vision {
         poses.add(targetPose);
       }
     }
-
     field2d.getObject("tracked targets").setPoses(poses);
   }
 
@@ -365,20 +346,15 @@ public class Vision {
         Matrix<N3, N1> multiTagStdDevsMatrix) {
       latencyAlert =
           new Alert("'" + name + "' Camera is experiencing high latency.", AlertType.kWarning);
-
       camera = new PhotonCamera(name);
-
       // https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
       robotToCamTransform = new Transform3d(robotToCamTranslation, robotToCamRotation);
-
       poseEstimator =
           new PhotonPoseEstimator(
               Vision.fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCamTransform);
       poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
-
       this.singleTagStdDevs = singleTagStdDevs;
       this.multiTagStdDevs = multiTagStdDevsMatrix;
-
       if (Robot.isSimulation()) {
         SimCameraProperties cameraProp = new SimCameraProperties();
         // A 640 x 480 camera with a 100 degree diagonal FOV.
@@ -390,7 +366,6 @@ public class Vision {
         // The average and standard deviation in milliseconds of image data latency.
         cameraProp.setAvgLatencyMs(35);
         cameraProp.setLatencyStdDevMs(5);
-
         cameraSim = new PhotonCameraSim(camera, cameraProp);
         cameraSim.enableDrawWireframe(true);
       }
@@ -418,7 +393,6 @@ public class Vision {
       if (resultsList.isEmpty()) {
         return Optional.empty();
       }
-
       PhotonPipelineResult bestResult = resultsList.get(0);
       double amiguity = bestResult.getBestTarget().getPoseAmbiguity();
       double currentAmbiguity = 0;
@@ -459,11 +433,9 @@ public class Vision {
     private void updateUnreadResults() {
       double mostRecentTimestamp =
           resultsList.isEmpty() ? 0.0 : resultsList.get(0).getTimestampSeconds();
-
       for (PhotonPipelineResult result : resultsList) {
         mostRecentTimestamp = Math.max(mostRecentTimestamp, result.getTimestampSeconds());
       }
-
       resultsList =
           Robot.isReal()
               ? camera.getAllUnreadResults()
@@ -508,13 +480,11 @@ public class Vision {
       if (estimatedPose.isEmpty()) {
         // No pose input. Default to single-tag std devs
         curStdDevs = singleTagStdDevs;
-
       } else {
         // Pose present. Start running Heuristic
         var estStdDevs = singleTagStdDevs;
         int numTags = 0;
         double avgDist = 0;
-
         // Precalculation - see how many tags we found, and calculate an average-distance metric
         for (var tgt : targets) {
           var tagPose = poseEstimator.getFieldTags().getTagPose(tgt.getFiducialId());
@@ -529,7 +499,6 @@ public class Vision {
                   .getTranslation()
                   .getDistance(estimatedPose.get().estimatedPose.toPose2d().getTranslation());
         }
-
         if (numTags == 0) {
           // No tags visible. Default to single-tag std devs
           curStdDevs = singleTagStdDevs;

@@ -4,19 +4,29 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.DrivebaseConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ClimberCommand;
 import frc.robot.commands.IndexCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Index;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.swerve.Drivetrain;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -26,58 +36,47 @@ import frc.robot.subsystems.Shooter;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final Shooter m_Shooter = new Shooter();
   private final Climber m_Climber = new Climber();
   private final Index m_Index = new Index();
   private final Intake m_Intake = new Intake();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  final CommandXboxController driverXbox =
+  final CommandXboxController m_Driver_Controller =
       new CommandXboxController(OperatorConstants.kDRIVER_CONTROLLER);
-  final CommandXboxController coDriverXbox =
+  final CommandXboxController m_Copilot_Controller =
       new CommandXboxController(OperatorConstants.kCOPILOT_CONTROLLER);
 
-  // The path to the drivetrain configuration json file, selected based on the RoboRIO serial number
-  // of
-  // the robot. This allows us to use the same codebase for both the competition robot and the
-  // practice robot, which have different swerve configurations.
+  // Gyro supplier created via factory and constants
+  private final GyroSupplier m_gyro =
+      GyroFactory.createGyro(
+          DrivebaseConstants.GyroConstants.GYRO_TYPE, DrivebaseConstants.GyroConstants.GYRO_PARAMS);
+  // Swerve drivetrain subsystem
+  private final Drivetrain m_swerve = new Drivetrain(m_gyro::getRotation2d, new Pose2d());
+  // private final SimDrivetrain m_simSwerve = new SimDrivetrain(new Pose2d());
 
-  // Establish a Sendable Chooser that will be able to be sent to the SmartDashboard, allowing
-  // selection of desired auto
+  // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
+  private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(20);
+  private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(20);
+  private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(20);
+  private LoggedDashboardChooser<Command> autoChooser;
 
-  /**
-   * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular
-   * velocity.
-   *
-   * <p>SwerveInputStream driveAngularVelocity = SwerveInputStream.of( drivebase.getSwerveDrive(),
-   * () -> driverXbox.getLeftY() * -1, () -> driverXbox.getLeftX() * -1)
-   * .withControllerRotationAxis(driverXbox::getRightX) .deadband(OperatorConstants.kDEADBAND)
-   * .scaleTranslation(0.8) .allianceRelativeControl(true);
-   *
-   * <p>/** Clone's the angular velocity input stream and converts it to a fieldRelative input
-   * stream. SwerveInputStream driveDirectAngle = driveAngularVelocity .copy()
-   * .withControllerHeadingAxis(driverXbox::getRightX, driverXbox::getRightY) .headingWhile(true);
-   *
-   * <p>/** Clone's the angular velocity input stream and converts it to a robotRelative input
-   * stream. SwerveInputStream driveRobotOriented =
-   * driveAngularVelocity.copy().robotRelative(true).allianceRelativeControl(false);
-   *
-   * <p>// Keyboard controls for simulation SwerveInputStream driveAngularVelocityKeyboard =
-   * SwerveInputStream.of( drivebase.getSwerveDrive(), () -> -driverXbox.getLeftY(), () ->
-   * -driverXbox.getLeftX()) .withControllerRotationAxis(() -> driverXbox.getRawAxis(2))
-   * .deadband(OperatorConstants.kDEADBAND) .scaleTranslation(0.8) .allianceRelativeControl(true);
-   *
-   * <p>// Derive the heading axis with math! SwerveInputStream driveDirectAngleKeyboard =
-   * driveAngularVelocityKeyboard .copy() .withControllerHeadingAxis( () ->
-   * Math.sin(driverXbox.getRawAxis(2) * Math.PI) * (Math.PI * 2), () ->
-   * Math.cos(driverXbox.getRawAxis(2) * Math.PI) * (Math.PI * 2)) .headingWhile(true)
-   * .translationHeadingOffset(true) .translationHeadingOffset(Rotation2d.fromDegrees(0));
-   *
-   * <p>/** The container for the robot. Contains subsystems, OI devices, and commands.
-   */
+  /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    // Configure the trigger bindings
+    configureBindings();
+    configureDefaultCommands();
+    DriverStation.silenceJoystickConnectionWarning(true);
 
+    // Create the NamedCommands that will be used in PathPlanner
+    NamedCommands.registerCommand("test", Commands.print("I EXIST"));
+
+    // Have the autoChooser pull in all PathPlanner autos as options
+    autoChooser =
+        new LoggedDashboardChooser<Command>("Auto Choices", AutoBuilder.buildAutoChooser());
+
+    // Set the default auto (do nothing)
+    autoChooser.addDefaultOption("Do Nothing", Commands.none());
     // Set default commands for subsystems
     m_Shooter.setDefaultCommand(new ShooterCommand(m_Shooter));
     m_Climber.setDefaultCommand(new ClimberCommand(m_Climber));
@@ -94,7 +93,49 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  private void configureBindings() {}
+  private void configureBindings() {
+    m_Driver_Controller.a().whileTrue(Commands.runOnce(m_swerve::setX, m_swerve).repeatedly());
+    m_Driver_Controller.b().whileTrue(Commands.none());
+    m_Driver_Controller.x().whileTrue(Commands.none());
+    m_Driver_Controller.y().whileTrue(Commands.none());
+  }
+
+  /** This method sets subsystem commands */
+  private void configureDefaultCommands() {
+    // Default drive command: run every scheduler cycle in teleop
+    m_swerve.setDefaultCommand(
+        new RunCommand(
+            () -> {
+              // Get the x speed. We are inverting this because Xbox controllers return
+              // negative values when we push forward.
+              final var xSpeed =
+                  -m_xspeedLimiter.calculate(
+                          MathUtil.applyDeadband(m_Driver_Controller.getLeftY(), 0.05))
+                      * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC;
+
+              // Get the y speed or sideways/strafe speed. We are inverting this because
+              // we want a positive value when we pull to the left. Xbox controllers
+              // return positive values when you pull to the right by default.
+              final var ySpeed =
+                  -m_yspeedLimiter.calculate(
+                          MathUtil.applyDeadband(m_Driver_Controller.getLeftX(), 0.05))
+                      * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC;
+
+              // Get the rate of angular rotation. We are inverting this because we want a
+              // positive value when we pull to the left (remember, CCW is positive in
+              // mathematics). Xbox controllers return positive values when you pull to
+              // the right by default.
+              final var rot =
+                  -m_rotLimiter.calculate(
+                          MathUtil.applyDeadband(m_Driver_Controller.getRightX(), 0.05))
+                      * Drivetrain.kMaxAngularSpeed;
+
+              // Command the drivetrain. 0.02 is the nominal TimedRobot loop period (20 ms).
+              m_swerve.drive(xSpeed, ySpeed, rot, true, 0.02);
+              // m_simSwerve.drive(xSpeed, ySpeed, rot, true, 0.02);
+            },
+            m_swerve));
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -102,7 +143,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // Pass in the selected auto from the SmartDashboard as our desired autnomous commmand
-    return new Command() {};
+    // Pass in the selected auto from the SmartDashboard as our desired autonomous command
+    return autoChooser.get();
   }
 }
