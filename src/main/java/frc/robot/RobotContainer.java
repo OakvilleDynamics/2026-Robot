@@ -38,11 +38,6 @@ public class RobotContainer {
   private final GyroSupplier m_gyro =
       GyroFactory.createGyro(
           DrivebaseConstants.GyroConstants.GYRO_TYPE, DrivebaseConstants.GyroConstants.GYRO_PARAMS);
-
-  // Establish a Sendable Chooser that will be able to be sent to the SmartDashboard, allowing
-  // selection of desired auto
-  //   private final SendableChooser<Command> autoChooser;
-  // Driver controller
   // Swerve drivetrain subsystem
   private final Drivetrain m_swerve = new Drivetrain(m_gyro::getRotation2d, new Pose2d());
   // private final SimDrivetrain m_simSwerve = new SimDrivetrain(new Pose2d());

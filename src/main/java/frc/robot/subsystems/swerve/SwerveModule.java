@@ -5,6 +5,8 @@
 package frc.robot.subsystems.swerve;
 
 import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.thethriftybot.devices.ThriftyNova;
@@ -17,7 +19,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import frc.robot.Constants.DrivebaseConstants;
-import frc.robot.Constants.DrivebaseConstants.*;
 import frc.robot.Constants.DrivebaseConstants.ModuleConstants;
 import org.littletonrobotics.junction.Logger;
 
@@ -31,9 +32,8 @@ public class SwerveModule {
 
   // Encoder configuration
   private final double m_encoderTicksPerRevolution;
-  private double
-      m_encoderOffsetTicks; // Used only for Thrifty encoder (RoboRIO reading), Nova just stores for
-  // persistence
+  // Used only for Thrifty encoder (RoboRIO reading), Nova just stores for persistence
+  private double m_encoderOffsetTicks;
   private final String m_moduleName;
 
   // Per-module inversion configuration
@@ -103,6 +103,12 @@ public class SwerveModule {
     // m_driveMotor.pid0.setFF(1.0 / maxRevPerSec);
     // m_driveMotor.usePIDSlot(PIDSlot.SLOT0);
     // m_driveMotor.setInversion(m_driveInverted);
+
+    // Set current limits and voltage compensation for motor safety and performance
+    TalonFXConfigurator talonFXConfigurator = m_driveMotor.getConfigurator();
+    CurrentLimitsConfigs limitConfigs = new CurrentLimitsConfigs();
+    limitConfigs.SupplyCurrentLimit = DrivebaseConstants.MAX_CURRENT_AMPS;
+    talonFXConfigurator.apply(limitConfigs);
   }
 
   /** Configure the azimuth motor based on encoder type */

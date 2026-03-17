@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.*;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
@@ -19,6 +21,10 @@ import edu.wpi.first.wpilibj.RobotController;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  // Robot physical constants
+  public static final double ROBOT_MASS = Units.lbsToKilograms(110);
+  // Approximation of moment of inertia for a 24" square robot
+  public static final double ROBOT_MOI = ROBOT_MASS * Math.pow(Units.inchesToMeters(12), 2);
 
   /** Constants related to the drivebase, such as dimensions */
   public static final class DrivebaseConstants {
@@ -33,6 +39,7 @@ public final class Constants {
     // Wheel specifications
     public static final double WHEEL_DIAMETER_INCHES = 4;
     public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(4);
+    public static final double WHEEL_FRICTION_COEFFICIENT = 1.19;
 
     // Top Speed (calculated from motor free speed, wheel diameter & gear ratio)
     public static final double TOP_SPEED_MOTOR_RPM = 6000;
@@ -42,6 +49,9 @@ public final class Constants {
             * Math.PI
             / DRIVE_GEAR_RATIO
             / 60; // = 4.729 m/s
+
+    // Electrical constants
+    public static final double MAX_CURRENT_AMPS = 30.0;
 
     // Module locations from center of robot
     private static final double HALF_WIDTH = DRIVE_BASE_WIDTH_METERS / 2.0;

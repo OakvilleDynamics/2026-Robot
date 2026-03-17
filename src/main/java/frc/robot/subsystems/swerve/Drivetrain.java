@@ -6,14 +6,15 @@ package frc.robot.subsystems.swerve;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -21,9 +22,12 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.*;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.DrivebaseConstants;
 import frc.robot.Constants.DrivebaseConstants.ModuleConstants;
 import frc.robot.Constants.DrivebaseConstants.ModuleConstants.BackLeftModule;
@@ -95,6 +99,19 @@ public class Drivetrain extends SubsystemBase {
 
   private final SwerveDrivePoseEstimator poseEstimator;
 
+  private RobotConfig config =
+      new RobotConfig(
+          Constants.ROBOT_MASS,
+          Constants.ROBOT_MOI,
+          new ModuleConfig(
+              DrivebaseConstants.WHEEL_DIAMETER_INCHES,
+              DrivebaseConstants.TOP_SPEED_METERS_PER_SEC,
+              DrivebaseConstants.WHEEL_FRICTION_COEFFICIENT,
+              DCMotor.getKrakenX60(1).withReduction(DrivebaseConstants.DRIVE_GEAR_RATIO),
+              DrivebaseConstants.MAX_CURRENT_AMPS,
+              1),
+          getModuleTranslations());
+
   /**
    * Constructs the Drivetrain with a supplier that returns the current robot heading.
    *
@@ -118,11 +135,7 @@ public class Drivetrain extends SubsystemBase {
     poseEstimator =
         new SwerveDrivePoseEstimator(m_kinematics, m_gyroSupplier.get(), m_lastPos, getPose());
 
-    // Load the RobotConfig from the GUI settings. You should probably
-    // store this in your Constants file
-    RobotConfig config;
-    
-    try{
+    try {
       config = RobotConfig.fromGUISettings();
     } catch (Exception e) {
       // Handle exception as needed
@@ -131,28 +144,36 @@ public class Drivetrain extends SubsystemBase {
 
     // Configure AutoBuilder last
     AutoBuilder.configure(
-            this::getPose, // Robot pose supplier
-            this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
-            this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            (speeds, feedforwards) -> driveVelocity(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+        // Robot pose supplier
+        this::getPose,
+        // Method to reset odometry (will be called if your auto has a starting pose)
+        this::resetOdometry,
+        // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+        this::getChassisSpeeds,
+        // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds.
+        // Also optionally outputs individual module feedforwards
+        (speeds, feedforwards) -> driveVelocity(speeds),
+        // PPHolonomicController is the built in path following controller for holonomic drive
+        // trains
+        new PPHolonomicDriveController(
+            new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+            new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
             ),
-            config, // The robot configuration
-            () -> {
-              // Boolean supplier that controls when the path will be mirrored for the red alliance
-              // This will flip the path being followed to the red side of the field.
-              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+        // The robot configuration
+        config,
+        () -> {
+          // Boolean supplier that controls when the path will be mirrored for the red alliance
+          // This will flip the path being followed to the red side of the field.
+          // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
-              var alliance = DriverStation.getAlliance();
-              if (alliance.isPresent()) {
-                return alliance.get() == DriverStation.Alliance.Red;
-              }
-              return false;
-            },
-            this // Reference to this subsystem to set requirements
-    );
+          var alliance = DriverStation.getAlliance();
+          if (alliance.isPresent()) {
+            return alliance.get() == DriverStation.Alliance.Red;
+          }
+          return false;
+        },
+        // Reference to this subsystem to set requirements
+        this);
   }
 
   /**
@@ -237,6 +258,14 @@ public class Drivetrain extends SubsystemBase {
         m_frontRight.getSwerveState(),
         m_backLeft.getSwerveState(),
         m_backRight.getSwerveState());
+  }
+
+  /** Returns an array of module translations. */
+  public static Translation2d[] getModuleTranslations() {
+    return new Translation2d[] {
+      DrivebaseConstants.FRONT_LEFT_LOCATION, DrivebaseConstants.FRONT_RIGHT_LOCATION,
+      DrivebaseConstants.BACK_LEFT_LOCATION, DrivebaseConstants.BACK_RIGHT_LOCATION
+    };
   }
 
   /** Should be called periodically to update odometry and SmartDashboard */
@@ -350,8 +379,8 @@ public class Drivetrain extends SubsystemBase {
     poseEstimator.addVisionMeasurement(visionMeasurement, timestamp, stdDevs);
   }
 
-  public void driveVelocity(ChassisSpeeds speeds){
-        // Calculate module setpoints
+  public void driveVelocity(ChassisSpeeds speeds) {
+    // Calculate module setpoints
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
     SwerveModuleState[] setpointStates = m_kinematics.toSwerveModuleStates(discreteSpeeds);
 
