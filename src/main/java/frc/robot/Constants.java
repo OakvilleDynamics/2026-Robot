@@ -48,7 +48,7 @@ public final class Constants {
             * WHEEL_DIAMETER_METERS
             * Math.PI
             / DRIVE_GEAR_RATIO
-            / 60; // = 4.729 m/s
+            / 60; // = 5.51 m/s
 
     // Electrical constants
     public static final double MAX_CURRENT_AMPS = 30.0;

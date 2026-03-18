@@ -284,16 +284,8 @@ public class Drivetrain extends SubsystemBase {
     m_backLeft.updateSmartDashboard();
     m_backRight.updateSmartDashboard();
 
-    m_frontLeft.logSwerveModule();
-    m_frontRight.logSwerveModule();
-    m_backLeft.logSwerveModule();
-    m_backRight.logSwerveModule();
-
     // Robot pose information
     Pose2d currentPose = getPose();
-    SmartDashboard.putNumber("Robot X (m)", currentPose.getX());
-    SmartDashboard.putNumber("Robot Y (m)", currentPose.getY());
-    SmartDashboard.putNumber("Robot Rotation (deg)", currentPose.getRotation().getDegrees());
     Logger.recordOutput("Robot X (m)", currentPose.getX());
     Logger.recordOutput("Robot Y (m)", currentPose.getY());
     Logger.recordOutput("Robot Rotation (deg)", currentPose.getRotation().getDegrees());
@@ -304,31 +296,20 @@ public class Drivetrain extends SubsystemBase {
 
     // Current chassis speeds
     ChassisSpeeds speeds = getChassisSpeeds();
-    SmartDashboard.putNumber("Chassis X Speed (m/s)", speeds.vxMetersPerSecond);
-    SmartDashboard.putNumber("Chassis Y Speed (m/s)", speeds.vyMetersPerSecond);
-    SmartDashboard.putNumber("Chassis Angular Speed (rad/s)", speeds.omegaRadiansPerSecond);
     Logger.recordOutput("Chassis X Speed (m/s)", speeds.vxMetersPerSecond);
     Logger.recordOutput("Chassis Y Speed (m/s)", speeds.vyMetersPerSecond);
     Logger.recordOutput("Chassis Angular Speed (rad/s)", speeds.omegaRadiansPerSecond);
 
     // Module states for debugging
-    SmartDashboard.putNumber("FL Speed (m/s)", m_frontLeft.getSwerveState().speedMetersPerSecond);
-    SmartDashboard.putNumber("FL Angle (deg)", m_frontLeft.getSwerveState().angle.getDegrees());
     Logger.recordOutput("FL Speed (m/s)", m_frontLeft.getSwerveState().speedMetersPerSecond);
     Logger.recordOutput("FL Angle (deg)", m_frontLeft.getSwerveState().angle.getDegrees());
 
-    SmartDashboard.putNumber("FR Speed (m/s)", m_frontRight.getSwerveState().speedMetersPerSecond);
-    SmartDashboard.putNumber("FR Angle (deg)", m_frontRight.getSwerveState().angle.getDegrees());
     Logger.recordOutput("FL Speed (m/s)", m_frontLeft.getSwerveState().speedMetersPerSecond);
     Logger.recordOutput("FL Angle (deg)", m_frontLeft.getSwerveState().angle.getDegrees());
 
-    SmartDashboard.putNumber("BL Speed (m/s)", m_backLeft.getSwerveState().speedMetersPerSecond);
-    SmartDashboard.putNumber("BL Angle (deg)", m_backLeft.getSwerveState().angle.getDegrees());
     Logger.recordOutput("BL Speed (m/s)", m_backLeft.getSwerveState().speedMetersPerSecond);
     Logger.recordOutput("BL Angle (deg)", m_backLeft.getSwerveState().angle.getDegrees());
 
-    SmartDashboard.putNumber("BR Speed (m/s)", m_backRight.getSwerveState().speedMetersPerSecond);
-    SmartDashboard.putNumber("BR Angle (deg)", m_backRight.getSwerveState().angle.getDegrees());
     Logger.recordOutput("BR Speed (m/s)", m_backRight.getSwerveState().speedMetersPerSecond);
     Logger.recordOutput("BR Angle (deg)", m_backRight.getSwerveState().angle.getDegrees());
 
