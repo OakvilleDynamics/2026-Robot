@@ -95,7 +95,7 @@ public final class Constants {
         public static final int FRONT_LEFT_AZIMUTH_MOTOR_ID = 3;
         public static final int FRONT_LEFT_ENCODER_PORT =
             0; // RoboRIO analog input port (for Thrifty absolute encoder)
-        public static final double FRONT_LEFT_ENCODER_OFFSET = 3118; // Encoder offset in ticks
+        public static final double FRONT_LEFT_ENCODER_OFFSET = 3126; // Encoder offset in ticks
         public static final boolean FRONT_LEFT_DRIVE_MOTOR_INVERTED = false;
         public static final boolean FRONT_LEFT_AZIMUTH_MOTOR_INVERTED = false;
       }
@@ -106,7 +106,7 @@ public final class Constants {
         public static final int FRONT_RIGHT_AZIMUTH_MOTOR_ID = 5;
         public static final int FRONT_RIGHT_ENCODER_PORT =
             1; // RoboRIO analog input port (for Thrifty absolute encoder)
-        public static final double FRONT_RIGHT_ENCODER_OFFSET = 2651;
+        public static final double FRONT_RIGHT_ENCODER_OFFSET = 2735;
         public static final boolean FRONT_RIGHT_DRIVE_MOTOR_INVERTED = false;
         public static final boolean FRONT_RIGHT_AZIMUTH_MOTOR_INVERTED = false;
       }
@@ -117,7 +117,7 @@ public final class Constants {
         public static final int BACK_LEFT_AZIMUTH_MOTOR_ID = 7;
         public static final int BACK_LEFT_ENCODER_PORT =
             2; // RoboRIO analog input port (for Thrifty absolute encoder)
-        public static final double BACK_LEFT_ENCODER_OFFSET = 934; // Encoder offset in ticks
+        public static final double BACK_LEFT_ENCODER_OFFSET = 971; // Encoder offset in ticks
         public static final boolean BACK_LEFT_DRIVE_MOTOR_INVERTED = false;
         public static final boolean BACK_LEFT_AZIMUTH_MOTOR_INVERTED = false;
       }
@@ -129,7 +129,7 @@ public final class Constants {
         public static final int BACK_RIGHT_AZIMUTH_MOTOR_ID = 9;
         public static final int BACK_RIGHT_ENCODER_PORT =
             3; // RoboRIO analog input port (for Thrifty absolute encoder)
-        public static final double BACK_RIGHT_ENCODER_OFFSET = 3834; // Encoder offset in ticks
+        public static final double BACK_RIGHT_ENCODER_OFFSET = 3854; // Encoder offset in ticks
         public static final boolean BACK_RIGHT_DRIVE_MOTOR_INVERTED = false;
         public static final boolean BACK_RIGHT_AZIMUTH_MOTOR_INVERTED = false;
       }
@@ -141,7 +141,7 @@ public final class Constants {
     // Gyro constants
     public static final class GyroConstants {
       public static final GyroType GYRO_TYPE = GyroType.PIGEON2;
-      public static final Object[] GYRO_PARAMS = new Object[] {}; // No parameters needed for NavX
+      public static final Object[] GYRO_PARAMS = new Object[] {};
     }
   }
 
@@ -156,8 +156,6 @@ public final class Constants {
 
     // Joystick Deadband
     public static final double kDEADBAND = 0.1;
-    public static final double kLEFT_Y_DEADBAND = 0.1;
-    public static final double kRIGHT_X_DEADBAND = 0.1;
     public static final double kTURN_CONSTANT = 6;
   }
 

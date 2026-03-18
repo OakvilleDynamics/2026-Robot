@@ -23,8 +23,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.units.*;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -116,8 +114,6 @@ public class Drivetrain extends SubsystemBase {
               1),
           getModuleTranslations());
 
-  private final StructArrayPublisher<SwerveModuleState> swerveStates;
-
   /**
    * Constructs the Drivetrain with a supplier that returns the current robot heading.
    *
@@ -180,12 +176,6 @@ public class Drivetrain extends SubsystemBase {
         },
         // Reference to this subsystem to set requirements
         this);
-
-    // Write to NT of swerve states
-    swerveStates =
-        NetworkTableInstance.getDefault()
-            .getStructArrayTopic("/Swerve", SwerveModuleState.struct)
-            .publish();
   }
 
   /**
@@ -314,19 +304,11 @@ public class Drivetrain extends SubsystemBase {
     ChassisSpeeds speeds = getChassisSpeeds();
     Logger.recordOutput("Chassis X Speed", speeds.vxMetersPerSecond, Units.MetersPerSecond);
     Logger.recordOutput("Chassis Y Speed", speeds.vyMetersPerSecond, Units.MetersPerSecond);
-    Logger.recordOutput("Chassis Angular Speed", speeds.omegaRadiansPerSecond, Units.RadiansPerSecond);
+    Logger.recordOutput(
+        "Chassis Angular Speed", speeds.omegaRadiansPerSecond, Units.RadiansPerSecond);
 
     // Control buttons
     handleSmartDashboardButtons();
-
-    // Set swerve states
-    swerveStates.set(
-        new SwerveModuleState[] {
-          m_frontLeft.getSwerveState(),
-          m_frontRight.getSwerveState(),
-          m_backLeft.getSwerveState(),
-          m_backRight.getSwerveState()
-        });
 
     // Write to Elastic for swerve feedback
     SmartDashboard.putData(
