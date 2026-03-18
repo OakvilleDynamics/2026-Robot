@@ -322,7 +322,7 @@ public class SwerveModule {
   }
 
   /** Update SmartDashboard with module information and handle zero button */
-  public void updateSmartDashboard() {
+  public void updateAndLog() {
     // Display encoder values
     Logger.recordOutput(m_moduleName + " Raw Encoder (ticks)", getRawEncoderTicks());
     Logger.recordOutput(m_moduleName + " Position (deg)", Math.toDegrees(getEncoderPosition()));
@@ -370,45 +370,5 @@ public class SwerveModule {
 
   private double ticksToDegrees(double ticks) {
     return (ticks / m_encoderTicksPerRevolution) * 360.0;
-  }
-
-  public void logSwerveModule() {
-    Logger.recordOutput(m_moduleName + " Raw Encoder (ticks)", getRawEncoderTicks());
-    Logger.recordOutput(m_moduleName + " Position (deg)", Math.toDegrees(getEncoderPosition()));
-    Logger.recordOutput(m_moduleName + " Position (rad)", getEncoderPosition());
-    Logger.recordOutput(m_moduleName + " desired angle (rad)", m_desiredAngle.getRadians());
-
-    // Display offset info based on encoder type
-    if (ModuleConstants.ENCODER_SELECTED
-        == DrivebaseConstants.EncoderType.THRIFTY_ABSOLUTE_ENCODER) {
-      Logger.recordOutput(m_moduleName + " Java Offset (ticks)", m_encoderOffsetTicks);
-      Logger.recordOutput(
-          m_moduleName + " Java Offset (deg)", ticksToDegrees(m_encoderOffsetTicks));
-    }
-
-    // Raw encoder readings from ThriftyNova (in rotations, 0-1 range)
-    Logger.recordOutput(
-        m_moduleName + " Raw getPositionAbs (rotations)", m_azimuthMotor.getPositionAbs());
-    Logger.recordOutput(
-        m_moduleName + " Raw getPosition (rotations)", m_azimuthMotor.getPosition());
-    Logger.recordOutput(
-        m_moduleName + " Raw getPositionInternal (rotations)",
-        m_azimuthMotor.getPositionInternal());
-    Logger.recordOutput(
-        m_moduleName + " Raw as Ticks (x4096)",
-        m_azimuthMotor.getPositionAbs() * m_encoderTicksPerRevolution);
-
-    // Display drive motor info
-    Logger.recordOutput(m_moduleName + " Drive Velocity", getSwerveState().speedMetersPerSecond);
-    Logger.recordOutput(m_moduleName + " Drive Position", getSwervePosition().distanceMeters);
-
-    // Display motor controller health
-    Logger.recordOutput(
-        m_moduleName + " Drive Current Output", m_driveMotor.getTorqueCurrent().getValueAsDouble());
-    Logger.recordOutput(
-        m_moduleName + " Drive Temperature", m_driveMotor.getDeviceTemp().getValueAsDouble());
-    Logger.recordOutput(
-        m_moduleName + " Azimuth Current Output", m_azimuthMotor.getStatorCurrent());
-    Logger.recordOutput(m_moduleName + " Azimuth Current Output", m_azimuthMotor.getTemperature());
   }
 }
