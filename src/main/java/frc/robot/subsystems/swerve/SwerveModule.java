@@ -5,14 +5,13 @@
 package frc.robot.subsystems.swerve;
 
 import com.ctre.phoenix6.CANBus;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.thethriftybot.devices.ThriftyNova;
-import com.thethriftybot.devices.ThriftyNova.ExternalEncoder;
 import com.thethriftybot.devices.ThriftyNova.MotorType;
-import com.thethriftybot.devices.ThriftyNova.PIDSlot;
+import com.thethriftybot.devices.ThriftyNova.ThriftyNovaConfig;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -27,6 +26,10 @@ public class SwerveModule {
   private final TalonFX m_driveMotor;
   private final ThriftyNova m_azimuthMotor;
 
+  // Motor configs
+  private final TalonFXConfiguration m_driveMotorConfig = new TalonFXConfiguration();
+  private final ThriftyNovaConfig m_azimuthMotorConfig = new ThriftyNovaConfig();
+
   // Encoder (only used for Thrifty absolute encoder)
   private final AnalogEncoder m_thriftyEncoder;
 
@@ -37,11 +40,11 @@ public class SwerveModule {
   private final String m_moduleName;
 
   // Per-module inversion configuration
-  private final boolean m_driveInverted;
+  private final InvertedValue m_driveInverted;
   private final boolean m_azimuthInverted;
 
   // PID controller for Thrifty encoder (RIO-side control)
-  private final PIDController m_turningPID = new PIDController(0.07, 0.0, 0.0);
+  private final PIDController m_turningPID = new PIDController(0.30, 0.0, 0.1);
   private Rotation2d m_desiredAngle = new Rotation2d();
 
   // (removed unused m_hasCheckedSavedOffset flag)
@@ -66,15 +69,22 @@ public class SwerveModule {
 
     m_moduleName = moduleName;
     m_encoderTicksPerRevolution = encoderTicksPerRevolution;
-    m_driveInverted = driveInverted;
+    if (driveInverted == false) {
+      m_driveInverted = InvertedValue.CounterClockwise_Positive;
+    } else {
+      m_driveInverted = InvertedValue.Clockwise_Positive;
+    }
+
     m_azimuthInverted = azimuthInverted;
 
     // Initialize motors
     m_driveMotor = new TalonFX(driveMotorId, CANBus.roboRIO());
-    m_azimuthMotor = new ThriftyNova(azimuthMotorId, MotorType.MINION);
+    m_azimuthMotor = new ThriftyNova(azimuthMotorId);
+
     // Set full range and expected zero so ticks map 1:1 with the configured encoder
     m_thriftyEncoder = new AnalogEncoder(encoderPort, m_encoderTicksPerRevolution, 0.0);
 
+    // Configure motors
     configureDriveMotor();
     configureAzimuthMotor();
     initializeOffset(encoderOffsetTicks);
@@ -87,11 +97,15 @@ public class SwerveModule {
 
   /** Configure the drive motor with PID and feedforward */
   private void configureDriveMotor() {
-    // m_driveMotor.factoryReset();
+    // Factory reset drive motor
+    m_driveMotor.getConfigurator().apply(new TalonFXConfiguration());
 
     // Configure drive PID and feedforward
     // PID tuned for rotation units instead of ticks (scaled up by NEO_ENCODER_TICKS_PER_REV = 42)
-    // m_driveMotor.pid0.setPID(new PIDController(0.0042, 0.0, 0.0));
+    m_driveMotorConfig.Slot0.kP = 0.1;
+    m_driveMotorConfig.Slot0.kI = 0.0;
+    m_driveMotorConfig.Slot0.kD = 0.0;
+
     // Set feedforward based on mechanism characteristics:
     // FF = 1.0 / maxRevPerSec (for velocity control in rotations/sec)
     double estimatedMaxMps = DrivebaseConstants.TOP_SPEED_METERS_PER_SEC;
@@ -101,65 +115,32 @@ public class SwerveModule {
                 * Math.PI
                 / DrivebaseConstants.DRIVE_GEAR_RATIO);
     // m_driveMotor.pid0.setFF(1.0 / maxRevPerSec);
-    // m_driveMotor.usePIDSlot(PIDSlot.SLOT0);
-    // m_driveMotor.setInversion(m_driveInverted);
+    m_driveMotorConfig.MotorOutput.Inverted = m_driveInverted;
 
-    // Set current limits and voltage compensation for motor safety and performance
-    TalonFXConfigurator talonFXConfigurator = m_driveMotor.getConfigurator();
-    CurrentLimitsConfigs limitConfigs = new CurrentLimitsConfigs();
-    limitConfigs.SupplyCurrentLimit = DrivebaseConstants.MAX_CURRENT_AMPS;
-    talonFXConfigurator.apply(limitConfigs);
+    // Set current limits
+    // m_driveMotorConfig.CurrentLimits.StatorCurrentLimit = 60.0;
+    // m_driveMotorConfig.CurrentLimits.SupplyCurrentLimit = 40.0;
+
+    // Apply motor configuration
+    m_driveMotor.getConfigurator().apply(m_driveMotorConfig);
   }
 
   /** Configure the azimuth motor based on encoder type */
   private void configureAzimuthMotor() {
+    // Factory reset motor
+    m_azimuthMotor.factoryReset();
 
-    switch (ModuleConstants.ENCODER_SELECTED) {
-      case REDUX_ENCODER:
-        m_azimuthMotor.setExternalEncoder(ExternalEncoder.REDUX_ENCODER);
-        // PID tuned for rotation units (0-1 range) instead of ticks (0-4096)
-        m_azimuthMotor.pid0.setP(0.0336).setD(0.00042);
-        m_azimuthMotor.usePIDSlot(PIDSlot.SLOT0);
-        m_azimuthMotor.setAbsoluteWrapping(true);
-        break;
+    // Set to correct motor types
+    m_azimuthMotorConfig.motorType = MotorType.MINION;
 
-      case SRX_MAG_ENCODER:
-        m_azimuthMotor.setExternalEncoder(ExternalEncoder.SRX_MAG_ENCODER);
-        // PID tuned for rotation units (0-1 range) instead of ticks (0-4096)
-        m_azimuthMotor.pid0.setP(0.0336).setD(0.00126);
-        m_azimuthMotor.usePIDSlot(PIDSlot.SLOT0);
-        break;
+    // Set inverted states
+    m_azimuthMotorConfig.inverted = m_azimuthInverted;
 
-      case REV_ENCODER:
-        m_azimuthMotor.setExternalEncoder(ExternalEncoder.REV_ENCODER);
-        // PID tuned for rotation units (0-1 range) instead of ticks (0-4096)
-        m_azimuthMotor.pid0.setP(0.0336).setD(0.00126);
-        m_azimuthMotor.usePIDSlot(PIDSlot.SLOT0);
-        break;
+    // Set power limits
+    m_azimuthMotorConfig.maxCurrent = 20.0;
 
-      case THRIFTY_ABSOLUTE_ENCODER:
-        // No motor controller configuration needed - using RIO PID
-        break;
-
-      case THRIFTY_10PIN_ENCODER:
-        m_azimuthMotor.usePIDSlot(PIDSlot.SLOT0);
-        m_azimuthMotor.setExternalEncoder(ExternalEncoder.THRIFTY_10_PIN_ENCODER);
-        // PID tuned for rotation units (0-1 range) instead of ticks (0-4096)
-        // P scaled up by encoder ticks per revolution (~4096x)
-        m_azimuthMotor.pid0.setP(0.00336).setD(0.00326).setFF(0.0).setAllowableError(0.0042);
-        m_azimuthMotor.setBrakeMode(true);
-        m_azimuthMotor.setAbsoluteWrapping(true);
-        break;
-      default:
-        System.err.println("Unknown encoder type for " + m_moduleName);
-        break;
-    }
-
-    // For controller-handled encoders (Redux/SRX/REV), invert motor direction.
-    if (ModuleConstants.ENCODER_SELECTED
-        != DrivebaseConstants.EncoderType.THRIFTY_ABSOLUTE_ENCODER) {
-      m_azimuthMotor.setInversion(m_azimuthInverted);
-    }
+    // Apply config
+    m_azimuthMotor.applyConfig(m_azimuthMotorConfig);
   }
 
   /** Initialize the encoder offset, prioritizing saved values over constants */
