@@ -9,6 +9,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -65,6 +66,7 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
     configureDefaultCommands();
+    DriverStation.silenceJoystickConnectionWarning(true);
 
     // Create the NamedCommands that will be used in PathPlanner
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
@@ -108,8 +110,7 @@ public class RobotContainer {
               // negative values when we push forward.
               final var xSpeed =
                   -m_xspeedLimiter.calculate(
-                          MathUtil.applyDeadband(
-                              m_Driver_Controller.getLeftY(), OperatorConstants.kDEADBAND))
+                          MathUtil.applyDeadband(m_Driver_Controller.getLeftY(), 0.05))
                       * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC;
 
               // Get the y speed or sideways/strafe speed. We are inverting this because
@@ -117,8 +118,7 @@ public class RobotContainer {
               // return positive values when you pull to the right by default.
               final var ySpeed =
                   -m_yspeedLimiter.calculate(
-                          MathUtil.applyDeadband(
-                              m_Driver_Controller.getLeftX(), OperatorConstants.kDEADBAND))
+                          MathUtil.applyDeadband(m_Driver_Controller.getLeftX(), 0.05))
                       * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC;
 
               // Get the rate of angular rotation. We are inverting this because we want a
@@ -127,8 +127,7 @@ public class RobotContainer {
               // the right by default.
               final var rot =
                   -m_rotLimiter.calculate(
-                          MathUtil.applyDeadband(
-                              m_Driver_Controller.getRightX(), OperatorConstants.kDEADBAND))
+                          MathUtil.applyDeadband(m_Driver_Controller.getRightX(), 0.05))
                       * Drivetrain.kMaxAngularSpeed;
 
               // Command the drivetrain. 0.02 is the nominal TimedRobot loop period (20 ms).

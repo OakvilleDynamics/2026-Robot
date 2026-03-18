@@ -9,16 +9,13 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.thethriftybot.devices.ThriftyNova;
-import com.thethriftybot.devices.ThriftyNova.CurrentType;
 import com.thethriftybot.devices.ThriftyNova.MotorType;
 import com.thethriftybot.devices.ThriftyNova.ThriftyNovaConfig;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import frc.robot.Constants.DrivebaseConstants;
 import frc.robot.Constants.DrivebaseConstants.ModuleConstants;
@@ -47,7 +44,7 @@ public class SwerveModule {
   private final boolean m_azimuthInverted;
 
   // PID controller for Thrifty encoder (RIO-side control)
-  private final PIDController m_turningPID = new PIDController(0.3, 0.0, 0.1);
+  private final PIDController m_turningPID = new PIDController(0.30, 0.0, 0.1);
   private Rotation2d m_desiredAngle = new Rotation2d();
 
   // (removed unused m_hasCheckedSavedOffset flag)
@@ -109,9 +106,6 @@ public class SwerveModule {
     m_driveMotorConfig.Slot0.kI = 0.0;
     m_driveMotorConfig.Slot0.kD = 0.0;
 
-    // Set brake mode to brake
-    m_driveMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-
     // Set feedforward based on mechanism characteristics:
     // FF = 1.0 / maxRevPerSec (for velocity control in rotations/sec)
     double estimatedMaxMps = DrivebaseConstants.TOP_SPEED_METERS_PER_SEC;
@@ -129,7 +123,6 @@ public class SwerveModule {
 
     // Apply motor configuration
     m_driveMotor.getConfigurator().apply(m_driveMotorConfig);
-    System.out.println(m_moduleName + " drive motor configured!");
   }
 
   /** Configure the azimuth motor based on encoder type */
@@ -138,38 +131,62 @@ public class SwerveModule {
     m_azimuthMotor.factoryReset();
 
     // Set to correct motor types
-    m_azimuthMotor.setMotorType(MotorType.MINION);
+    m_azimuthMotorConfig.motorType = MotorType.MINION;
 
     // Set inverted states
-    m_azimuthMotor.setInverted(m_azimuthInverted);
-    ;
+    m_azimuthMotorConfig.inverted = m_azimuthInverted;
 
     // Set power limits
-    m_azimuthMotor.setMaxCurrent(CurrentType.STATOR, 20);
+    m_azimuthMotorConfig.maxCurrent = 20.0;
 
-    // Set brake mode to coast
-    m_azimuthMotor.setBrakeMode(false);
-
-    System.out.println(m_moduleName + " azimuth motor configured!");
+    // Apply config
+    m_azimuthMotor.applyConfig(m_azimuthMotorConfig);
   }
 
   /** Initialize the encoder offset, prioritizing saved values over constants */
   private void initializeOffset(double constantsOffsetTicks) {
-    m_encoderOffsetTicks = constantsOffsetTicks;
-    System.out.println(
-        m_moduleName
-            + " Thrifty encoder initialized with constants: "
-            + ticksToDegrees(constantsOffsetTicks)
-            + " degrees");
+    if (ModuleConstants.ENCODER_SELECTED
+        == DrivebaseConstants.EncoderType.THRIFTY_ABSOLUTE_ENCODER) {
+      // Thrifty encoder: Use constants for initial setup, will check saved values
+      // later in periodic
+      m_encoderOffsetTicks = constantsOffsetTicks;
+      System.out.println(
+          m_moduleName
+              + " Thrifty encoder initialized with constants: "
+              + ticksToDegrees(constantsOffsetTicks)
+              + " degrees");
+    } else {
+      // Redux/SRX/REV: Set constants to Nova if provided, otherwise Nova will use
+      // whatever is saved
+      if (constantsOffsetTicks != 0) {
+        m_azimuthMotor.setAbsOffset((int) constantsOffsetTicks);
+        System.out.println(
+            m_moduleName
+                + " Nova encoder set to constants: "
+                + ticksToDegrees(constantsOffsetTicks)
+                + " degrees");
+      } else {
+        System.out.println(m_moduleName + " Nova encoder using saved offset");
+      }
+
+      // Nova handles offset automatically, Java doesn't need to track it
+      m_encoderOffsetTicks = 0;
+    }
   }
 
   /** Get raw encoder reading in ticks */
   private double getRawEncoderTicks() {
     double raw;
-
-    raw = m_thriftyEncoder.get();
-
-    if (m_azimuthInverted) {
+    if (ModuleConstants.ENCODER_SELECTED
+        == DrivebaseConstants.EncoderType.THRIFTY_ABSOLUTE_ENCODER) {
+      raw = m_thriftyEncoder.get();
+    } else {
+      raw = m_azimuthMotor.getPositionAbs() * m_encoderTicksPerRevolution;
+    }
+    // For THRIFTY_ABSOLUTE_ENCODER, use azimuthInverted to invert
+    // sensor phase when required; otherwise, motor controller manages this.
+    if (ModuleConstants.ENCODER_SELECTED == DrivebaseConstants.EncoderType.THRIFTY_ABSOLUTE_ENCODER
+        && m_azimuthInverted) {
       return -raw;
     }
     return raw;
@@ -179,8 +196,15 @@ public class SwerveModule {
   public double getEncoderPosition() {
     double rawTicks = getRawEncoderTicks();
 
-    double adjustedTicks = rawTicks - m_encoderOffsetTicks;
-    return ticksToRadians(adjustedTicks);
+    if (ModuleConstants.ENCODER_SELECTED
+        == DrivebaseConstants.EncoderType.THRIFTY_ABSOLUTE_ENCODER) {
+      // Thrifty encoder: motor controller doesn't apply offset, so we do it in
+      // software
+      double adjustedTicks = rawTicks - m_encoderOffsetTicks;
+      return ticksToRadians(adjustedTicks);
+    } else {
+      return ticksToRadians(rawTicks);
+    }
   }
 
   /** Get current swerve module state */
@@ -298,14 +322,12 @@ public class SwerveModule {
   }
 
   /** Update SmartDashboard with module information and handle zero button */
-  public void updateAndLog() {
+  public void updateSmartDashboard() {
     // Display encoder values
     Logger.recordOutput(m_moduleName + " Raw Encoder (ticks)", getRawEncoderTicks());
-    Logger.recordOutput(
-        m_moduleName + " Position", Math.toDegrees(getEncoderPosition()), Units.Degrees);
-    Logger.recordOutput(m_moduleName + " Position", getEncoderPosition(), Units.Radians);
-    Logger.recordOutput(
-        m_moduleName + " desired angle", m_desiredAngle.getRadians(), Units.Radians);
+    Logger.recordOutput(m_moduleName + " Position (deg)", Math.toDegrees(getEncoderPosition()));
+    Logger.recordOutput(m_moduleName + " Position (rad)", getEncoderPosition());
+    Logger.recordOutput(m_moduleName + " desired angle (rad)", m_desiredAngle.getRadians());
 
     // Display offset info based on encoder type
     if (ModuleConstants.ENCODER_SELECTED
@@ -317,24 +339,28 @@ public class SwerveModule {
 
     // Raw encoder readings from ThriftyNova (in rotations, 0-1 range)
     Logger.recordOutput(
-        m_moduleName + " Raw getPositionAbs", m_azimuthMotor.getPositionAbs(), Units.Rotations);
+        m_moduleName + " Raw getPositionAbs (rotations)", m_azimuthMotor.getPositionAbs());
     Logger.recordOutput(
-        m_moduleName + " Raw getPosition", m_azimuthMotor.getPosition(), Units.Rotations);
+        m_moduleName + " Raw getPosition (rotations)", m_azimuthMotor.getPosition());
     Logger.recordOutput(
-        m_moduleName + " Raw getPositionInternal",
-        m_azimuthMotor.getPositionInternal(),
-        Units.Rotations);
+        m_moduleName + " Raw getPositionInternal (rotations)",
+        m_azimuthMotor.getPositionInternal());
     Logger.recordOutput(
         m_moduleName + " Raw as Ticks (x4096)",
         m_azimuthMotor.getPositionAbs() * m_encoderTicksPerRevolution);
 
     // Display drive motor info
+    Logger.recordOutput(m_moduleName + " Drive Velocity", getSwerveState().speedMetersPerSecond);
+    Logger.recordOutput(m_moduleName + " Drive Position", getSwervePosition().distanceMeters);
+
+    // Display motor controller health
     Logger.recordOutput(
-        m_moduleName + " Drive Velocity",
-        getSwerveState().speedMetersPerSecond,
-        Units.MetersPerSecond);
+        m_moduleName + " Drive Current Output", m_driveMotor.getTorqueCurrent().getValueAsDouble());
     Logger.recordOutput(
-        m_moduleName + " Drive Position", getSwervePosition().distanceMeters, Units.Meters);
+        m_moduleName + " Drive Temperature", m_driveMotor.getDeviceTemp().getValueAsDouble());
+    Logger.recordOutput(
+        m_moduleName + " Azimuth Current Output", m_azimuthMotor.getStatorCurrent());
+    Logger.recordOutput(m_moduleName + " Azimuth Current Output", m_azimuthMotor.getTemperature());
   }
 
   // Utility methods for unit conversions
@@ -344,5 +370,45 @@ public class SwerveModule {
 
   private double ticksToDegrees(double ticks) {
     return (ticks / m_encoderTicksPerRevolution) * 360.0;
+  }
+
+  public void logSwerveModule() {
+    Logger.recordOutput(m_moduleName + " Raw Encoder (ticks)", getRawEncoderTicks());
+    Logger.recordOutput(m_moduleName + " Position (deg)", Math.toDegrees(getEncoderPosition()));
+    Logger.recordOutput(m_moduleName + " Position (rad)", getEncoderPosition());
+    Logger.recordOutput(m_moduleName + " desired angle (rad)", m_desiredAngle.getRadians());
+
+    // Display offset info based on encoder type
+    if (ModuleConstants.ENCODER_SELECTED
+        == DrivebaseConstants.EncoderType.THRIFTY_ABSOLUTE_ENCODER) {
+      Logger.recordOutput(m_moduleName + " Java Offset (ticks)", m_encoderOffsetTicks);
+      Logger.recordOutput(
+          m_moduleName + " Java Offset (deg)", ticksToDegrees(m_encoderOffsetTicks));
+    }
+
+    // Raw encoder readings from ThriftyNova (in rotations, 0-1 range)
+    Logger.recordOutput(
+        m_moduleName + " Raw getPositionAbs (rotations)", m_azimuthMotor.getPositionAbs());
+    Logger.recordOutput(
+        m_moduleName + " Raw getPosition (rotations)", m_azimuthMotor.getPosition());
+    Logger.recordOutput(
+        m_moduleName + " Raw getPositionInternal (rotations)",
+        m_azimuthMotor.getPositionInternal());
+    Logger.recordOutput(
+        m_moduleName + " Raw as Ticks (x4096)",
+        m_azimuthMotor.getPositionAbs() * m_encoderTicksPerRevolution);
+
+    // Display drive motor info
+    Logger.recordOutput(m_moduleName + " Drive Velocity", getSwerveState().speedMetersPerSecond);
+    Logger.recordOutput(m_moduleName + " Drive Position", getSwervePosition().distanceMeters);
+
+    // Display motor controller health
+    Logger.recordOutput(
+        m_moduleName + " Drive Current Output", m_driveMotor.getTorqueCurrent().getValueAsDouble());
+    Logger.recordOutput(
+        m_moduleName + " Drive Temperature", m_driveMotor.getDeviceTemp().getValueAsDouble());
+    Logger.recordOutput(
+        m_moduleName + " Azimuth Current Output", m_azimuthMotor.getStatorCurrent());
+    Logger.recordOutput(m_moduleName + " Azimuth Current Output", m_azimuthMotor.getTemperature());
   }
 }
