@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.HardwareConstants;
 import frc.robot.Constants.HardwareConstants.RioState;
 import frc.robot.Constants.RuntimeConstants;
+import frc.robot.misc.Alerts;
+import java.io.File;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedPowerDistribution;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -32,6 +34,8 @@ public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
+
+  private final File logDrive = new File("/U/logs");
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -73,6 +77,28 @@ public class Robot extends LoggedRobot {
               LoggedPowerDistribution.getInstance(HardwareConstants.REV_PDH_ID, ModuleType.kRev);
         }
         ;
+
+        // Check git status and alert if there are uncommitted changes or if not on main branch
+        if (BuildConstants.DIRTY == 1) {
+          Alerts.gitDirtyAlert.set(true);
+        }
+
+        // Alert if not on main branch
+        if (!BuildConstants.GIT_BRANCH.equals("main")) {
+          Alerts.gitMainBranchAlert.set(true);
+        }
+
+        // Info alert if on an event branch
+        if (BuildConstants.GIT_BRANCH.contains("event")) {
+          Alerts.gitEventBranchAlert.set(true);
+        }
+
+        if (!logDrive.exists() || !logDrive.isDirectory()) {
+          Alerts.storageMissingAlert.set(true);
+        } else if (logDrive.getUsableSpace() < 500 * 1024 * 1024) { // Less than 500 MB
+          Alerts.storageLowAlert.set(true);
+        }
+
         DataLogManager.start();
         URCL.start();
         // Utilize exclusively URCL for logging REV status frames
