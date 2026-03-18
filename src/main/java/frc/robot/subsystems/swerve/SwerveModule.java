@@ -4,11 +4,13 @@
 
 package frc.robot.subsystems.swerve;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.thethriftybot.devices.ThriftyNova;
 import com.thethriftybot.devices.ThriftyNova.MotorType;
 import com.thethriftybot.devices.ThriftyNova.ThriftyNovaConfig;
@@ -107,6 +109,9 @@ public class SwerveModule {
     m_driveMotorConfig.Slot0.kI = 0.0;
     m_driveMotorConfig.Slot0.kD = 0.0;
 
+    // Set brake mode to brake
+    m_driveMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
     // Set feedforward based on mechanism characteristics:
     // FF = 1.0 / maxRevPerSec (for velocity control in rotations/sec)
     double estimatedMaxMps = DrivebaseConstants.TOP_SPEED_METERS_PER_SEC;
@@ -139,6 +144,9 @@ public class SwerveModule {
 
     // Set power limits
     m_azimuthMotorConfig.maxCurrent = 20.0;
+
+    // Set brake mode to coast
+    m_azimuthMotorConfig.brakeMode = false;
 
     // Apply config
     m_azimuthMotor.applyConfig(m_azimuthMotorConfig);
