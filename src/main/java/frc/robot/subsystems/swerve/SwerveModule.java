@@ -16,6 +16,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import frc.robot.Constants.DrivebaseConstants;
 import frc.robot.Constants.DrivebaseConstants.ModuleConstants;
@@ -325,9 +326,9 @@ public class SwerveModule {
   public void updateAndLog() {
     // Display encoder values
     Logger.recordOutput(m_moduleName + " Raw Encoder (ticks)", getRawEncoderTicks());
-    Logger.recordOutput(m_moduleName + " Position (deg)", Math.toDegrees(getEncoderPosition()));
-    Logger.recordOutput(m_moduleName + " Position (rad)", getEncoderPosition());
-    Logger.recordOutput(m_moduleName + " desired angle (rad)", m_desiredAngle.getRadians());
+    Logger.recordOutput(m_moduleName + " Position", Math.toDegrees(getEncoderPosition()),Units.Degrees);
+    Logger.recordOutput(m_moduleName + " Position", getEncoderPosition(), Units.Radians);
+    Logger.recordOutput(m_moduleName + " desired angle", m_desiredAngle.getRadians(), Units.Radians);
 
     // Display offset info based on encoder type
     if (ModuleConstants.ENCODER_SELECTED
@@ -339,28 +340,28 @@ public class SwerveModule {
 
     // Raw encoder readings from ThriftyNova (in rotations, 0-1 range)
     Logger.recordOutput(
-        m_moduleName + " Raw getPositionAbs (rotations)", m_azimuthMotor.getPositionAbs());
+        m_moduleName + " Raw getPositionAbs", m_azimuthMotor.getPositionAbs(), Units.Rotations);
     Logger.recordOutput(
-        m_moduleName + " Raw getPosition (rotations)", m_azimuthMotor.getPosition());
+        m_moduleName + " Raw getPosition", m_azimuthMotor.getPosition(), Units.Rotations);
     Logger.recordOutput(
-        m_moduleName + " Raw getPositionInternal (rotations)",
-        m_azimuthMotor.getPositionInternal());
+        m_moduleName + " Raw getPositionInternal",
+        m_azimuthMotor.getPositionInternal(), Units.Rotations);
     Logger.recordOutput(
         m_moduleName + " Raw as Ticks (x4096)",
         m_azimuthMotor.getPositionAbs() * m_encoderTicksPerRevolution);
 
     // Display drive motor info
-    Logger.recordOutput(m_moduleName + " Drive Velocity", getSwerveState().speedMetersPerSecond);
-    Logger.recordOutput(m_moduleName + " Drive Position", getSwervePosition().distanceMeters);
+    Logger.recordOutput(m_moduleName + " Drive Velocity", getSwerveState().speedMetersPerSecond, Units.MetersPerSecond);
+    Logger.recordOutput(m_moduleName + " Drive Position", getSwervePosition().distanceMeters, Units.Meters);
 
     // Display motor controller health
     Logger.recordOutput(
-        m_moduleName + " Drive Current Output", m_driveMotor.getTorqueCurrent().getValueAsDouble());
+        m_moduleName + " Drive Current Output", m_driveMotor.getTorqueCurrent().getValueAsDouble(), Units.Amps);
     Logger.recordOutput(
-        m_moduleName + " Drive Temperature", m_driveMotor.getDeviceTemp().getValueAsDouble());
+        m_moduleName + " Drive Temperature", m_driveMotor.getDeviceTemp().getValueAsDouble(), Units.Celsius);
     Logger.recordOutput(
-        m_moduleName + " Azimuth Current Output", m_azimuthMotor.getStatorCurrent());
-    Logger.recordOutput(m_moduleName + " Azimuth Current Output", m_azimuthMotor.getTemperature());
+        m_moduleName + " Azimuth Current Output", m_azimuthMotor.getStatorCurrent(), Units.Amps);
+    Logger.recordOutput(m_moduleName + " Azimuth Current Output", m_azimuthMotor.getTemperature(), Units.Celsius);
   }
 
   // Utility methods for unit conversions

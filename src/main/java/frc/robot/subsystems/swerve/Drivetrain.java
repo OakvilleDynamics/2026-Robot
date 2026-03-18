@@ -285,6 +285,7 @@ public class Drivetrain extends SubsystemBase {
     };
   }
 
+  /** Resets gyro */
   public static void resetGyro() {
     pigeon.reset();
   }
@@ -302,18 +303,18 @@ public class Drivetrain extends SubsystemBase {
 
     // Robot pose information
     Pose2d currentPose = getPose();
-    Logger.recordOutput("Robot X (m)", currentPose.getX());
-    Logger.recordOutput("Robot Y (m)", currentPose.getY());
-    Logger.recordOutput("Robot Rotation (deg)", currentPose.getRotation().getDegrees());
+    Logger.recordOutput("Robot X", currentPose.getX(), Units.Meters);
+    Logger.recordOutput("Robot Y", currentPose.getY(), Units.Meters);
+    Logger.recordOutput("Robot Rotation", currentPose.getRotation().getDegrees(), Units.Degrees);
 
     // Gyro information
-    Logger.recordOutput("Gyro Angle (deg)", m_gyroSupplier.get().getDegrees());
+    Logger.recordOutput("Gyro Angle", m_gyroSupplier.get().getDegrees(), Units.Degrees);
 
     // Current chassis speeds
     ChassisSpeeds speeds = getChassisSpeeds();
-    Logger.recordOutput("Chassis X Speed (m/s)", speeds.vxMetersPerSecond);
-    Logger.recordOutput("Chassis Y Speed (m/s)", speeds.vyMetersPerSecond);
-    Logger.recordOutput("Chassis Angular Speed (rad/s)", speeds.omegaRadiansPerSecond);
+    Logger.recordOutput("Chassis X Speed", speeds.vxMetersPerSecond, Units.MetersPerSecond);
+    Logger.recordOutput("Chassis Y Speed", speeds.vyMetersPerSecond, Units.MetersPerSecond);
+    Logger.recordOutput("Chassis Angular Speed", speeds.omegaRadiansPerSecond, Units.RadiansPerSecond);
 
     // Control buttons
     handleSmartDashboardButtons();
