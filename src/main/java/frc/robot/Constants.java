@@ -44,11 +44,7 @@ public final class Constants {
     // Top Speed (calculated from motor free speed, wheel diameter & gear ratio)
     public static final double TOP_SPEED_MOTOR_RPM = 6000;
     public static final double TOP_SPEED_METERS_PER_SEC =
-        TOP_SPEED_MOTOR_RPM
-            * WHEEL_DIAMETER_METERS
-            * Math.PI
-            / DRIVE_GEAR_RATIO
-            / 60; // = 4.729 m/s
+        TOP_SPEED_MOTOR_RPM * WHEEL_DIAMETER_METERS * Math.PI / DRIVE_GEAR_RATIO / 60; // = 5.51 m/s
 
     // Electrical constants
     public static final double MAX_CURRENT_AMPS = 30.0;
