@@ -12,7 +12,6 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.thethriftybot.devices.ThriftyNova;
 import com.thethriftybot.devices.ThriftyNova.CurrentType;
 import com.thethriftybot.devices.ThriftyNova.MotorType;
-import com.thethriftybot.devices.ThriftyNova.ThriftyNovaConfig;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
