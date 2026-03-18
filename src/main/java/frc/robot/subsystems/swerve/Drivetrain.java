@@ -291,7 +291,6 @@ public class Drivetrain extends SubsystemBase {
     Logger.recordOutput("Robot Rotation (deg)", currentPose.getRotation().getDegrees());
 
     // Gyro information
-    SmartDashboard.putNumber("Gyro Angle (deg)", m_gyroSupplier.get().getDegrees());
     Logger.recordOutput("Gyro Angle (deg)", m_gyroSupplier.get().getDegrees());
 
     // Current chassis speeds
