@@ -3,41 +3,57 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0,
-        "y": 7.0
+        "x": 1.942855421686747,
+        "y": 7.389807228915663
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0,
-        "y": 6.5
+        "x": 2.021912363184138,
+        "y": 7.626978053430564
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.958476027397261,
-        "y": 6.012192024384049
+        "x": 1.6259518072289163,
+        "y": 6.165903614457831
       },
       "prevControl": {
-        "x": 3.9584760273972606,
-        "y": 7.012192024384048
+        "x": 1.9669745668863685,
+        "y": 5.917887061979684
       },
       "nextControl": {
-        "x": 5.958476027397261,
-        "y": 5.012192024384049
+        "x": 1.3855421686746991,
+        "y": 6.340746987951808
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.225280307703473,
-        "y": 6.012192024384049
+        "x": 1.0358554216867475,
+        "y": 1.5981204819277117
       },
       "prevControl": {
-        "x": 6.975280307703473,
-        "y": 7.512192024384059
+        "x": 2.5898621246536147,
+        "y": 3.3689653294946096
+      },
+      "nextControl": {
+        "x": 0.565963855421687,
+        "y": 1.0626626506024093
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.0358554216867475,
+        "y": 2.647180722891566
+      },
+      "prevControl": {
+        "x": 1.2325542168674697,
+        "y": 1.0954457831325297
       },
       "nextControl": null,
       "isLocked": false,
@@ -47,7 +63,30 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "climber up"
+        }
+      }
+    },
+    {
+      "name": "climber down",
+      "waypointRelativePos": 3.0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "climber down"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -58,7 +97,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": null,
