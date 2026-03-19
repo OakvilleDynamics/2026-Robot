@@ -241,7 +241,7 @@ public final class Constants {
     public static final boolean ClimberMotor_Inverted = false;
 
     // Motor speeds ~~ Change as needed
-    public static final double Shooter_Speed1 = 0.8;
+    public static final double Shooter_Speed1 = 0.6;
     public static final double Shooter_Speed2 = 0.4;
     public static final double Intake_Speed = 0.5;
     public static final double Intake_Hinge_Speed = 0.5;
