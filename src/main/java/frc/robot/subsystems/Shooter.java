@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 /* Use if using REV
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel; **/
@@ -40,5 +42,14 @@ public class Shooter extends SubsystemBase {
   /** Stops the shooter motor */
   public void StopShoot() {
     ShooterMotor.set(0);
+  }
+
+  @Override
+  public void periodic() {
+    // Shooter motor telemetry
+    Logger.recordOutput("Shooter/Motor Output", ShooterMotor.get());
+    Logger.recordOutput("Shooter/Current", ShooterMotor.getSupplyCurrent().getValueAsDouble());
+    Logger.recordOutput("Shooter/Temperature", ShooterMotor.getDeviceTemp().getValueAsDouble());
+    Logger.recordOutput("Shooter/RPM", ShooterMotor.getVelocity().getValueAsDouble() * 600 / 2048);
   }
 }

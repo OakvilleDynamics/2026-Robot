@@ -1,12 +1,10 @@
 package frc.robot.subsystems;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MechanismConstants;
+import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
   private final TalonSRX ClimberMotor = new TalonSRX(MechanismConstants.ClimberMotor);
@@ -16,23 +14,17 @@ public class Climber extends SubsystemBase {
     ClimberMotor.setInverted(MechanismConstants.ClimberMotor_Inverted);
   }
 
-  /**
-   * Activates the climber motor to move in the forward direction at a predefined speed.
-   */
+  /** Activates the climber motor to move in the forward direction at a predefined speed. */
   public void Climb() {
     ClimberMotor.set(TalonSRXControlMode.PercentOutput, MechanismConstants.Climber_Speed);
   }
 
-  /**
-   * Activates the climber motor to move in the backward direction at a predefined speed.
-   */
+  /** Activates the climber motor to move in the backward direction at a predefined speed. */
   public void Descend() {
     ClimberMotor.set(TalonSRXControlMode.PercentOutput, -MechanismConstants.Climber_Speed);
   }
 
-  /**
-   * Stops the climber motor.
-   */
+  /** Stops the climber motor. */
   public void Stop() {
     ClimberMotor.set(TalonSRXControlMode.PercentOutput, 0);
   }
