@@ -303,7 +303,8 @@ public class Drivetrain extends SubsystemBase {
     Logger.recordOutput("Swerve/FL/Speed (m/s)", m_frontLeft.getSwerveState().speedMetersPerSecond);
     Logger.recordOutput("Swerve/FL/Angle (deg)", m_frontLeft.getSwerveState().angle.getDegrees());
 
-    Logger.recordOutput("Swerve/FR/Speed (m/s)", m_frontRight.getSwerveState().speedMetersPerSecond);
+    Logger.recordOutput(
+        "Swerve/FR/Speed (m/s)", m_frontRight.getSwerveState().speedMetersPerSecond);
     Logger.recordOutput("Swerve/FR/Angle (deg)", m_frontRight.getSwerveState().angle.getDegrees());
 
     Logger.recordOutput("Swerve/BL/Speed (m/s)", m_backLeft.getSwerveState().speedMetersPerSecond);
@@ -313,7 +314,6 @@ public class Drivetrain extends SubsystemBase {
     Logger.recordOutput("Swerve/BR/Angle (deg)", m_backRight.getSwerveState().angle.getDegrees());
 
     // Add swerve module states to Elastic
-    
 
     // Control buttons
     handleSmartDashboardButtons();

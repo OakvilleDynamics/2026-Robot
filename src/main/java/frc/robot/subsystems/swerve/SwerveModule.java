@@ -337,9 +337,11 @@ public class SwerveModule {
 
     // Display encoder values
     Logger.recordOutput("Swerve/" + moduleAbbr + "/Raw Encoder (ticks)", getRawEncoderTicks());
-    Logger.recordOutput("Swerve/" + moduleAbbr + "/Position (deg)", Math.toDegrees(getEncoderPosition()));
+    Logger.recordOutput(
+        "Swerve/" + moduleAbbr + "/Position (deg)", Math.toDegrees(getEncoderPosition()));
     Logger.recordOutput("Swerve/" + moduleAbbr + "/Position (rad)", getEncoderPosition());
-    Logger.recordOutput("Swerve/" + moduleAbbr + "/Desired Angle (rad)", m_desiredAngle.getRadians());
+    Logger.recordOutput(
+        "Swerve/" + moduleAbbr + "/Desired Angle (rad)", m_desiredAngle.getRadians());
 
     // Display offset info based on encoder type
     if (ModuleConstants.ENCODER_SELECTED
@@ -351,7 +353,8 @@ public class SwerveModule {
 
     // Raw encoder readings from ThriftyNova (in rotations, 0-1 range)
     Logger.recordOutput(
-        "Swerve/" + moduleAbbr + "/Raw getPositionAbs (rotations)", m_azimuthMotor.getPositionAbs());
+        "Swerve/" + moduleAbbr + "/Raw getPositionAbs (rotations)",
+        m_azimuthMotor.getPositionAbs());
     Logger.recordOutput(
         "Swerve/" + moduleAbbr + "/Raw getPosition (rotations)", m_azimuthMotor.getPosition());
     Logger.recordOutput(
@@ -362,8 +365,10 @@ public class SwerveModule {
         m_azimuthMotor.getPositionAbs() * m_encoderTicksPerRevolution);
 
     // Display drive motor info
-    Logger.recordOutput("Swerve/" + moduleAbbr + "/Drive Velocity", getSwerveState().speedMetersPerSecond);
-    Logger.recordOutput("Swerve/" + moduleAbbr + "/Drive Position", getSwervePosition().distanceMeters);
+    Logger.recordOutput(
+        "Swerve/" + moduleAbbr + "/Drive Velocity", getSwerveState().speedMetersPerSecond);
+    Logger.recordOutput(
+        "Swerve/" + moduleAbbr + "/Drive Position", getSwervePosition().distanceMeters);
   }
 
   // Utility methods for unit conversions
