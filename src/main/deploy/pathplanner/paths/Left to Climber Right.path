@@ -8,52 +8,68 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.021912363184138,
-        "y": 7.626978053430564
+        "x": 1.0210171711083615,
+        "y": 7.4205667765453605
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.6259518072289163,
-        "y": 6.165903614457831
+        "x": 1.5538025948495577,
+        "y": 4.810483790696269
       },
       "prevControl": {
-        "x": 1.9669745668863685,
-        "y": 5.917887061979684
+        "x": 1.2221354966211804,
+        "y": 4.814151663732047
       },
       "nextControl": {
-        "x": 1.3855421686746991,
-        "y": 6.340746987951808
+        "x": 2.0453267819179333,
+        "y": 4.805048074214861
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.0358554216867475,
-        "y": 1.5981204819277117
+        "x": 1.942855421686747,
+        "y": 3.7221176563609726
       },
       "prevControl": {
-        "x": 2.5898621246536147,
-        "y": 3.3689653294946096
+        "x": 1.9526430782336976,
+        "y": 4.105751948487871
       },
       "nextControl": {
-        "x": 0.565963855421687,
-        "y": 1.0626626506024093
+        "x": 1.9310215740011198,
+        "y": 3.258281419542101
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.0358554216867475,
-        "y": 2.647180722891566
+        "x": 1.5538025948495577,
+        "y": 1.819377598618015
       },
       "prevControl": {
-        "x": 1.2325542168674697,
-        "y": 1.0954457831325297
+        "x": 2.1641893510144166,
+        "y": 1.7700326422489048
+      },
+      "nextControl": {
+        "x": 0.8935758672674214,
+        "y": 1.8727517236907119
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.0757973651693324,
+        "y": 2.939879356153083
+      },
+      "prevControl": {
+        "x": 1.1048631510755618,
+        "y": 2.557198226868566
       },
       "nextControl": null,
       "isLocked": false,
@@ -63,30 +79,7 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "climber up",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "climber up"
-        }
-      }
-    },
-    {
-      "name": "climber down",
-      "waypointRelativePos": 3.0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "climber down"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
