@@ -41,7 +41,7 @@ public class SwerveModule {
   private final boolean m_azimuthInverted;
 
   // PID controller for Thrifty encoder (RIO-side control)
-  private final PIDController m_turningPID = new PIDController(0.3, 0.0, 0.1);
+  private final PIDController m_turningPID = new PIDController(0.29275, 0.0, 0.081725);
   private Rotation2d m_desiredAngle = new Rotation2d();
 
   // (removed unused m_hasCheckedSavedOffset flag)
@@ -115,8 +115,8 @@ public class SwerveModule {
     m_driveMotorConfig.MotorOutput.Inverted = m_driveInverted;
 
     // Set current limits
-    // m_driveMotorConfig.CurrentLimits.StatorCurrentLimit = 60.0;
-    // m_driveMotorConfig.CurrentLimits.SupplyCurrentLimit = 40.0;
+    m_driveMotorConfig.CurrentLimits.StatorCurrentLimit = DrivebaseConstants.MAX_CURRENT_AMPS;
+    m_driveMotorConfig.CurrentLimits.SupplyCurrentLimit = DrivebaseConstants.MAX_CURRENT_AMPS;
 
     // Apply motor configuration
     m_driveMotor.getConfigurator().apply(m_driveMotorConfig);

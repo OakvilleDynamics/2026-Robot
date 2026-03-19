@@ -151,7 +151,7 @@ public final class Constants {
     public static final int kCOPILOT_CONTROLLER = 1;
 
     // Joystick Deadband
-    public static final double kDEADBAND = 0.1;
+    public static final double kDEADBAND = 0.2;
     public static final double kLEFT_Y_DEADBAND = 0.1;
     public static final double kRIGHT_X_DEADBAND = 0.1;
     public static final double kTURN_CONSTANT = 6;
