@@ -243,8 +243,8 @@ public final class Constants {
     // Motor speeds ~~ Change as needed
     public static final double Shooter_Speed1 = 0.6;
     public static final double Shooter_Speed2 = 0.4;
-    public static final double Intake_Speed = 0.5;
-    public static final double Intake_Hinge_Speed = 0.5;
+    public static final double Intake_Speed = 0.8;
+    public static final double Intake_Hinge_Speed = 0.8;
     public static final double Index_Speed = 0.3;
     public static final double Climber_Speed = 1.0;
   }
