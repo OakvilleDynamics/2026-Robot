@@ -12,20 +12,32 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MechanismConstants;
 
 public class Shooter extends SubsystemBase {
-  /* Use if using REV
-  private final SparkFlex ShooterMotor =
-      new SparkFlex(MechanismConstants.ShooterMotor, SparkLowLevel.MotorType.kBrushless); */
 
   private final TalonFX ShooterMotor = new TalonFX(MechanismConstants.ShooterMotor);
 
-  public void ShootStart() {
+  // private final TalonFXConfiguration ShooterConfig = new TalonFXConfiguration();
+
+  public Shooter() {
+    // Constructor code here, if needed
+    // ShooterConfig.MotorOutput.Inverted = MechanismConstants.ShooterMotor_Inverted;
+    // ShooterConfig.Slot0.kP = MechanismConstants.Shooter_kP;
+    // ShooterConfig.Slot0.kI = MechanismConstants.Shooter_kI;
+    // ShooterConfig.Slot0.kD = MechanismConstants.Shooter_kD;
+    // ShooterConfig.Slot0.kF = MechanismConstants.Shooter_kF;
+    // ShooterMotor.getConfigurator().apply(ShooterConfig);
+  }
+
+  /** Spins up the shooter motor to a slower speed than final speed */
+  public void SpinUpShooter() {
     ShooterMotor.set(MechanismConstants.Shooter_Speed2);
   }
 
+  /** Shoots the fuel at final speed */
   public void Shoot() {
     ShooterMotor.set(MechanismConstants.Shooter_Speed1);
   }
 
+  /** Stops the shooter motor */
   public void StopShoot() {
     ShooterMotor.set(0);
   }
