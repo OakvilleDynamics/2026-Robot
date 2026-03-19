@@ -10,8 +10,6 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.thethriftybot.devices.ThriftyNova;
-import com.thethriftybot.devices.ThriftyNova.CurrentType;
-import com.thethriftybot.devices.ThriftyNova.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -129,18 +127,18 @@ public class SwerveModule {
   /** Configure the azimuth motor based on encoder type */
   private void configureAzimuthMotor() {
     // Factory reset motor
-    //m_azimuthMotor.factoryReset();
+    // m_azimuthMotor.factoryReset();
 
     //// Set to correct motor types
-    //m_azimuthMotor.setMotorType(MotorType.MINION);
+    // m_azimuthMotor.setMotorType(MotorType.MINION);
 
     //// Set inverted states
-    //m_azimuthMotor.setInverted(m_azimuthInverted);
+    // m_azimuthMotor.setInverted(m_azimuthInverted);
 
     //// Set power limits
-    //m_azimuthMotor.setMaxCurrent(CurrentType.STATOR, 20);
+    // m_azimuthMotor.setMaxCurrent(CurrentType.STATOR, 20);
 
-    //System.out.println(m_moduleName + " azimuth motor configured");
+    // System.out.println(m_moduleName + " azimuth motor configured");
   }
 
   /** Initialize the encoder offset, prioritizing saved values over constants */
