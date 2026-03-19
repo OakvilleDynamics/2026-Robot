@@ -129,18 +129,18 @@ public class SwerveModule {
   /** Configure the azimuth motor based on encoder type */
   private void configureAzimuthMotor() {
     // Factory reset motor
-    m_azimuthMotor.factoryReset();
+    //m_azimuthMotor.factoryReset();
 
-    // Set to correct motor types
-    m_azimuthMotor.setMotorType(MotorType.MINION);
+    //// Set to correct motor types
+    //m_azimuthMotor.setMotorType(MotorType.MINION);
 
-    // Set inverted states
-    m_azimuthMotor.setInverted(m_azimuthInverted);
+    //// Set inverted states
+    //m_azimuthMotor.setInverted(m_azimuthInverted);
 
-    // Set power limits
-    m_azimuthMotor.setMaxCurrent(CurrentType.STATOR, 20);
+    //// Set power limits
+    //m_azimuthMotor.setMaxCurrent(CurrentType.STATOR, 20);
 
-    System.out.println(m_moduleName + " azimuth motor configured");
+    //System.out.println(m_moduleName + " azimuth motor configured");
   }
 
   /** Initialize the encoder offset, prioritizing saved values over constants */
