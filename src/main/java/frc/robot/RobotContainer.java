@@ -61,6 +61,76 @@ public class RobotContainer {
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(20);
   private LoggedDashboardChooser<Command> autoChooser;
 
+  private final RunCommand normalDrive = new RunCommand(
+            () -> {
+              // Get the x speed. We are inverting this because Xbox controllers return
+              // negative values when we push forward.
+              final var xSpeed =
+                  -m_xspeedLimiter.calculate(
+                          MathUtil.applyDeadband(
+                              m_Driver_Controller.getLeftY(), OperatorConstants.kDEADBAND))
+                      * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC;
+
+              // Get the y speed or sideways/strafe speed. We are inverting this because
+              // we want a positive value when we pull to the left. Xbox controllers
+              // return positive values when you pull to the right by default.
+              final var ySpeed =
+                  -m_yspeedLimiter.calculate(
+                          MathUtil.applyDeadband(
+                              m_Driver_Controller.getLeftX(), OperatorConstants.kDEADBAND))
+                      * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC;
+
+              // Get the rate of angular rotation. We are inverting this because we want a
+              // positive value when we pull to the left (remember, CCW is positive in
+              // mathematics). Xbox controllers return positive values when you pull to
+              // the right by default.
+              final var rot =
+                  -m_rotLimiter.calculate(
+                          MathUtil.applyDeadband(
+                              m_Driver_Controller.getRightX(), OperatorConstants.kDEADBAND))
+                      * Drivetrain.kMaxAngularSpeed;
+
+              // Command the drivetrain. 0.02 is the nominal TimedRobot loop period (20 ms).
+              m_swerve.drive(xSpeed, ySpeed, rot, true, 0.02);
+              // m_simSwerve.drive(xSpeed, ySpeed, rot, true, 0.02);
+            },
+            m_swerve);
+
+      private final RunCommand slowedDrive = new RunCommand(
+            () -> {
+              // Get the x speed. We are inverting this because Xbox controllers return
+              // negative values when we push forward.
+              final var xSpeed =
+                  (-m_xspeedLimiter.calculate(
+                          MathUtil.applyDeadband(
+                              m_Driver_Controller.getLeftY(), OperatorConstants.kDEADBAND))
+                      * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC) * 0.5;
+
+              // Get the y speed or sideways/strafe speed. We are inverting this because
+              // we want a positive value when we pull to the left. Xbox controllers
+              // return positive values when you pull to the right by default.
+              final var ySpeed =
+                  (-m_yspeedLimiter.calculate(
+                          MathUtil.applyDeadband(
+                              m_Driver_Controller.getLeftX(), OperatorConstants.kDEADBAND))
+                      * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC) * 0.5;
+
+              // Get the rate of angular rotation. We are inverting this because we want a
+              // positive value when we pull to the left (remember, CCW is positive in
+              // mathematics). Xbox controllers return positive values when you pull to
+              // the right by default.
+              final var rot =
+                  (-m_rotLimiter.calculate(
+                          MathUtil.applyDeadband(
+                              m_Driver_Controller.getRightX(), OperatorConstants.kDEADBAND))
+                      * Drivetrain.kMaxAngularSpeed) * 0.5;
+
+              // Command the drivetrain. 0.02 is the nominal TimedRobot loop period (20 ms).
+              m_swerve.drive(xSpeed, ySpeed, rot, true, 0.02);
+              // m_simSwerve.drive(xSpeed, ySpeed, rot, true, 0.02);
+            },
+            m_swerve);
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
@@ -99,6 +169,7 @@ public class RobotContainer {
     m_Driver_Controller.b().whileTrue(Commands.none());
     m_Driver_Controller.x().whileTrue(Commands.none());
     m_Driver_Controller.y().whileTrue(Commands.none());
+    m_Driver_Controller.leftBumper().whileTrue(slowedDrive).onFalse(normalDrive);
   }
 
   /** This method sets subsystem commands */
