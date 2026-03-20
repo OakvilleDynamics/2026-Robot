@@ -205,7 +205,8 @@ public class Drivetrain extends SubsystemBase {
     m_backRight.setDesiredState(swerveModuleStates[3]);
 
     // Horrible hack to get the modules to stop spinning if no drive input.
-    if ((xSpeed == 0) && (ySpeed == 0) && (rot == 0)) {
+    // Another horrible hack to check if we are in auto or teleop
+    if (DriverStation.isTeleop() && ((xSpeed == 0) && (ySpeed == 0) && (rot == 0))) {
       stopModules();
     }
   }
