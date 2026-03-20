@@ -6,6 +6,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
@@ -234,7 +235,8 @@ public final class Constants {
     public static final int ClimberMotor = 21;
 
     // Inverts
-    public static final boolean ShooterMotor_Inverted = false;
+    public static final InvertedValue ShooterMotor_Inverted =
+        InvertedValue.CounterClockwise_Positive;
     public static final boolean IntakeMotor_Inverted = false;
     public static final boolean IntakeHinge_Inverted = false;
     public static final boolean Index_Inverted = false;

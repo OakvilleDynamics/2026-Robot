@@ -18,11 +18,11 @@ public class ClimberCommand extends Command {
 
   public void execute() {
     if (RelayJoystick.getRawButton(10)) {
-      m_RelaySubsystem.RelayOn();
+      m_RelaySubsystem.Climb();
     } else if (RelayJoystick.getRawButton(11)) {
-      m_RelaySubsystem.RelayBack();
+      m_RelaySubsystem.Descend();
     } else {
-      m_RelaySubsystem.RelayOff();
+      m_RelaySubsystem.Stop();
     }
   }
 }

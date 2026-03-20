@@ -24,7 +24,7 @@ public class ShooterCommand extends Command {
     // Button 1 is simply a placeholder button, probably will be changed
     if (!DriverStation.isFMSAttached() && DriverStation.isTeleop()) {    
       if (ShootJoystick.getRawButton(5)) {
-        m_ShooterSubsystem.ShootStart();
+        m_ShooterSubsystem.SpinUpShooter();
         m_ShooterSubsystem.Shoot();
       } else if (ShootJoystick.getRawButton(6)) {
         m_ShooterSubsystem.StopShoot();
