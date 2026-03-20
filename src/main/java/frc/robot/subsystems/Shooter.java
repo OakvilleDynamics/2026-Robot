@@ -4,14 +4,10 @@
 
 package frc.robot.subsystems;
 
-import org.littletonrobotics.junction.Logger;
-
-/* Use if using REV
-import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkLowLevel; **/
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MechanismConstants;
+import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
 

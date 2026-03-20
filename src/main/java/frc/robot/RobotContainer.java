@@ -69,8 +69,8 @@ public class RobotContainer {
     DriverStation.silenceJoystickConnectionWarning(true);
 
     // Create the NamedCommands that will be used in PathPlanner
-    NamedCommands.registerCommand("climber up", Commands.run(m_Climber::RelayOn, m_Climber));
-    NamedCommands.registerCommand("climber down", Commands.run(m_Climber::RelayBack, m_Climber));
+    NamedCommands.registerCommand("climber up", Commands.run(m_Climber::Climb, m_Climber));
+    NamedCommands.registerCommand("climber down", Commands.run(m_Climber::Descend, m_Climber));
 
     // Have the autoChooser pull in all PathPlanner autos as options
     autoChooser =
