@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.OperatorConstants;
@@ -21,11 +22,15 @@ public class ShooterCommand extends Command {
   @Override
   public void execute() {
     // Button 1 is simply a placeholder button, probably will be changed
-    if (ShootJoystick.getRawButton(5)) {
-      m_ShooterSubsystem.ShootStart();
+    if (!DriverStation.isFMSAttached() && DriverStation.isTeleop()) {    
+      if (ShootJoystick.getRawButton(5)) {
+        m_ShooterSubsystem.ShootStart();
+        m_ShooterSubsystem.Shoot();
+      } else if (ShootJoystick.getRawButton(6)) {
+        m_ShooterSubsystem.StopShoot();
+      }
+    } else if (DriverStation.isFMSAttached()) {
       m_ShooterSubsystem.Shoot();
-    } else if (ShootJoystick.getRawButton(6)) {
-      m_ShooterSubsystem.StopShoot();
     }
   }
 }
