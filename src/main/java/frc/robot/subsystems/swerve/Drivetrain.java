@@ -108,7 +108,7 @@ public class Drivetrain extends SubsystemBase {
               DrivebaseConstants.TOP_SPEED_METERS_PER_SEC,
               DrivebaseConstants.WHEEL_FRICTION_COEFFICIENT,
               DCMotor.getKrakenX60(1).withReduction(DrivebaseConstants.DRIVE_GEAR_RATIO),
-              DrivebaseConstants.MAX_CURRENT_AMPS,
+              DrivebaseConstants.MAX_DRIVE_CURRENT_SUPPLY_AMPS,
               1),
           getModuleTranslations());
 

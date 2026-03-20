@@ -115,8 +115,10 @@ public class SwerveModule {
     m_driveMotorConfig.MotorOutput.Inverted = m_driveInverted;
 
     // Set current limits
-    m_driveMotorConfig.CurrentLimits.StatorCurrentLimit = DrivebaseConstants.MAX_DRIVE_CURRENT_STATOR_AMPS;
-    m_driveMotorConfig.CurrentLimits.SupplyCurrentLimit = DrivebaseConstants.MAX_DRIVE_CURRENT_SUPPLY_AMPS;
+    m_driveMotorConfig.CurrentLimits.StatorCurrentLimit =
+        DrivebaseConstants.MAX_DRIVE_CURRENT_STATOR_AMPS;
+    m_driveMotorConfig.CurrentLimits.SupplyCurrentLimit =
+        DrivebaseConstants.MAX_DRIVE_CURRENT_SUPPLY_AMPS;
 
     // Apply motor configuration
     m_driveMotor.getConfigurator().apply(m_driveMotorConfig);
