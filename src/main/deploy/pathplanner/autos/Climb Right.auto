@@ -11,6 +11,12 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "G3 Blue"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "climber up"
@@ -20,12 +26,6 @@
           "type": "wait",
           "data": {
             "waitTime": 7.0
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "G3 Blue"
           }
         },
         {
