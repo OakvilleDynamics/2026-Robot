@@ -115,8 +115,8 @@ public class SwerveModule {
     m_driveMotorConfig.MotorOutput.Inverted = m_driveInverted;
 
     // Set current limits
-    m_driveMotorConfig.CurrentLimits.StatorCurrentLimit = DrivebaseConstants.MAX_CURRENT_AMPS;
-    m_driveMotorConfig.CurrentLimits.SupplyCurrentLimit = DrivebaseConstants.MAX_CURRENT_AMPS;
+    m_driveMotorConfig.CurrentLimits.StatorCurrentLimit = DrivebaseConstants.MAX_DRIVE_CURRENT_STATOR_AMPS;
+    m_driveMotorConfig.CurrentLimits.SupplyCurrentLimit = DrivebaseConstants.MAX_DRIVE_CURRENT_SUPPLY_AMPS;
 
     // Apply motor configuration
     m_driveMotor.getConfigurator().apply(m_driveMotorConfig);
@@ -126,7 +126,7 @@ public class SwerveModule {
 
   /** Configure the azimuth motor based on encoder type */
   private void configureAzimuthMotor() {
-    // Factory reset motor
+    //// Factory reset motor
     // m_azimuthMotor.factoryReset();
 
     //// Set to correct motor types
@@ -138,7 +138,7 @@ public class SwerveModule {
     //// Set power limits
     // m_azimuthMotor.setMaxCurrent(CurrentType.STATOR, 20);
 
-    // System.out.println(m_moduleName + " azimuth motor configured");
+    System.out.println(m_moduleName + " azimuth motor configured");
   }
 
   /** Initialize the encoder offset, prioritizing saved values over constants */
