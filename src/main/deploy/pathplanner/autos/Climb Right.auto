@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Left to Climber Right"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0
+            "pathName": "Climber Right"
           }
         },
         {
@@ -25,7 +19,13 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0
+            "waitTime": 7.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "G3 Blue"
           }
         },
         {
