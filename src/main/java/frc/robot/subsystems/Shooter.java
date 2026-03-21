@@ -48,6 +48,6 @@ public class Shooter extends SubsystemBase {
     Logger.recordOutput("Shooter/Motor Output", ShooterMotor.get());
     Logger.recordOutput("Shooter/Current", ShooterMotor.getSupplyCurrent().getValueAsDouble());
     Logger.recordOutput("Shooter/Temperature", ShooterMotor.getDeviceTemp().getValueAsDouble());
-    Logger.recordOutput("Shooter/RPM", ShooterMotor.getVelocity().getValueAsDouble() * 600 / 2048);
+    Logger.recordOutput("Shooter/Velocity", ShooterMotor.getVelocity().getValueAsDouble());
   }
 }

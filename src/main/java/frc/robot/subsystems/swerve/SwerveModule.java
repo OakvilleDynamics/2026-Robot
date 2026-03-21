@@ -373,6 +373,16 @@ public class SwerveModule {
         "Swerve/" + moduleAbbr + "/Drive Velocity", getSwerveState().speedMetersPerSecond);
     Logger.recordOutput(
         "Swerve/" + moduleAbbr + "/Drive Position", getSwervePosition().distanceMeters);
+
+    // Drive motor health info
+    Logger.recordOutput("Swerve/" + moduleAbbr + "/Drive Motor Output", m_driveMotor.get());
+    Logger.recordOutput("Swerve/" + moduleAbbr + "/Drive Motor Current", m_driveMotor.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput("Swerve/" + moduleAbbr + "/Drive Motor Temperature", m_driveMotor.getStatorCurrent().getValueAsDouble());
+
+    // Angle motor health info
+    Logger.recordOutput("Swerve/" + moduleAbbr + "/Azimuth Motor Output", m_azimuthMotor.get());
+    Logger.recordOutput("Swerve/" + moduleAbbr + "/Azimuth Motor Current", m_azimuthMotor.getStatorCurrent());
+    Logger.recordOutput("Swerve/" + moduleAbbr + "/Azimuth Motor Temperature", m_azimuthMotor.getTemperature());
   }
 
   // Utility methods for unit conversions

@@ -34,8 +34,8 @@ public class Climber extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    Logger.recordOutput("Climber/ClimberMotorOutput", ClimberMotor.getMotorOutputPercent());
-    Logger.recordOutput("Climber/ClimberMotorCurrent", ClimberMotor.getStatorCurrent());
-    Logger.recordOutput("Climber/ClimberMotorTemperature", ClimberMotor.getTemperature());
+    Logger.recordOutput("Climber/Output", ClimberMotor.getMotorOutputPercent());
+    Logger.recordOutput("Climber/Current", ClimberMotor.getStatorCurrent());
+    Logger.recordOutput("Climber/Motor Temperature", ClimberMotor.getTemperature());
   }
 }
