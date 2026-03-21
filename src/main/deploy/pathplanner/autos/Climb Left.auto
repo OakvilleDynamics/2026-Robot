@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Corner 1"
+            "pathName": "corner left"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "named",
           "data": {
-            "name": "climber down"
+            "name": "Climb"
           }
         },
         {

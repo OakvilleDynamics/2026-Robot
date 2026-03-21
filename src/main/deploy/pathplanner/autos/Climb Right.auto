@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Climber Right"
+            "pathName": "corner right"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "G3 Blue"
+            "pathName": "Corner to climb right"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "climber down"
+            "name": "Climb"
           }
         }
       ]
