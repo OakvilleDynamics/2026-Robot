@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DrivebaseConstants;
@@ -44,8 +45,8 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final CommandXboxController m_Driver_Controller =
       new CommandXboxController(OperatorConstants.kDRIVER_CONTROLLER);
-  final CommandXboxController m_Copilot_Controller =
-      new CommandXboxController(OperatorConstants.kCOPILOT_CONTROLLER);
+  final CommandJoystick m_Copilot_Controller =
+      new CommandJoystick(OperatorConstants.kCOPILOT_CONTROLLER);
 
   // Gyro supplier created via factory and constants
   private final GyroSupplier m_gyro =
@@ -61,6 +62,7 @@ public class RobotContainer {
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(20);
   private LoggedDashboardChooser<Command> autoChooser;
 
+  // Normal swerve drive command
   private final RunCommand normalDrive = new RunCommand(
             () -> {
               // Get the x speed. We are inverting this because Xbox controllers return
@@ -96,6 +98,7 @@ public class RobotContainer {
             },
             m_swerve);
 
+            // Slowed swerve drive, for extra precision.
       private final RunCommand slowedDrive = new RunCommand(
             () -> {
               // Get the x speed. We are inverting this because Xbox controllers return
@@ -104,7 +107,7 @@ public class RobotContainer {
                   (-m_xspeedLimiter.calculate(
                           MathUtil.applyDeadband(
                               m_Driver_Controller.getLeftY(), OperatorConstants.kDEADBAND))
-                      * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC) * 0.5;
+                      * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC) * 0.35;
 
               // Get the y speed or sideways/strafe speed. We are inverting this because
               // we want a positive value when we pull to the left. Xbox controllers
@@ -113,7 +116,7 @@ public class RobotContainer {
                   (-m_yspeedLimiter.calculate(
                           MathUtil.applyDeadband(
                               m_Driver_Controller.getLeftX(), OperatorConstants.kDEADBAND))
-                      * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC) * 0.5;
+                      * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC) * 0.35;
 
               // Get the rate of angular rotation. We are inverting this because we want a
               // positive value when we pull to the left (remember, CCW is positive in
@@ -123,7 +126,7 @@ public class RobotContainer {
                   (-m_rotLimiter.calculate(
                           MathUtil.applyDeadband(
                               m_Driver_Controller.getRightX(), OperatorConstants.kDEADBAND))
-                      * Drivetrain.kMaxAngularSpeed) * 0.5;
+                      * Drivetrain.kMaxAngularSpeed) * 0.35;
 
               // Command the drivetrain. 0.02 is the nominal TimedRobot loop period (20 ms).
               m_swerve.drive(xSpeed, ySpeed, rot, true, 0.02);
@@ -139,8 +142,9 @@ public class RobotContainer {
     DriverStation.silenceJoystickConnectionWarning(true);
 
     // Create the NamedCommands that will be used in PathPlanner
-    NamedCommands.registerCommand("climber up", Commands.run(m_Climber::Climb, m_Climber));
-    NamedCommands.registerCommand("climber down", Commands.run(m_Climber::Descend, m_Climber));
+    NamedCommands.registerCommand("Climb", Commands.run(m_Climber::Climb, m_Climber));
+    NamedCommands.registerCommand("Descend", Commands.run(m_Climber::Descend, m_Climber));
+    NamedCommands.registerCommand("Shoot", Commands.run(m_Shooter::Shoot, m_Shooter));
 
     // Have the autoChooser pull in all PathPlanner autos as options
     autoChooser =
@@ -165,51 +169,28 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    // Driver Controller binds (Xbox)
     m_Driver_Controller.a().whileTrue(Commands.runOnce(m_swerve::setX, m_swerve).repeatedly());
     m_Driver_Controller.b().whileTrue(Commands.none());
     m_Driver_Controller.x().whileTrue(Commands.none());
     m_Driver_Controller.y().whileTrue(Commands.none());
     m_Driver_Controller.leftBumper().whileTrue(slowedDrive).onFalse(normalDrive);
+
+    // // Copilot Controller binds (Joystick)
+    // m_Copilot_Controller.trigger().whileTrue(Commands.runOnce(m_Intake::IntakeFuel, m_Intake).repeatedly());
+    // m_Copilot_Controller.top().whileTrue(Commands.runOnce(m_Intake::IntakeSpit, m_Intake).repeatedly());
+    // m_Copilot_Controller.button(3).whileTrue(Commands.runOnce(m_Index::IndexReverse, m_Index).repeatedly());
+    // m_Copilot_Controller.button(4).whileTrue(Commands.runOnce(m_Index::IndexMove, m_Index).repeatedly());
+    // m_Copilot_Controller.button(7).whileTrue(Commands.runOnce(m_Intake::IntakeUp, m_Intake).repeatedly());
+    // m_Copilot_Controller.button(8).whileTrue(Commands.runOnce(m_Intake::IntakeDown, m_Intake).repeatedly());
+    // m_Copilot_Controller.button(10).whileTrue(Commands.runOnce(m_Climber::Climb, m_Climber).repeatedly());
+    // m_Copilot_Controller.button(11).whileTrue(Commands.runOnce(m_Climber::Descend, m_Climber).repeatedly());  
   }
 
   /** This method sets subsystem commands */
   private void configureDefaultCommands() {
     // Default drive command: run every scheduler cycle in teleop
-    m_swerve.setDefaultCommand(
-        new RunCommand(
-            () -> {
-              // Get the x speed. We are inverting this because Xbox controllers return
-              // negative values when we push forward.
-              final var xSpeed =
-                  -m_xspeedLimiter.calculate(
-                          MathUtil.applyDeadband(
-                              m_Driver_Controller.getLeftY(), OperatorConstants.kDEADBAND))
-                      * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC;
-
-              // Get the y speed or sideways/strafe speed. We are inverting this because
-              // we want a positive value when we pull to the left. Xbox controllers
-              // return positive values when you pull to the right by default.
-              final var ySpeed =
-                  -m_yspeedLimiter.calculate(
-                          MathUtil.applyDeadband(
-                              m_Driver_Controller.getLeftX(), OperatorConstants.kDEADBAND))
-                      * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC;
-
-              // Get the rate of angular rotation. We are inverting this because we want a
-              // positive value when we pull to the left (remember, CCW is positive in
-              // mathematics). Xbox controllers return positive values when you pull to
-              // the right by default.
-              final var rot =
-                  -m_rotLimiter.calculate(
-                          MathUtil.applyDeadband(
-                              m_Driver_Controller.getRightX(), OperatorConstants.kDEADBAND))
-                      * Drivetrain.kMaxAngularSpeed;
-
-              // Command the drivetrain. 0.02 is the nominal TimedRobot loop period (20 ms).
-              m_swerve.drive(xSpeed, ySpeed, rot, true, 0.02);
-              // m_simSwerve.drive(xSpeed, ySpeed, rot, true, 0.02);
-            },
-            m_swerve));
+    m_swerve.setDefaultCommand(normalDrive);
   }
 
   /**
