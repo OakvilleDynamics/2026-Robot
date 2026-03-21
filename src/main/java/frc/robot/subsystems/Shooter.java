@@ -16,6 +16,7 @@ public class Shooter extends SubsystemBase {
   // private final TalonFXConfiguration ShooterConfig = new TalonFXConfiguration();
 
   public Shooter() {
+    System.out.println("[Shooter] Initializing Shooter Subsystem...");
     // Constructor code here, if needed
     // ShooterConfig.MotorOutput.Inverted = MechanismConstants.ShooterMotor_Inverted;
     // ShooterConfig.Slot0.kP = MechanismConstants.Shooter_kP;
@@ -23,6 +24,7 @@ public class Shooter extends SubsystemBase {
     // ShooterConfig.Slot0.kD = MechanismConstants.Shooter_kD;
     // ShooterConfig.Slot0.kF = MechanismConstants.Shooter_kF;
     // ShooterMotor.getConfigurator().apply(ShooterConfig);
+    System.out.println("[Shooter] Shooter Subsystem Initialized!");
   }
 
   /** Spins up the shooter motor to a slower speed than final speed */

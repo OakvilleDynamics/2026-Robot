@@ -119,6 +119,7 @@ public class Drivetrain extends SubsystemBase {
    * @param initialPose The initial pose of the robot
    */
   public Drivetrain(Supplier<Rotation2d> gyroSupplier, Pose2d initialPose) {
+    System.out.println("[Swerve] Initializing Swerve Drive...");
     this.m_gyroSupplier = gyroSupplier;
 
     m_lastPos =
@@ -174,6 +175,7 @@ public class Drivetrain extends SubsystemBase {
         },
         // Reference to this subsystem to set requirements
         this);
+    System.out.println("[Swerve] Swerve Drive Initialized!");
   }
 
   /**

@@ -16,8 +16,10 @@ public class Intake extends SubsystemBase {
       new SparkFlex(MechanismConstants.IntakeHinge, SparkLowLevel.MotorType.kBrushless);
 
   public Intake() {
+    System.out.println("[Intake] Initializing Intake Subsystem...");
     IntakeMotor.setInverted(MechanismConstants.IntakeMotor_Inverted);
     IntakeHinge.setInverted(MechanismConstants.IntakeHinge_Inverted);
+    System.out.println("[Intake] Intake Subsystem Initialized!");
   }
 
   public void IntakeFuel() {

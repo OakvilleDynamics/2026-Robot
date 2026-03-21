@@ -63,7 +63,7 @@ public class SwerveModule {
       String moduleName,
       boolean driveInverted,
       boolean azimuthInverted) {
-
+    System.out.println("[Swerve] Initializing " + moduleName + " module...");
     m_moduleName = moduleName;
     m_encoderTicksPerRevolution = encoderTicksPerRevolution;
     if (driveInverted == false) {
@@ -89,11 +89,12 @@ public class SwerveModule {
     // Configure turning PID for continuous input (-180 to 180 degrees)
     m_turningPID.enableContinuousInput(-Math.PI, Math.PI);
 
-    System.out.println(m_moduleName + " module initialized successfully");
+    System.out.println(m_moduleName + " module initialized successfully!");
   }
 
   /** Configure the drive motor with PID and feedforward */
   private void configureDriveMotor() {
+    System.out.println("[Swerve] Configuring " + m_moduleName + " drive motor...");
     // Factory reset drive motor
     m_driveMotor.getConfigurator().apply(new TalonFXConfiguration());
 
@@ -123,11 +124,12 @@ public class SwerveModule {
     // Apply motor configuration
     m_driveMotor.getConfigurator().apply(m_driveMotorConfig);
 
-    System.out.println(m_moduleName + " drive motor configured");
+    System.out.println("[Swerve]" + m_moduleName + " drive motor configured successfully!");
   }
 
   /** Configure the azimuth motor based on encoder type */
   private void configureAzimuthMotor() {
+    System.out.println("[Swerve] Configuring " + m_moduleName + " azimuth motor...");
     //// Factory reset motor
     // m_azimuthMotor.factoryReset();
 
@@ -140,7 +142,7 @@ public class SwerveModule {
     //// Set power limits
     // m_azimuthMotor.setMaxCurrent(CurrentType.STATOR, 20);
 
-    System.out.println(m_moduleName + " azimuth motor configured");
+    System.out.println("[Swerve]" + m_moduleName + " azimuth motor configured successfully!");
   }
 
   /** Initialize the encoder offset, prioritizing saved values over constants */
@@ -284,7 +286,8 @@ public class SwerveModule {
       m_azimuthMotor.setAbsOffset((int) currentRawTicks);
 
       System.out.println(
-          m_moduleName
+          "[Swerve]"
+              + m_moduleName
               + " Thrifty encoder zeroed. Java offset: "
               + currentRawTicks
               + " ticks ("
@@ -309,7 +312,8 @@ public class SwerveModule {
 
     // Verify the zero worked by checking position
     System.out.println(
-        m_moduleName
+        "[Swerve]"
+            + m_moduleName
             + " Position after zero: "
             + Math.toDegrees(getEncoderPosition())
             + " degrees");

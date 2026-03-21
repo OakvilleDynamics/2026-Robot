@@ -11,7 +11,9 @@ public class Climber extends SubsystemBase {
 
   public Climber() {
     // Constructor code here, if needed
+    System.out.println("[Climber] Initializing Climber Subsystem...");
     ClimberMotor.setInverted(MechanismConstants.ClimberMotor_Inverted);
+    System.out.println("[Climber] Climber Subsystem Initialized!");
   }
 
   /** Activates the climber motor to move in the forward direction at a predefined speed. */

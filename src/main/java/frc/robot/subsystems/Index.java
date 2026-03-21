@@ -11,7 +11,9 @@ public class Index extends SubsystemBase {
       new SparkFlex(MechanismConstants.IndexMotor, SparkLowLevel.MotorType.kBrushless);
 
   public Index() {
+    System.out.println("[Index] Initializing Index Subsystem...");
     IndexMotor.setInverted(MechanismConstants.Index_Inverted);
+    System.out.println("[Index] Index Subsystem Initialized!");
   }
 
   /** Runs the indexer to the shooter */

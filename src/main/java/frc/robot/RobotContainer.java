@@ -9,7 +9,6 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -63,83 +62,87 @@ public class RobotContainer {
   private LoggedDashboardChooser<Command> autoChooser;
 
   // Normal swerve drive command
-  private final RunCommand normalDrive = new RunCommand(
-            () -> {
-              // Get the x speed. We are inverting this because Xbox controllers return
-              // negative values when we push forward.
-              final var xSpeed =
-                  -m_xspeedLimiter.calculate(
-                          MathUtil.applyDeadband(
-                              m_Driver_Controller.getLeftY(), OperatorConstants.kDEADBAND))
-                      * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC;
+  private final RunCommand normalDrive =
+      new RunCommand(
+          () -> {
+            // Get the x speed. We are inverting this because Xbox controllers return
+            // negative values when we push forward.
+            final var xSpeed =
+                -m_xspeedLimiter.calculate(
+                        MathUtil.applyDeadband(
+                            m_Driver_Controller.getLeftY(), OperatorConstants.kDEADBAND))
+                    * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC;
 
-              // Get the y speed or sideways/strafe speed. We are inverting this because
-              // we want a positive value when we pull to the left. Xbox controllers
-              // return positive values when you pull to the right by default.
-              final var ySpeed =
-                  -m_yspeedLimiter.calculate(
-                          MathUtil.applyDeadband(
-                              m_Driver_Controller.getLeftX(), OperatorConstants.kDEADBAND))
-                      * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC;
+            // Get the y speed or sideways/strafe speed. We are inverting this because
+            // we want a positive value when we pull to the left. Xbox controllers
+            // return positive values when you pull to the right by default.
+            final var ySpeed =
+                -m_yspeedLimiter.calculate(
+                        MathUtil.applyDeadband(
+                            m_Driver_Controller.getLeftX(), OperatorConstants.kDEADBAND))
+                    * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC;
 
-              // Get the rate of angular rotation. We are inverting this because we want a
-              // positive value when we pull to the left (remember, CCW is positive in
-              // mathematics). Xbox controllers return positive values when you pull to
-              // the right by default.
-              final var rot =
-                  -m_rotLimiter.calculate(
-                          MathUtil.applyDeadband(
-                              m_Driver_Controller.getRightX(), OperatorConstants.kDEADBAND))
-                      * Drivetrain.kMaxAngularSpeed;
+            // Get the rate of angular rotation. We are inverting this because we want a
+            // positive value when we pull to the left (remember, CCW is positive in
+            // mathematics). Xbox controllers return positive values when you pull to
+            // the right by default.
+            final var rot =
+                -m_rotLimiter.calculate(
+                        MathUtil.applyDeadband(
+                            m_Driver_Controller.getRightX(), OperatorConstants.kDEADBAND))
+                    * Drivetrain.kMaxAngularSpeed;
 
-              // Command the drivetrain. 0.02 is the nominal TimedRobot loop period (20 ms).
-              m_swerve.drive(xSpeed, ySpeed, rot, true, 0.02);
-              // m_simSwerve.drive(xSpeed, ySpeed, rot, true, 0.02);
-            },
-            m_swerve);
+            // Command the drivetrain. 0.02 is the nominal TimedRobot loop period (20 ms).
+            m_swerve.drive(xSpeed, ySpeed, rot, true, 0.02);
+            // m_simSwerve.drive(xSpeed, ySpeed, rot, true, 0.02);
+          },
+          m_swerve);
 
-            // Slowed swerve drive, for extra precision.
-      private final RunCommand slowedDrive = new RunCommand(
-            () -> {
-              // Get the x speed. We are inverting this because Xbox controllers return
-              // negative values when we push forward.
-              final var xSpeed =
-                  (-m_xspeedLimiter.calculate(
-                          MathUtil.applyDeadband(
-                              m_Driver_Controller.getLeftY(), OperatorConstants.kDEADBAND))
-                      * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC) * 0.35;
+  // Slowed swerve drive, for extra precision.
+  private final RunCommand slowedDrive =
+      new RunCommand(
+          () -> {
+            // Get the x speed. We are inverting this because Xbox controllers return
+            // negative values when we push forward.
+            final var xSpeed =
+                (-m_xspeedLimiter.calculate(
+                            MathUtil.applyDeadband(
+                                m_Driver_Controller.getLeftY(), OperatorConstants.kDEADBAND))
+                        * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC)
+                    * 0.35;
 
-              // Get the y speed or sideways/strafe speed. We are inverting this because
-              // we want a positive value when we pull to the left. Xbox controllers
-              // return positive values when you pull to the right by default.
-              final var ySpeed =
-                  (-m_yspeedLimiter.calculate(
-                          MathUtil.applyDeadband(
-                              m_Driver_Controller.getLeftX(), OperatorConstants.kDEADBAND))
-                      * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC) * 0.35;
+            // Get the y speed or sideways/strafe speed. We are inverting this because
+            // we want a positive value when we pull to the left. Xbox controllers
+            // return positive values when you pull to the right by default.
+            final var ySpeed =
+                (-m_yspeedLimiter.calculate(
+                            MathUtil.applyDeadband(
+                                m_Driver_Controller.getLeftX(), OperatorConstants.kDEADBAND))
+                        * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC)
+                    * 0.35;
 
-              // Get the rate of angular rotation. We are inverting this because we want a
-              // positive value when we pull to the left (remember, CCW is positive in
-              // mathematics). Xbox controllers return positive values when you pull to
-              // the right by default.
-              final var rot =
-                  (-m_rotLimiter.calculate(
-                          MathUtil.applyDeadband(
-                              m_Driver_Controller.getRightX(), OperatorConstants.kDEADBAND))
-                      * Drivetrain.kMaxAngularSpeed) * 0.35;
+            // Get the rate of angular rotation. We are inverting this because we want a
+            // positive value when we pull to the left (remember, CCW is positive in
+            // mathematics). Xbox controllers return positive values when you pull to
+            // the right by default.
+            final var rot =
+                (-m_rotLimiter.calculate(
+                            MathUtil.applyDeadband(
+                                m_Driver_Controller.getRightX(), OperatorConstants.kDEADBAND))
+                        * Drivetrain.kMaxAngularSpeed)
+                    * 0.35;
 
-              // Command the drivetrain. 0.02 is the nominal TimedRobot loop period (20 ms).
-              m_swerve.drive(xSpeed, ySpeed, rot, true, 0.02);
-              // m_simSwerve.drive(xSpeed, ySpeed, rot, true, 0.02);
-            },
-            m_swerve);
+            // Command the drivetrain. 0.02 is the nominal TimedRobot loop period (20 ms).
+            m_swerve.drive(xSpeed, ySpeed, rot, true, 0.02);
+            // m_simSwerve.drive(xSpeed, ySpeed, rot, true, 0.02);
+          },
+          m_swerve);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
     configureDefaultCommands();
-    DriverStation.silenceJoystickConnectionWarning(true);
 
     // Create the NamedCommands that will be used in PathPlanner
     NamedCommands.registerCommand("Climb", Commands.run(m_Climber::Climb, m_Climber));
@@ -177,14 +180,22 @@ public class RobotContainer {
     m_Driver_Controller.leftBumper().whileTrue(slowedDrive).onFalse(normalDrive);
 
     // // Copilot Controller binds (Joystick)
-    // m_Copilot_Controller.trigger().whileTrue(Commands.runOnce(m_Intake::IntakeFuel, m_Intake).repeatedly());
-    // m_Copilot_Controller.top().whileTrue(Commands.runOnce(m_Intake::IntakeSpit, m_Intake).repeatedly());
-    // m_Copilot_Controller.button(3).whileTrue(Commands.runOnce(m_Index::IndexReverse, m_Index).repeatedly());
-    // m_Copilot_Controller.button(4).whileTrue(Commands.runOnce(m_Index::IndexMove, m_Index).repeatedly());
-    // m_Copilot_Controller.button(7).whileTrue(Commands.runOnce(m_Intake::IntakeUp, m_Intake).repeatedly());
-    // m_Copilot_Controller.button(8).whileTrue(Commands.runOnce(m_Intake::IntakeDown, m_Intake).repeatedly());
-    // m_Copilot_Controller.button(10).whileTrue(Commands.runOnce(m_Climber::Climb, m_Climber).repeatedly());
-    // m_Copilot_Controller.button(11).whileTrue(Commands.runOnce(m_Climber::Descend, m_Climber).repeatedly());  
+    // m_Copilot_Controller.trigger().whileTrue(Commands.runOnce(m_Intake::IntakeFuel,
+    // m_Intake).repeatedly());
+    // m_Copilot_Controller.top().whileTrue(Commands.runOnce(m_Intake::IntakeSpit,
+    // m_Intake).repeatedly());
+    // m_Copilot_Controller.button(3).whileTrue(Commands.runOnce(m_Index::IndexReverse,
+    // m_Index).repeatedly());
+    // m_Copilot_Controller.button(4).whileTrue(Commands.runOnce(m_Index::IndexMove,
+    // m_Index).repeatedly());
+    // m_Copilot_Controller.button(7).whileTrue(Commands.runOnce(m_Intake::IntakeUp,
+    // m_Intake).repeatedly());
+    // m_Copilot_Controller.button(8).whileTrue(Commands.runOnce(m_Intake::IntakeDown,
+    // m_Intake).repeatedly());
+    // m_Copilot_Controller.button(10).whileTrue(Commands.runOnce(m_Climber::Climb,
+    // m_Climber).repeatedly());
+    // m_Copilot_Controller.button(11).whileTrue(Commands.runOnce(m_Climber::Descend,
+    // m_Climber).repeatedly());
   }
 
   /** This method sets subsystem commands */
