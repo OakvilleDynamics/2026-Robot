@@ -6,6 +6,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
@@ -47,7 +48,8 @@ public final class Constants {
         TOP_SPEED_MOTOR_RPM * WHEEL_DIAMETER_METERS * Math.PI / DRIVE_GEAR_RATIO / 60; // = 5.51 m/s
 
     // Electrical constants
-    public static final double MAX_CURRENT_AMPS = 30.0;
+    public static final double MAX_DRIVE_CURRENT_SUPPLY_AMPS = 60.0;
+    public static final double MAX_DRIVE_CURRENT_STATOR_AMPS = 60.0;
 
     // Module locations from center of robot
     private static final double HALF_WIDTH = DRIVE_BASE_WIDTH_METERS / 2.0;
@@ -151,7 +153,7 @@ public final class Constants {
     public static final int kCOPILOT_CONTROLLER = 1;
 
     // Joystick Deadband
-    public static final double kDEADBAND = 0.1;
+    public static final double kDEADBAND = 0.2;
     public static final double kLEFT_Y_DEADBAND = 0.1;
     public static final double kRIGHT_X_DEADBAND = 0.1;
     public static final double kTURN_CONSTANT = 6;
@@ -234,19 +236,19 @@ public final class Constants {
     public static final int ClimberMotor = 21;
 
     // Inverts
-    public static final boolean ShooterMotor_Inverted = false;
+    public static final InvertedValue ShooterMotor_Inverted =
+        InvertedValue.CounterClockwise_Positive;
     public static final boolean IntakeMotor_Inverted = false;
     public static final boolean IntakeHinge_Inverted = false;
     public static final boolean Index_Inverted = false;
     public static final boolean ClimberMotor_Inverted = false;
 
     // Motor speeds ~~ Change as needed
-    public static final double Shooter_Speed1 = 0.8;
+    public static final double Shooter_Speed1 = 0.6;
     public static final double Shooter_Speed2 = 0.4;
-    public static final double Intake_Speed = 0.5;
-    public static final double Intake_Hinge_Speed = 0.5;
+    public static final double Intake_Speed = 0.8;
+    public static final double Intake_Hinge_Speed = 0.8;
     public static final double Index_Speed = 0.3;
     public static final double Climber_Speed = 1.0;
   }
 }
-// REV PHD 10

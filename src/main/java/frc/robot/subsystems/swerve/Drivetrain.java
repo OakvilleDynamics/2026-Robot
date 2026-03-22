@@ -108,7 +108,7 @@ public class Drivetrain extends SubsystemBase {
               DrivebaseConstants.TOP_SPEED_METERS_PER_SEC,
               DrivebaseConstants.WHEEL_FRICTION_COEFFICIENT,
               DCMotor.getKrakenX60(1).withReduction(DrivebaseConstants.DRIVE_GEAR_RATIO),
-              DrivebaseConstants.MAX_CURRENT_AMPS,
+              DrivebaseConstants.MAX_DRIVE_CURRENT_SUPPLY_AMPS,
               1),
           getModuleTranslations());
 
@@ -119,6 +119,7 @@ public class Drivetrain extends SubsystemBase {
    * @param initialPose The initial pose of the robot
    */
   public Drivetrain(Supplier<Rotation2d> gyroSupplier, Pose2d initialPose) {
+    System.out.println("[Swerve] Initializing Swerve Drive...");
     this.m_gyroSupplier = gyroSupplier;
 
     m_lastPos =
@@ -174,6 +175,7 @@ public class Drivetrain extends SubsystemBase {
         },
         // Reference to this subsystem to set requirements
         this);
+    System.out.println("[Swerve] Swerve Drive Initialized!");
   }
 
   /**
@@ -205,7 +207,8 @@ public class Drivetrain extends SubsystemBase {
     m_backRight.setDesiredState(swerveModuleStates[3]);
 
     // Horrible hack to get the modules to stop spinning if no drive input.
-    if ((xSpeed == 0) && (ySpeed == 0) && (rot == 0)) {
+    // Another horrible hack to check if we are in auto or teleop
+    if (DriverStation.isTeleop() && ((xSpeed == 0) && (ySpeed == 0) && (rot == 0))) {
       stopModules();
     }
   }

@@ -7,31 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Left to Climber Right"
+            "pathName": "corner left"
           }
         },
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 0
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "climber up"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0
+            "pathName": "Corner to Climb left"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "climber down"
+            "name": "Climb"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 7.0
           }
         }
       ]

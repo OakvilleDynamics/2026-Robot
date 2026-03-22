@@ -4,6 +4,7 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MechanismConstants;
+import org.littletonrobotics.junction.Logger;
 
 // Very basic intake process, changes to be made accordingly
 
@@ -13,6 +14,13 @@ public class Intake extends SubsystemBase {
 
   public final SparkFlex IntakeHinge =
       new SparkFlex(MechanismConstants.IntakeHinge, SparkLowLevel.MotorType.kBrushless);
+
+  public Intake() {
+    System.out.println("[Intake] Initializing Intake Subsystem...");
+    IntakeMotor.setInverted(MechanismConstants.IntakeMotor_Inverted);
+    IntakeHinge.setInverted(MechanismConstants.IntakeHinge_Inverted);
+    System.out.println("[Intake] Intake Subsystem Initialized!");
+  }
 
   public void IntakeFuel() {
     IntakeMotor.set(MechanismConstants.Intake_Speed);
@@ -33,5 +41,20 @@ public class Intake extends SubsystemBase {
   public void IntakeStop() {
     IntakeMotor.set(0);
     IntakeHinge.set(0);
+  }
+
+  @Override
+  public void periodic() {
+    // IntakeMotor telemetry
+    Logger.recordOutput("Intake/Intake/Motor Output", IntakeMotor.get());
+    Logger.recordOutput("Intake/Intake/Current", IntakeMotor.getOutputCurrent());
+    Logger.recordOutput("Intake/Intake/Temperature", IntakeMotor.getMotorTemperature());
+
+    // IntakeHinge telemetry
+    Logger.recordOutput("Intake/Hinge/Motor Output", IntakeHinge.get());
+    Logger.recordOutput("Intake/Hinge/Current", IntakeHinge.getOutputCurrent());
+    Logger.recordOutput("Intake/Hinge/Temperature", IntakeHinge.getMotorTemperature());
+    Logger.recordOutput("Intake/Hinge/Encoder", IntakeHinge.getEncoder().getPosition());
+    Logger.recordOutput("Intake/Hinge/Velocity", IntakeHinge.getEncoder().getVelocity());
   }
 }

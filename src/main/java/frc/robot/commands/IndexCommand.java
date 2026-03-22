@@ -21,9 +21,9 @@ public class IndexCommand extends Command {
   @Override
   public void execute() {
 
-    if (IndexJoystick.getRawButton(5)) {
+    if (IndexJoystick.getRawButton(4)) {
       m_IndexSubsystem.IndexMove();
-    } else if (IndexJoystick.getRawButton(6)) {
+    } else if (IndexJoystick.getRawButton(3)) {
       m_IndexSubsystem.IndexReverse();
     } else {
       m_IndexSubsystem.IndexStop();

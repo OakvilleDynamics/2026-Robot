@@ -21,11 +21,13 @@ public class IntakeCommand extends Command {
   @Override
   public void execute() {
     // Button 1 is simply a placeholder button, probably will be changed
-    if (IntakeJoystick.getRawButton(2)) {
+    if (IntakeJoystick.getRawButton(1)) {
       m_IntakeSubsystem.IntakeFuel();
-    } else if (IntakeJoystick.getRawButton(3)) {
+    } else if (IntakeJoystick.getRawButton(2)) {
+      m_IntakeSubsystem.IntakeSpit();
+    } else if (IntakeJoystick.getRawButton(7)) {
       m_IntakeSubsystem.IntakeUp();
-    } else if (IntakeJoystick.getRawButton(4)) {
+    } else if (IntakeJoystick.getRawButton(8)) {
       m_IntakeSubsystem.IntakeDown();
     } else {
       m_IntakeSubsystem.IntakeStop();
