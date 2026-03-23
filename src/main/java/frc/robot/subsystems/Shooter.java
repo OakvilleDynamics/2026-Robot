@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MechanismConstants;
@@ -48,8 +47,13 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     // Shooter motor telemetry
     Logger.recordOutput("Shooter/Output", ShooterMotor.get());
-    Logger.recordOutput("Shooter/Current", ShooterMotor.getSupplyCurrent().getValueAsDouble(), Units.Amps);
-    Logger.recordOutput("Shooter/Temperature", ShooterMotor.getDeviceTemp().getValueAsDouble(), Units.Celsius);
-    Logger.recordOutput("Shooter/Velocity", ShooterMotor.getVelocity().getValueAsDouble(), Units.RotationsPerSecond);
+    Logger.recordOutput(
+        "Shooter/Current", ShooterMotor.getSupplyCurrent().getValueAsDouble(), Units.Amps);
+    Logger.recordOutput(
+        "Shooter/Temperature", ShooterMotor.getDeviceTemp().getValueAsDouble(), Units.Celsius);
+    Logger.recordOutput(
+        "Shooter/Velocity",
+        ShooterMotor.getVelocity().getValueAsDouble(),
+        Units.RotationsPerSecond);
   }
 }

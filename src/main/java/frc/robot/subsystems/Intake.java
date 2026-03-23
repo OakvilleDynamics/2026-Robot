@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
-
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MechanismConstants;
@@ -50,12 +49,14 @@ public class Intake extends SubsystemBase {
     // IntakeRoller telemetry
     Logger.recordOutput("Intake/Roller/Motor Output", IntakeRoller.get());
     Logger.recordOutput("Intake/Roller/Current", IntakeRoller.getOutputCurrent(), Units.Amps);
-    Logger.recordOutput("Intake/Roller/Temperature", IntakeRoller.getMotorTemperature(), Units.Celsius);
+    Logger.recordOutput(
+        "Intake/Roller/Temperature", IntakeRoller.getMotorTemperature(), Units.Celsius);
 
     // IntakeHinge telemetry
     Logger.recordOutput("Intake/Hinge/Motor Output", IntakeHinge.get());
     Logger.recordOutput("Intake/Hinge/Current", IntakeHinge.getOutputCurrent(), Units.Amps);
-    Logger.recordOutput("Intake/Hinge/Temperature", IntakeHinge.getMotorTemperature(), Units.Celsius);
+    Logger.recordOutput(
+        "Intake/Hinge/Temperature", IntakeHinge.getMotorTemperature(), Units.Celsius);
     Logger.recordOutput("Intake/Hinge/Encoder", IntakeHinge.getEncoder().getPosition());
     Logger.recordOutput("Intake/Hinge/Velocity", IntakeHinge.getEncoder().getVelocity(), Units.RPM);
   }
