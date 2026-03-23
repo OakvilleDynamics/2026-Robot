@@ -9,7 +9,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MechanismConstants;
-import frc.robot.Constants.MechanismConstants.IntakeConstants;
+import org.littletonrobotics.junction.Logger;
 
 // Very basic intake process, changes to be made accordingly
 public class Intake extends SubsystemBase {
@@ -19,28 +19,13 @@ public class Intake extends SubsystemBase {
   private SparkFlex intakeHinge =
       new SparkFlex(MechanismConstants.kIntakeHinge, MotorType.kBrushless);
 
-  private RelativeEncoder hingeEncoder;
-
-  private final SparkClosedLoopController intakeHingeController;
-
   public Intake() {
-    intakeMotor.configure(
-        IntakeConstants.kIntakeMotorConfig,
-        ResetMode.kResetSafeParameters,
-        PersistMode.kPersistParameters);
-    intakeHinge.configure(
-        IntakeConstants.kIntakeHingeConfig,
-        ResetMode.kResetSafeParameters,
-        PersistMode.kPersistParameters);
-
-    hingeEncoder = intakeHinge.getEncoder();
-
-    intakeHingeController = intakeHinge.getClosedLoopController();
-
-    System.out.println("Intake subsystem initialized.");
+    System.out.println("[Intake] Initializing Intake Subsystem...");
+    IntakeMotor.setInverted(MechanismConstants.IntakeMotor_Inverted);
+    IntakeHinge.setInverted(MechanismConstants.IntakeHinge_Inverted);
+    System.out.println("[Intake] Intake Subsystem Initialized!");
   }
 
-  /** Runs intake motor to intake fuel. */
   public void IntakeFuel() {
     intakeMotor.set(IntakeConstants.kIntake_Speed);
   }
@@ -68,11 +53,16 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Intake Hinge Position", hingeEncoder.getPosition());
-    SmartDashboard.putNumber("Intake Hinge Speed", intakeHinge.get());
-    SmartDashboard.putNumber("Intake Hinge Current", intakeHinge.getOutputCurrent());
-    SmartDashboard.putNumber("Intake Motor Speed", intakeMotor.get());
-    SmartDashboard.putNumber("Intake Motor Current", intakeMotor.getOutputCurrent());
+    // IntakeMotor telemetry
+    Logger.recordOutput("Intake/Intake/Motor Output", IntakeMotor.get());
+    Logger.recordOutput("Intake/Intake/Current", IntakeMotor.getOutputCurrent());
+    Logger.recordOutput("Intake/Intake/Temperature", IntakeMotor.getMotorTemperature());
+
+    // IntakeHinge telemetry
+    Logger.recordOutput("Intake/Hinge/Motor Output", IntakeHinge.get());
+    Logger.recordOutput("Intake/Hinge/Current", IntakeHinge.getOutputCurrent());
+    Logger.recordOutput("Intake/Hinge/Temperature", IntakeHinge.getMotorTemperature());
+    Logger.recordOutput("Intake/Hinge/Encoder", IntakeHinge.getEncoder().getPosition());
+    Logger.recordOutput("Intake/Hinge/Velocity", IntakeHinge.getEncoder().getVelocity());
   }
 }

@@ -108,7 +108,7 @@ public class Drivetrain extends SubsystemBase {
               DrivebaseConstants.TOP_SPEED_METERS_PER_SEC,
               DrivebaseConstants.WHEEL_FRICTION_COEFFICIENT,
               DCMotor.getKrakenX60(1).withReduction(DrivebaseConstants.DRIVE_GEAR_RATIO),
-              DrivebaseConstants.MAX_CURRENT_AMPS,
+              DrivebaseConstants.MAX_DRIVE_CURRENT_SUPPLY_AMPS,
               1),
           getModuleTranslations());
 
@@ -119,6 +119,7 @@ public class Drivetrain extends SubsystemBase {
    * @param initialPose The initial pose of the robot
    */
   public Drivetrain(Supplier<Rotation2d> gyroSupplier, Pose2d initialPose) {
+    System.out.println("[Swerve] Initializing Swerve Drive...");
     this.m_gyroSupplier = gyroSupplier;
 
     m_lastPos =
@@ -174,6 +175,7 @@ public class Drivetrain extends SubsystemBase {
         },
         // Reference to this subsystem to set requirements
         this);
+    System.out.println("[Swerve] Swerve Drive Initialized!");
   }
 
   /**
@@ -203,6 +205,12 @@ public class Drivetrain extends SubsystemBase {
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_backLeft.setDesiredState(swerveModuleStates[2]);
     m_backRight.setDesiredState(swerveModuleStates[3]);
+
+    // Horrible hack to get the modules to stop spinning if no drive input.
+    // Another horrible hack to check if we are in auto or teleop
+    if (DriverStation.isTeleop() && ((xSpeed == 0) && (ySpeed == 0) && (rot == 0))) {
+      stopModules();
+    }
   }
 
   /** Updates the field relative position of the robot. */
@@ -279,53 +287,36 @@ public class Drivetrain extends SubsystemBase {
     m_backLeft.updateSmartDashboard();
     m_backRight.updateSmartDashboard();
 
-    m_frontLeft.logSwerveModule();
-    m_frontRight.logSwerveModule();
-    m_backLeft.logSwerveModule();
-    m_backRight.logSwerveModule();
-
     // Robot pose information
     Pose2d currentPose = getPose();
-    SmartDashboard.putNumber("Robot X (m)", currentPose.getX());
-    SmartDashboard.putNumber("Robot Y (m)", currentPose.getY());
-    SmartDashboard.putNumber("Robot Rotation (deg)", currentPose.getRotation().getDegrees());
-    Logger.recordOutput("Robot X (m)", currentPose.getX());
-    Logger.recordOutput("Robot Y (m)", currentPose.getY());
-    Logger.recordOutput("Robot Rotation (deg)", currentPose.getRotation().getDegrees());
+    Logger.recordOutput("Swerve/Robot X (m)", currentPose.getX());
+    Logger.recordOutput("Swerve/Robot Y (m)", currentPose.getY());
+    Logger.recordOutput("Swerve/Robot Rotation (deg)", currentPose.getRotation().getDegrees());
 
     // Gyro information
-    SmartDashboard.putNumber("Gyro Angle (deg)", m_gyroSupplier.get().getDegrees());
-    Logger.recordOutput("Gyro Angle (deg)", m_gyroSupplier.get().getDegrees());
+    Logger.recordOutput("Swerve/Gyro Angle (deg)", m_gyroSupplier.get().getDegrees());
 
     // Current chassis speeds
     ChassisSpeeds speeds = getChassisSpeeds();
-    SmartDashboard.putNumber("Chassis X Speed (m/s)", speeds.vxMetersPerSecond);
-    SmartDashboard.putNumber("Chassis Y Speed (m/s)", speeds.vyMetersPerSecond);
-    SmartDashboard.putNumber("Chassis Angular Speed (rad/s)", speeds.omegaRadiansPerSecond);
-    Logger.recordOutput("Chassis X Speed (m/s)", speeds.vxMetersPerSecond);
-    Logger.recordOutput("Chassis Y Speed (m/s)", speeds.vyMetersPerSecond);
-    Logger.recordOutput("Chassis Angular Speed (rad/s)", speeds.omegaRadiansPerSecond);
+    Logger.recordOutput("Swerve/Chassis X Speed (m/s)", speeds.vxMetersPerSecond);
+    Logger.recordOutput("Swerve/Chassis Y Speed (m/s)", speeds.vyMetersPerSecond);
+    Logger.recordOutput("Swerve/Chassis Angular Speed (rad/s)", speeds.omegaRadiansPerSecond);
 
     // Module states for debugging
-    SmartDashboard.putNumber("FL Speed (m/s)", m_frontLeft.getSwerveState().speedMetersPerSecond);
-    SmartDashboard.putNumber("FL Angle (deg)", m_frontLeft.getSwerveState().angle.getDegrees());
-    Logger.recordOutput("FL Speed (m/s)", m_frontLeft.getSwerveState().speedMetersPerSecond);
-    Logger.recordOutput("FL Angle (deg)", m_frontLeft.getSwerveState().angle.getDegrees());
+    Logger.recordOutput("Swerve/FL/Speed (m/s)", m_frontLeft.getSwerveState().speedMetersPerSecond);
+    Logger.recordOutput("Swerve/FL/Angle (deg)", m_frontLeft.getSwerveState().angle.getDegrees());
 
-    SmartDashboard.putNumber("FR Speed (m/s)", m_frontRight.getSwerveState().speedMetersPerSecond);
-    SmartDashboard.putNumber("FR Angle (deg)", m_frontRight.getSwerveState().angle.getDegrees());
-    Logger.recordOutput("FL Speed (m/s)", m_frontLeft.getSwerveState().speedMetersPerSecond);
-    Logger.recordOutput("FL Angle (deg)", m_frontLeft.getSwerveState().angle.getDegrees());
+    Logger.recordOutput(
+        "Swerve/FR/Speed (m/s)", m_frontRight.getSwerveState().speedMetersPerSecond);
+    Logger.recordOutput("Swerve/FR/Angle (deg)", m_frontRight.getSwerveState().angle.getDegrees());
 
-    SmartDashboard.putNumber("BL Speed (m/s)", m_backLeft.getSwerveState().speedMetersPerSecond);
-    SmartDashboard.putNumber("BL Angle (deg)", m_backLeft.getSwerveState().angle.getDegrees());
-    Logger.recordOutput("BL Speed (m/s)", m_backLeft.getSwerveState().speedMetersPerSecond);
-    Logger.recordOutput("BL Angle (deg)", m_backLeft.getSwerveState().angle.getDegrees());
+    Logger.recordOutput("Swerve/BL/Speed (m/s)", m_backLeft.getSwerveState().speedMetersPerSecond);
+    Logger.recordOutput("Swerve/BL/Angle (deg)", m_backLeft.getSwerveState().angle.getDegrees());
 
-    SmartDashboard.putNumber("BR Speed (m/s)", m_backRight.getSwerveState().speedMetersPerSecond);
-    SmartDashboard.putNumber("BR Angle (deg)", m_backRight.getSwerveState().angle.getDegrees());
-    Logger.recordOutput("BR Speed (m/s)", m_backRight.getSwerveState().speedMetersPerSecond);
-    Logger.recordOutput("BR Angle (deg)", m_backRight.getSwerveState().angle.getDegrees());
+    Logger.recordOutput("Swerve/BR/Speed (m/s)", m_backRight.getSwerveState().speedMetersPerSecond);
+    Logger.recordOutput("Swerve/BR/Angle (deg)", m_backRight.getSwerveState().angle.getDegrees());
+
+    // Add swerve module states to Elastic
 
     // Control buttons
     handleSmartDashboardButtons();

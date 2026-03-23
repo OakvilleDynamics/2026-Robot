@@ -4,32 +4,38 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MechanismConstants;
-import frc.robot.Constants.MechanismConstants.IndexerConstants;
+import org.littletonrobotics.junction.Logger;
 
 public class Index extends SubsystemBase {
   private final SparkFlex IndexMotor =
       new SparkFlex(MechanismConstants.kIndexMotor, SparkLowLevel.MotorType.kBrushless);
 
   public Index() {
-    IndexMotor.setInverted(IndexerConstants.kIndex_Inverted);
-
-    System.out.println("Index subsystem initialized.");
+    System.out.println("[Index] Initializing Index Subsystem...");
+    IndexMotor.setInverted(MechanismConstants.Index_Inverted);
+    System.out.println("[Index] Index Subsystem Initialized!");
   }
 
+  /** Runs the indexer to the shooter */
   public void IndexMove() {
     IndexMotor.set(IndexerConstants.kIndex_Speed);
   }
 
+  /** Runs the indexer in reverse to clear jams */
   public void IndexReverse() {
     IndexMotor.set(-IndexerConstants.kIndex_Speed);
   }
 
+  /** Stops the indexer motor */
   public void IndexStop() {
     IndexMotor.set(0);
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    // Index motor telemetry
+    Logger.recordOutput("Index/Motor Output", IndexMotor.get());
+    Logger.recordOutput("Index/Current", IndexMotor.getOutputCurrent());
+    Logger.recordOutput("Index/Temperature", IndexMotor.getMotorTemperature());
   }
 }

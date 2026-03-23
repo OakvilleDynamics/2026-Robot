@@ -6,6 +6,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
@@ -44,14 +45,11 @@ public final class Constants {
     // Top Speed (calculated from motor free speed, wheel diameter & gear ratio)
     public static final double TOP_SPEED_MOTOR_RPM = 6000;
     public static final double TOP_SPEED_METERS_PER_SEC =
-        TOP_SPEED_MOTOR_RPM
-            * WHEEL_DIAMETER_METERS
-            * Math.PI
-            / DRIVE_GEAR_RATIO
-            / 60; // = 4.729 m/s
+        TOP_SPEED_MOTOR_RPM * WHEEL_DIAMETER_METERS * Math.PI / DRIVE_GEAR_RATIO / 60; // = 5.51 m/s
 
     // Electrical constants
-    public static final double MAX_CURRENT_AMPS = 30.0;
+    public static final double MAX_DRIVE_CURRENT_SUPPLY_AMPS = 60.0;
+    public static final double MAX_DRIVE_CURRENT_STATOR_AMPS = 60.0;
 
     // Module locations from center of robot
     private static final double HALF_WIDTH = DRIVE_BASE_WIDTH_METERS / 2.0;
@@ -155,7 +153,7 @@ public final class Constants {
     public static final int kCOPILOT_CONTROLLER = 1;
 
     // Joystick Deadband
-    public static final double kDEADBAND = 0.1;
+    public static final double kDEADBAND = 0.2;
     public static final double kLEFT_Y_DEADBAND = 0.1;
     public static final double kRIGHT_X_DEADBAND = 0.1;
     public static final double kTURN_CONSTANT = 6;
@@ -238,75 +236,20 @@ public final class Constants {
     public static final int kIndexMotor = 14;
     public static final int ClimberMotor = 21;
 
-    /** Constants for the shooter mechanism. */
-    public static class ShooterConstants {
-      public static final double kShooter_Speed1 = 0.8;
-      public static final double kShooter_Speed2 = 0.4;
-      public static final InvertedValue kShooterMotor_Inverted = InvertedValue.Clockwise_Positive;
+    // Inverts
+    public static final InvertedValue ShooterMotor_Inverted =
+        InvertedValue.CounterClockwise_Positive;
+    public static final boolean IntakeMotor_Inverted = false;
+    public static final boolean IntakeHinge_Inverted = false;
+    public static final boolean Index_Inverted = false;
+    public static final boolean ClimberMotor_Inverted = false;
 
-      // Static gain, the minimum voltage needed to overcome friction and start the motor moving
-      public static final double kShooter_kS = 0.2;
-      // Velocity gain, the voltage needed to maintain a certain velocity (V = kV * velocity)
-      public static final double kShooter_kV = 0.1;
-      // Proportional gain, the voltage added based on the error between the target
-      // velocity and the actual velocity (V = kP * error)
-      public static final double kShooter_kP = 0.5;
-      // Integral gain, the voltage added based on the accumulated error over time (V = kI *
-      // integral of error)
-      public static final double kShooter_kI = 0.001;
-      // Derivative gain, the voltage added based on the rate of change of the error (V = kD *
-      // derivative of error)
-      public static final double kShooter_kD = 5;
-    }
-
-    /** Constants for the indexer mechanism. */
-    public static class IndexerConstants {
-      public static final double kIndex_Speed = 0.3;
-      public static final boolean kIndex_Inverted = false;
-
-      public static final SparkFlexConfig kIndexerConfig = new SparkFlexConfig();
-
-      static {
-        kIndexerConfig
-            .idleMode(IdleMode.kBrake)
-            .smartCurrentLimit(20)
-            .voltageCompensation(12)
-            .openLoopRampRate(0.5);
-      }
-    }
-
-    /** Constants for the intake mechanism. */
-    public static class IntakeConstants {
-      public static final double kIntake_Speed = 0.5;
-      public static final double kIntake_Hinge_Speed = 0.5;
-      public static final boolean kIntakeMotor_Inverted = false;
-      public static final boolean kIntakeHinge_Inverted = false;
-
-      public static final SparkFlexConfig kIntakeMotorConfig = new SparkFlexConfig();
-
-      static {
-        kIntakeMotorConfig
-            .idleMode(IdleMode.kBrake)
-            .smartCurrentLimit(20)
-            .voltageCompensation(12)
-            .openLoopRampRate(0.5);
-      }
-
-      public static final SparkFlexConfig kIntakeHingeConfig = new SparkFlexConfig();
-
-      static {
-        kIntakeHingeConfig
-            .idleMode(IdleMode.kBrake)
-            .smartCurrentLimit(20)
-            .voltageCompensation(12)
-            .openLoopRampRate(0.5);
-      }
-    }
-
-    /** Constants for the climber mechanism. */
-    public static class ClimberConstants {
-      public static final boolean ClimberMotor_Inverted = false;
-      public static final double Climber_Speed = 1.0;
-    }
+    // Motor speeds ~~ Change as needed
+    public static final double Shooter_Speed1 = 0.6;
+    public static final double Shooter_Speed2 = 0.4;
+    public static final double Intake_Speed = 0.8;
+    public static final double Intake_Hinge_Speed = 0.8;
+    public static final double Index_Speed = 0.3;
+    public static final double Climber_Speed = 1.0;
   }
 }
