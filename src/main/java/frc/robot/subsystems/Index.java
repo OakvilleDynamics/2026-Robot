@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
+
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MechanismConstants;
 import org.littletonrobotics.junction.Logger;
@@ -34,8 +36,8 @@ public class Index extends SubsystemBase {
   @Override
   public void periodic() {
     // Index motor telemetry
-    Logger.recordOutput("Index/Motor Output", IndexMotor.get());
-    Logger.recordOutput("Index/Current", IndexMotor.getOutputCurrent());
-    Logger.recordOutput("Index/Temperature", IndexMotor.getMotorTemperature());
+    Logger.recordOutput("Index/Output", IndexMotor.get());
+    Logger.recordOutput("Index/Current", IndexMotor.getOutputCurrent(), Units.Amps);
+    Logger.recordOutput("Index/Temperature", IndexMotor.getMotorTemperature(), Units.Celsius);
   }
 }

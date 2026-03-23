@@ -14,6 +14,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import frc.robot.Constants.DrivebaseConstants;
 import frc.robot.Constants.DrivebaseConstants.ModuleConstants;
@@ -124,7 +125,7 @@ public class SwerveModule {
     // Apply motor configuration
     m_driveMotor.getConfigurator().apply(m_driveMotorConfig);
 
-    System.out.println("[Swerve]" + m_moduleName + " drive motor configured successfully!");
+    System.out.println("[Swerve] " + m_moduleName + " drive motor configured successfully!");
   }
 
   /** Configure the azimuth motor based on encoder type */
@@ -326,7 +327,7 @@ public class SwerveModule {
   }
 
   /** Update SmartDashboard with module information and handle zero button */
-  public void updateSmartDashboard() {
+  public void updateLogger() {
     String moduleAbbr = "";
 
     if (m_moduleName.contains("Front Left")) {
@@ -342,53 +343,83 @@ public class SwerveModule {
     // Display encoder values
     Logger.recordOutput("Swerve/" + moduleAbbr + "/Raw Encoder (ticks)", getRawEncoderTicks());
     Logger.recordOutput(
-        "Swerve/" + moduleAbbr + "/Position (deg)", Math.toDegrees(getEncoderPosition()));
-    Logger.recordOutput("Swerve/" + moduleAbbr + "/Position (rad)", getEncoderPosition());
+        "Swerve/" + moduleAbbr + "/Position (deg)",
+        Math.toDegrees(getEncoderPosition()),
+        Units.Degrees);
     Logger.recordOutput(
-        "Swerve/" + moduleAbbr + "/Desired Angle (rad)", m_desiredAngle.getRadians());
+        "Swerve/" + moduleAbbr + "/Position (rad)", getEncoderPosition(), Units.Radians);
+    Logger.recordOutput(
+        "Swerve/" + moduleAbbr + "/Desired Angle (rad)",
+        m_desiredAngle.getRadians(),
+        Units.Radians);
 
     // Display offset info based on encoder type
     if (ModuleConstants.ENCODER_SELECTED
         == DrivebaseConstants.EncoderType.THRIFTY_ABSOLUTE_ENCODER) {
       Logger.recordOutput("Swerve/" + moduleAbbr + "/Java Offset (ticks)", m_encoderOffsetTicks);
       Logger.recordOutput(
-          "Swerve/" + moduleAbbr + "/Java Offset (deg)", ticksToDegrees(m_encoderOffsetTicks));
+          "Swerve/" + moduleAbbr + "/Java Offset (deg)",
+          ticksToDegrees(m_encoderOffsetTicks),
+          Units.Degrees);
     }
 
     // Raw encoder readings from ThriftyNova (in rotations, 0-1 range)
     Logger.recordOutput(
         "Swerve/" + moduleAbbr + "/Raw getPositionAbs (rotations)",
-        m_azimuthMotor.getPositionAbs());
+        m_azimuthMotor.getPositionAbs(),
+        Units.Rotations);
     Logger.recordOutput(
-        "Swerve/" + moduleAbbr + "/Raw getPosition (rotations)", m_azimuthMotor.getPosition());
+        "Swerve/" + moduleAbbr + "/Raw getPosition (rotations)",
+        m_azimuthMotor.getPosition(),
+        Units.Rotations);
     Logger.recordOutput(
         "Swerve/" + moduleAbbr + "/Raw getPositionInternal (rotations)",
-        m_azimuthMotor.getPositionInternal());
+        m_azimuthMotor.getPositionInternal(),
+        Units.Rotations);
     Logger.recordOutput(
         "Swerve/" + moduleAbbr + "/Raw as Ticks (x4096)",
         m_azimuthMotor.getPositionAbs() * m_encoderTicksPerRevolution);
 
     // Display drive motor info
     Logger.recordOutput(
-        "Swerve/" + moduleAbbr + "/Drive Velocity", getSwerveState().speedMetersPerSecond);
+        "Swerve/" + moduleAbbr + "/Drive Velocity",
+        getSwerveState().speedMetersPerSecond,
+        Units.MetersPerSecond);
     Logger.recordOutput(
-        "Swerve/" + moduleAbbr + "/Drive Position", getSwervePosition().distanceMeters);
+        "Swerve/" + moduleAbbr + "/Drive Position",
+        getSwervePosition().distanceMeters,
+        Units.Meters);
 
     // Drive motor health info
     Logger.recordOutput("Swerve/" + moduleAbbr + "/Drive Motor Output", m_driveMotor.get());
     Logger.recordOutput(
-        "Swerve/" + moduleAbbr + "/Drive Motor Current",
-        m_driveMotor.getStatorCurrent().getValueAsDouble());
+        "Swerve/" + moduleAbbr + "/Drive Motor Stator Current",
+        m_driveMotor.getStatorCurrent().getValueAsDouble(),
+        Units.Amps);
+    Logger.recordOutput(
+        "Swerve/" + moduleAbbr + "/Drive Motor Supply Current",
+        m_driveMotor.getSupplyCurrent().getValueAsDouble(),
+        Units.Amps);
+    Logger.recordOutput(
+        "Swerve/" + moduleAbbr + "/Drive Motor Torque Current",
+        m_driveMotor.getTorqueCurrent().getValueAsDouble(),
+        Units.Amps);
     Logger.recordOutput(
         "Swerve/" + moduleAbbr + "/Drive Motor Temperature",
-        m_driveMotor.getStatorCurrent().getValueAsDouble());
+        m_driveMotor.getDeviceTemp().getValueAsDouble(),
+        Units.Celsius);
 
     // Angle motor health info
-    Logger.recordOutput("Swerve/" + moduleAbbr + "/Azimuth Motor Output", m_azimuthMotor.get());
     Logger.recordOutput(
-        "Swerve/" + moduleAbbr + "/Azimuth Motor Current", m_azimuthMotor.getStatorCurrent());
+        "Swerve/" + moduleAbbr + "/Azimuth Motor Output", m_azimuthMotor.getAppliedPower());
     Logger.recordOutput(
-        "Swerve/" + moduleAbbr + "/Azimuth Motor Temperature", m_azimuthMotor.getTemperature());
+        "Swerve/" + moduleAbbr + "/Azimuth Motor Current",
+        m_azimuthMotor.getStatorCurrent(),
+        Units.Amps);
+    Logger.recordOutput(
+        "Swerve/" + moduleAbbr + "/Azimuth Motor Temperature",
+        m_azimuthMotor.getTemperature(),
+        Units.Celsius);
   }
 
   // Utility methods for unit conversions
