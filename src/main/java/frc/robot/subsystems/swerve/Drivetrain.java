@@ -438,8 +438,8 @@ public class Drivetrain extends SubsystemBase {
     SwerveModuleState[] setpointStates = m_kinematics.toSwerveModuleStates(discreteSpeeds);
 
     // Log unoptimized setpoints and setpoint speeds
-    Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
-    Logger.recordOutput("SwerveChassisSpeeds/Setpoints", discreteSpeeds);
+    Logger.recordOutput("Swerve/Swerve States/Setpoints", setpointStates);
+    Logger.recordOutput("Swerve/Chassis Speeds/Setpoints", discreteSpeeds);
 
     // Send setpoints to modules
     m_frontLeft.setDesiredState(setpointStates[0]);
@@ -448,6 +448,6 @@ public class Drivetrain extends SubsystemBase {
     m_backRight.setDesiredState(setpointStates[3]);
 
     // Log optimized setpoints (runSetpoint mutates each state)
-    Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
+    Logger.recordOutput("Swerve/Swerve States/SetpointsOptimized", setpointStates);
   }
 }

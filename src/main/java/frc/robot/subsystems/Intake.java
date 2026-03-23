@@ -11,25 +11,25 @@ import org.littletonrobotics.junction.Logger;
 // Very basic intake process, changes to be made accordingly
 
 public class Intake extends SubsystemBase {
-  private final SparkFlex IntakeMotor =
-      new SparkFlex(MechanismConstants.IntakeMotor, SparkLowLevel.MotorType.kBrushless);
+  private final SparkFlex IntakeRoller =
+      new SparkFlex(MechanismConstants.IntakeRoller, SparkLowLevel.MotorType.kBrushless);
 
   public final SparkFlex IntakeHinge =
       new SparkFlex(MechanismConstants.IntakeHinge, SparkLowLevel.MotorType.kBrushless);
 
   public Intake() {
     System.out.println("[Intake] Initializing Intake Subsystem...");
-    IntakeMotor.setInverted(MechanismConstants.IntakeMotor_Inverted);
+    IntakeRoller.setInverted(MechanismConstants.IntakeRoller_Inverted);
     IntakeHinge.setInverted(MechanismConstants.IntakeHinge_Inverted);
     System.out.println("[Intake] Intake Subsystem Initialized!");
   }
 
   public void IntakeFuel() {
-    IntakeMotor.set(MechanismConstants.Intake_Speed);
+    IntakeRoller.set(MechanismConstants.Intake_Speed);
   }
 
   public void IntakeSpit() {
-    IntakeMotor.set(-MechanismConstants.Intake_Speed);
+    IntakeRoller.set(-MechanismConstants.Intake_Speed);
   }
 
   public void IntakeUp() {
@@ -41,16 +41,16 @@ public class Intake extends SubsystemBase {
   }
 
   public void IntakeStop() {
-    IntakeMotor.set(0);
+    IntakeRoller.set(0);
     IntakeHinge.set(0);
   }
 
   @Override
   public void periodic() {
-    // IntakeMotor telemetry
-    Logger.recordOutput("Intake/Roller/Motor Output", IntakeMotor.get());
-    Logger.recordOutput("Intake/Roller/Current", IntakeMotor.getOutputCurrent(), Units.Amps);
-    Logger.recordOutput("Intake/Roller/Temperature", IntakeMotor.getMotorTemperature(), Units.Celsius);
+    // IntakeRoller telemetry
+    Logger.recordOutput("Intake/Roller/Motor Output", IntakeRoller.get());
+    Logger.recordOutput("Intake/Roller/Current", IntakeRoller.getOutputCurrent(), Units.Amps);
+    Logger.recordOutput("Intake/Roller/Temperature", IntakeRoller.getMotorTemperature(), Units.Celsius);
 
     // IntakeHinge telemetry
     Logger.recordOutput("Intake/Hinge/Motor Output", IntakeHinge.get());
