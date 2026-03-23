@@ -229,7 +229,7 @@ public final class Constants {
 
   public static class MechanismConstants {
     // Subsystem CAN IDs
-    public static final int IntakeMotor = 11;
+    public static final int IntakeRoller = 11;
     public static final int IntakeHinge = 12;
     public static final int ShooterMotor = 13;
     public static final int IndexMotor = 14;
@@ -238,7 +238,7 @@ public final class Constants {
     // Inverts
     public static final InvertedValue ShooterMotor_Inverted =
         InvertedValue.CounterClockwise_Positive;
-    public static final boolean IntakeMotor_Inverted = false;
+    public static final boolean IntakeRoller_Inverted = false;
     public static final boolean IntakeHinge_Inverted = false;
     public static final boolean Index_Inverted = false;
     public static final boolean ClimberMotor_Inverted = false;
