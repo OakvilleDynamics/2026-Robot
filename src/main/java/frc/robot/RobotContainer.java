@@ -19,6 +19,9 @@ import frc.robot.Constants.DrivebaseConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ClimberCommand;
 import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Index;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.swerve.Drivetrain;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -30,10 +33,10 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  // private final Shooter m_Shooter = new Shooter();
+  private final Shooter m_Shooter = new Shooter();
   private final Climber m_Climber = new Climber();
-  // private final Index m_Index = new Index();
-  // private final Intake m_Intake = new Intake();
+  private final Index m_Index = new Index();
+  private final Intake m_Intake = new Intake();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final CommandXboxController m_Driver_Controller =
@@ -149,11 +152,6 @@ public class RobotContainer {
 
     // Set the default auto (do nothing)
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
-    // Set default commands for subsystems
-    // m_Shooter.setDefaultCommand(new ShooterCommand(m_Shooter));
-    m_Climber.setDefaultCommand(new ClimberCommand(m_Climber));
-    // m_Index.setDefaultCommand(new IndexCommand(m_Index));
-    // m_Intake.setDefaultCommand(new IntakeCommand(m_Intake));
   }
 
   /**
@@ -167,29 +165,35 @@ public class RobotContainer {
    */
   private void configureBindings() {
     // Driver Controller binds (Xbox)
-    m_Driver_Controller.a().whileTrue(Commands.runOnce(m_swerve::setX, m_swerve).repeatedly());
+    // A, B, X, Y buttons
+    m_Driver_Controller.a().whileTrue(Commands.none());
     m_Driver_Controller.b().whileTrue(Commands.none());
-    m_Driver_Controller.x().whileTrue(Commands.none());
+    m_Driver_Controller.x().whileTrue(Commands.runOnce(m_swerve::setX, m_swerve).repeatedly());
     m_Driver_Controller.y().whileTrue(Commands.none());
-    m_Driver_Controller.leftBumper().whileTrue(slowedDrive).onFalse(normalDrive);
 
-    // // Copilot Controller binds (Joystick)
-    // m_Copilot_Controller.trigger().whileTrue(Commands.runOnce(m_Intake::IntakeFuel,
-    // m_Intake).repeatedly());
-    // m_Copilot_Controller.top().whileTrue(Commands.runOnce(m_Intake::IntakeSpit,
-    // m_Intake).repeatedly());
-    // m_Copilot_Controller.button(3).whileTrue(Commands.runOnce(m_Index::IndexReverse,
-    // m_Index).repeatedly());
-    // m_Copilot_Controller.button(4).whileTrue(Commands.runOnce(m_Index::IndexMove,
-    // m_Index).repeatedly());
-    // m_Copilot_Controller.button(7).whileTrue(Commands.runOnce(m_Intake::IntakeUp,
-    // m_Intake).repeatedly());
-    // m_Copilot_Controller.button(8).whileTrue(Commands.runOnce(m_Intake::IntakeDown,
-    // m_Intake).repeatedly());
-    // m_Copilot_Controller.button(10).whileTrue(Commands.runOnce(m_Climber::Climb,
-    // m_Climber).repeatedly());
-    // m_Copilot_Controller.button(11).whileTrue(Commands.runOnce(m_Climber::Descend,
-    // m_Climber).repeatedly());
+    // Bumpers
+    m_Driver_Controller.leftBumper().whileTrue(slowedDrive).onFalse(normalDrive);
+    m_Driver_Controller.rightBumper().whileTrue(Commands.none());
+
+    // POV (D-pad)
+    m_Driver_Controller.povUp().whileTrue(Commands.none());
+    m_Driver_Controller.povDown().whileTrue(Commands.none());
+    m_Driver_Controller.povLeft().whileTrue(Commands.none());
+    m_Driver_Controller.povRight().whileTrue(Commands.none());
+
+    // Start/Back buttons
+    m_Driver_Controller.start().whileTrue(Commands.none());
+    m_Driver_Controller.back().onTrue(Commands.runOnce(m_swerve::zeroGyro, m_swerve));
+
+    // Copilot Controller binds (Joystick)
+    m_Copilot_Controller.trigger().whileTrue(Commands.runOnce(m_Intake::IntakeFuel, m_Intake).repeatedly());
+    m_Copilot_Controller.top().whileTrue(Commands.runOnce(m_Intake::IntakeSpit, m_Intake).repeatedly());
+    m_Copilot_Controller.button(3).whileTrue(Commands.runOnce(m_Index::IndexReverse, m_Index).repeatedly());
+    m_Copilot_Controller.button(4).whileTrue(Commands.runOnce(m_Index::IndexMove, m_Index).repeatedly());
+    m_Copilot_Controller.button(7).whileTrue(Commands.runOnce(m_Intake::IntakeUp, m_Intake).repeatedly());
+    m_Copilot_Controller.button(8).whileTrue(Commands.runOnce(m_Intake::IntakeDown, m_Intake).repeatedly());
+    m_Copilot_Controller.button(10).whileTrue(Commands.runOnce(m_Climber::Climb, m_Climber).repeatedly());
+    m_Copilot_Controller.button(11).whileTrue(Commands.runOnce(m_Climber::Descend, m_Climber).repeatedly());
   }
 
   /** This method sets subsystem commands */

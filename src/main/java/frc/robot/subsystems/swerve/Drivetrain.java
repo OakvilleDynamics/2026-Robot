@@ -261,6 +261,11 @@ public class Drivetrain extends SubsystemBase {
     m_backRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
   }
 
+  /** Zeros the gyro to reset the robot's heading to zero. */
+  public void zeroGyro() {
+    pigeon.setYaw(0);
+  }
+
   /** Gets current chassis speeds */
   public ChassisSpeeds getChassisSpeeds() {
     return m_kinematics.toChassisSpeeds(
