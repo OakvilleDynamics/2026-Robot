@@ -39,7 +39,7 @@ import org.littletonrobotics.junction.Logger;
 
 /** Represents a swerve drive style drivetrain. */
 public class Drivetrain extends SubsystemBase {
-  public static final double kMaxAngularSpeed = Math.PI; // 1/2 rotation per second
+  public static final double kMaxAngularSpeed = Math.PI * 4; // 1/2 rotation per second
   public static final Pigeon2 pigeon = new Pigeon2(1);
 
   private final SwerveModule m_frontLeft =
