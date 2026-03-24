@@ -19,6 +19,7 @@ import frc.robot.Constants.DrivebaseConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ClimberCommand;
 import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.swerve.Drivetrain;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -34,6 +35,7 @@ public class RobotContainer {
   private final Climber m_Climber = new Climber();
   // private final Index m_Index = new Index();
   // private final Intake m_Intake = new Intake();
+  private final Vision m_Vision = new Vision();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final CommandXboxController m_Driver_Controller =
@@ -132,6 +134,24 @@ public class RobotContainer {
           },
           m_swerve);
 
+  RunCommand turnToTarget =
+      new RunCommand(
+          () -> {
+            // Get the latest camera data
+            m_Vision.getAprilTagData(m_Vision.getClimberCamera());
+
+            if (m_Vision.isTargetVisible()) {
+              // If a target is visible, turn to it
+              double targetAngle =
+                  m_Vision.getTargetYaw(); // Assuming this returns the angle to the target
+              m_swerve.drive(0, 0, targetAngle * 0.01, true, 0.02); // Proportional control
+            } else {
+              // If no target is visible, stop turning
+              m_swerve.drive(0, 0, 0, true, 0.02);
+            }
+          },
+          m_swerve);
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
@@ -172,6 +192,7 @@ public class RobotContainer {
     m_Driver_Controller.x().whileTrue(Commands.none());
     m_Driver_Controller.y().whileTrue(Commands.none());
     m_Driver_Controller.leftBumper().whileTrue(slowedDrive).onFalse(normalDrive);
+    m_Driver_Controller.rightBumper().whileTrue(turnToTarget).onFalse(normalDrive);
 
     // // Copilot Controller binds (Joystick)
     // m_Copilot_Controller.trigger().whileTrue(Commands.runOnce(m_Intake::IntakeFuel,
