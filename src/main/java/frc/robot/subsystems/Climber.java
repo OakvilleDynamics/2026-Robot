@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MechanismConstants;
 import org.littletonrobotics.junction.Logger;
@@ -66,7 +67,7 @@ public class Climber extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     Logger.recordOutput("Climber/Output", ClimberMotor.getMotorOutputPercent());
-    Logger.recordOutput("Climber/Current", ClimberMotor.getStatorCurrent());
-    Logger.recordOutput("Climber/Motor Temperature", ClimberMotor.getTemperature());
+    Logger.recordOutput("Climber/Current", ClimberMotor.getStatorCurrent(), Units.Amps);
+    Logger.recordOutput("Climber/Motor Temperature", ClimberMotor.getTemperature(), Units.Celsius);
   }
 }

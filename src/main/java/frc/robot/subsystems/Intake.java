@@ -5,34 +5,34 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import com.revrobotics.spark.SparkLowLevel;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MechanismConstants;
 import org.littletonrobotics.junction.Logger;
 
 // Very basic intake process, changes to be made accordingly
 public class Intake extends SubsystemBase {
-  private SparkFlex intakeMotor =
-      new SparkFlex(MechanismConstants.kIntakeMotor, MotorType.kBrushless);
+  private final SparkFlex IntakeRoller =
+      new SparkFlex(MechanismConstants.IntakeRoller, SparkLowLevel.MotorType.kBrushless);
 
   private SparkFlex intakeHinge =
       new SparkFlex(MechanismConstants.kIntakeHinge, MotorType.kBrushless);
 
   public Intake() {
     System.out.println("[Intake] Initializing Intake Subsystem...");
-    IntakeMotor.setInverted(MechanismConstants.IntakeMotor_Inverted);
+    IntakeRoller.setInverted(MechanismConstants.IntakeRoller_Inverted);
     IntakeHinge.setInverted(MechanismConstants.IntakeHinge_Inverted);
     System.out.println("[Intake] Intake Subsystem Initialized!");
   }
 
   public void IntakeFuel() {
-    intakeMotor.set(IntakeConstants.kIntake_Speed);
+    IntakeRoller.set(MechanismConstants.Intake_Speed);
   }
 
   /** Expells fuel from the intake. */
   public void IntakeSpit() {
-    intakeMotor.set(-IntakeConstants.kIntake_Speed);
+    IntakeRoller.set(-MechanismConstants.Intake_Speed);
   }
 
   /** Sets the hinge of the intake mechanism to move up. */
@@ -47,22 +47,24 @@ public class Intake extends SubsystemBase {
 
   /** Stops intake subsystem entirely. */
   public void IntakeStop() {
-    intakeMotor.set(0);
-    intakeHinge.set(0);
+    IntakeRoller.set(0);
+    IntakeHinge.set(0);
   }
 
   @Override
   public void periodic() {
-    // IntakeMotor telemetry
-    Logger.recordOutput("Intake/Intake/Motor Output", IntakeMotor.get());
-    Logger.recordOutput("Intake/Intake/Current", IntakeMotor.getOutputCurrent());
-    Logger.recordOutput("Intake/Intake/Temperature", IntakeMotor.getMotorTemperature());
+    // IntakeRoller telemetry
+    Logger.recordOutput("Intake/Roller/Motor Output", IntakeRoller.get());
+    Logger.recordOutput("Intake/Roller/Current", IntakeRoller.getOutputCurrent(), Units.Amps);
+    Logger.recordOutput(
+        "Intake/Roller/Temperature", IntakeRoller.getMotorTemperature(), Units.Celsius);
 
     // IntakeHinge telemetry
     Logger.recordOutput("Intake/Hinge/Motor Output", IntakeHinge.get());
-    Logger.recordOutput("Intake/Hinge/Current", IntakeHinge.getOutputCurrent());
-    Logger.recordOutput("Intake/Hinge/Temperature", IntakeHinge.getMotorTemperature());
+    Logger.recordOutput("Intake/Hinge/Current", IntakeHinge.getOutputCurrent(), Units.Amps);
+    Logger.recordOutput(
+        "Intake/Hinge/Temperature", IntakeHinge.getMotorTemperature(), Units.Celsius);
     Logger.recordOutput("Intake/Hinge/Encoder", IntakeHinge.getEncoder().getPosition());
-    Logger.recordOutput("Intake/Hinge/Velocity", IntakeHinge.getEncoder().getVelocity());
+    Logger.recordOutput("Intake/Hinge/Velocity", IntakeHinge.getEncoder().getVelocity(), Units.RPM);
   }
 }
