@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.HardwareConstants;
-import frc.robot.Constants.HardwareConstants.RioState;
 import frc.robot.Constants.RuntimeConstants;
 import frc.robot.misc.Alerts;
 import java.io.File;
@@ -68,15 +67,7 @@ public class Robot extends LoggedRobot {
         // Running on a real robot, log to a local file and to NT
         Logger.addDataReceiver(new WPILOGWriter());
         Logger.addDataReceiver(new NT4Publisher());
-        switch (RioState.getRioSerial()) {
-          case KENOBI_RIO_SERIAL ->
-              LoggedPowerDistribution.getInstance(HardwareConstants.REV_PDH_ID, ModuleType.kRev);
-          case VADER_RIO_SERIAL ->
-              LoggedPowerDistribution.getInstance(HardwareConstants.CTRE_PDP_ID, ModuleType.kCTRE);
-          case UNKNOWN ->
-              LoggedPowerDistribution.getInstance(HardwareConstants.REV_PDH_ID, ModuleType.kRev);
-        }
-        ;
+        LoggedPowerDistribution.getInstance(HardwareConstants.REV_PDH_ID, ModuleType.kRev);
 
         // Check git status and alert if there are uncommitted changes or if not on main branch
         if (BuildConstants.DIRTY == 1) {

@@ -2,85 +2,42 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.List;
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
 
-public class Vision {
-  PhotonCamera climberCamera, shooterCamera, reverseCamera;
-
-  // Array of all cameras for easy iteration
-  PhotonCamera[] cameras = {climberCamera, shooterCamera, reverseCamera};
+public class Vision extends SubsystemBase {
+  PhotonCamera camera;
 
   // Target data
   double targetYaw, targetPitch;
   int targetID;
-
-  boolean isTargetVisible;
+  boolean isTargetVisible = false;
 
   // Assume welded field layout for now, will change if we end up using the non-welded field
   AprilTagFieldLayout aprilTagFieldLayout =
       AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
-  public Vision() {
-    climberCamera = new PhotonCamera("Climber Camera");
-    shooterCamera = new PhotonCamera("Shooter Camera");
-    reverseCamera = new PhotonCamera("Reverse Camera");
+  public Vision(String cameraName, boolean isDriverCamera) {
+    System.out.println("[Vision] Initializing " + cameraName + " camera...");
+    camera = new PhotonCamera(cameraName);
+    camera.setDriverMode(isDriverCamera);
+    System.out.println("[Vision] Camera " + cameraName + " initialized successfully!");
   }
 
-  /**
-   * Gets the climber camera PhotonVision instance.
-   *
-   * @return Climber camera PhotonVision instance.
-   */
-  public PhotonCamera getClimberCamera() {
-    return climberCamera;
+  @Override
+  public void periodic() {
+    getAprilTagData();
   }
 
-  /**
-   * Gets the shooter camera PhotonVision instance.
-   *
-   * @return Shooter camera PhotonVision instance.
-   */
-  public PhotonCamera getShooterCamera() {
-    return shooterCamera;
-  }
-
-  /**
-   * Gets the reverse camera PhotonVision instance.
-   *
-   * @return Reverse camera PhotonVision instance.
-   */
-  public PhotonCamera getReverseCamera() {
-    return reverseCamera;
-  }
-
-  public List<PhotonPipelineResult> getLastCameraResult(PhotonCamera camera) {
+  public List<PhotonPipelineResult> getLastCameraResult() {
     return camera.getAllUnreadResults();
   }
 
-  public void printCameraResults(PhotonCamera camera) {
-    List<PhotonPipelineResult> results = getLastCameraResult(camera);
-    for (PhotonPipelineResult result : results) {
-      System.out.println("Camera: " + camera.getName());
-      System.out.println("Has Targets: " + result.hasTargets());
-      if (result.hasTargets()) {
-        for (PhotonTrackedTarget target : result.getTargets()) {
-          System.out.println("Target ID: " + target.getFiducialId());
-          System.out.println("Pose: " + target.getBestCameraToTarget().toString());
-        }
-      }
-    }
-  }
-
-  public void printAllCameraResults() {
-    for (PhotonCamera camera : cameras) {
-      printCameraResults(camera);
-    }
-  }
-
-  public void getAprilTagData(PhotonCamera camera) {
+  public void getAprilTagData() {
     var results = camera.getAllUnreadResults();
     if (!results.isEmpty()) {
       // Get the most recent result
@@ -93,8 +50,18 @@ public class Vision {
           isTargetVisible = true;
         }
       }
+    } else {
+      isTargetVisible = false;
+      targetID = -1;
+      targetPitch = 0;
+      targetYaw = 0;
     }
-    isTargetVisible = false;
+
+    // Log the target data to AdvantageKit/AdvantageScope
+    Logger.recordOutput("Vision/" + camera.getName() + "/Target ID", targetID);
+    Logger.recordOutput("Vision/" + camera.getName() + "/Target Yaw", targetYaw);
+    Logger.recordOutput("Vision/" + camera.getName() + "/Target Pitch", targetPitch);
+    Logger.recordOutput("Vision/" + camera.getName() + "/Is Target Visible", isTargetVisible);
   }
 
   /** Return the yaw of the target */
@@ -115,5 +82,55 @@ public class Vision {
   /** Return whether the target is visible */
   public boolean isTargetVisible() {
     return isTargetVisible;
+  }
+
+  /**
+   * Return whether the target is a valid tower target based on its ID and alliance
+   *
+   * @return true if the target is a valid tower target, false otherwise
+   */
+  public boolean isValidTowerTarget() {
+    if (!isTargetVisible || targetID == -1) {
+      return false;
+    }
+    if (DriverStation.getAlliance().isPresent()) {
+      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+        // Red alliance targets
+        if (targetID == 15 || targetID == 16) {
+          return true;
+        }
+      } else {
+        // Blue alliance targets
+        if (targetID == 31 || targetID == 32) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Return whether the target is a valid hub target based on its ID and alliance
+   *
+   * @return true if the target is a valid hub target, false otherwise
+   */
+  public boolean isValidHubTarget() {
+    if (!isTargetVisible || targetID == -1) {
+      return false;
+    }
+    if (DriverStation.getAlliance().isPresent()) {
+      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+        // Red alliance targets
+        if (targetID == 9 || targetID == 10) {
+          return true;
+        }
+      } else {
+        // Blue alliance targets
+        if (targetID == 25 || targetID == 26) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 }

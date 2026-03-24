@@ -4,14 +4,11 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
-
 import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.RobotController;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -27,7 +24,7 @@ public final class Constants {
   // Approximation of moment of inertia for a 24" square robot
   public static final double ROBOT_MOI = ROBOT_MASS * Math.pow(Units.inchesToMeters(12), 2);
 
-  /** Constants related to the drivebase, such as dimensions */
+  /** Constants related to the drivebase, pertaining to the swerve drivetrain */
   public static final class DrivebaseConstants {
     // Drive base dimensions
     public static final double DRIVE_BASE_WIDTH_METERS = Units.inchesToMeters(24);
@@ -163,52 +160,13 @@ public final class Constants {
    * Constants related to hardware, such as CAN IDs, serial numbers, and other constants related to
    * the physical robot
    *
-   * <p>Note: these should be constants that are not expected to change between different physical
-   * robots, such as the Kenobi and Vader drivebases.
-   *
    * <p>Constants that are expected to change between different physical robots should be placed in
    * the RobotContainer class, where they can be set at runtime based on the detected hardware.
    */
   public static class HardwareConstants {
 
-    public static class RioState {
-      public static final String KENOBI_RIO_SERIAL = "0332053D";
-      public static final String VADER_RIO_SERIAL = "033205CD";
-
-      /**
-       * Gets the RoboRIO serial number and returns an enum representing which RoboRIO is currently
-       * in use. This allows us to select different configurations at runtime based on the detected
-       * hardware, such as selecting the correct drivetrain configuration JSON for the Kenobi and
-       * Vader drivebases.
-       *
-       * @return an enum representing which RoboRIO is currently in use
-       */
-      public static RioSerials getRioSerial() {
-        String serial = RobotController.getSerialNumber();
-        if (serial.equals(KENOBI_RIO_SERIAL)) {
-          return RioSerials.KENOBI_RIO_SERIAL;
-        } else if (serial.equals(VADER_RIO_SERIAL)) {
-          return RioSerials.VADER_RIO_SERIAL;
-        } else {
-          return RioSerials.UNKNOWN;
-        }
-      }
-
-      public static enum RioSerials {
-        /** KENOBI RIO Serial */
-        KENOBI_RIO_SERIAL,
-        /** VADER RIO Serial */
-        VADER_RIO_SERIAL,
-        /** Unknown RIO Serial */
-        UNKNOWN
-      }
-    }
-
-    // REV Power Distribution Hub CAN ID, this is only used for the Kenobi drivebase.
+    // REV Power Distribution Hub CAN ID
     public static final int REV_PDH_ID = 10;
-
-    // CTRE Power Distribution Panel CAN ID, this is only used for the Vader drivebase.
-    public static final int CTRE_PDP_ID = 20;
   }
 
   public static class RuntimeConstants {
@@ -224,6 +182,29 @@ public final class Constants {
 
       /** Replaying from a log file. */
       REPLAY
+    }
+  }
+
+  /**
+   * Constants related to the vision system, such as camera names, target IDs, and other constants
+   */
+  public static class VisionConstants {
+    /** Constants for the climb camera */
+    public static class ClimbCamera {
+      public static final String NAME = "ClimbCamera";
+      public static final boolean IS_DRIVER_CAMERA = false;
+    }
+
+    /** Constants for the shooter camera */
+    public static class ShooterCamera {
+      public static final String NAME = "ShooterCamera";
+      public static final boolean IS_DRIVER_CAMERA = false;
+    }
+
+    /** Constants for the reverse camera */
+    public static class ReverseCamera {
+      public static final String NAME = "ReverseCamera";
+      public static final boolean IS_DRIVER_CAMERA = true;
     }
   }
 

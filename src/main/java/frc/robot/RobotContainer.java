@@ -35,7 +35,9 @@ public class RobotContainer {
   private final Climber m_Climber = new Climber();
   // private final Index m_Index = new Index();
   // private final Intake m_Intake = new Intake();
-  private final Vision m_Vision = new Vision();
+  private final Vision m_ClimbCamera = new Vision("ClimbCamera", true);
+  private final Vision m_ShooterCamera = new Vision("ShooterCamera", false);
+  private final Vision m_ReverseCamera = new Vision("ReverseCamera", false);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final CommandXboxController m_Driver_Controller =
@@ -134,16 +136,30 @@ public class RobotContainer {
           },
           m_swerve);
 
-  RunCommand turnToTarget =
+  /** Aims at the tower while driving */
+  RunCommand aimAtTower =
       new RunCommand(
           () -> {
-            // Get the latest camera data
-            m_Vision.getAprilTagData(m_Vision.getClimberCamera());
-
-            if (m_Vision.isTargetVisible()) {
+            if (m_ReverseCamera.isTargetVisible() && m_ReverseCamera.getTargetID() == 15) {
               // If a target is visible, turn to it
               double targetAngle =
-                  m_Vision.getTargetYaw(); // Assuming this returns the angle to the target
+                  m_ReverseCamera.getTargetYaw(); // Assuming this returns the angle to the target
+              m_swerve.drive(0, 0, targetAngle * 0.01, true, 0.02); // Proportional control
+            } else {
+              // If no target is visible, stop turning
+              m_swerve.drive(0, 0, 0, true, 0.02);
+            }
+          },
+          m_swerve);
+
+  /** Aims at the hub while driving */
+  RunCommand aimAtHub =
+      new RunCommand(
+          () -> {
+            if (m_ShooterCamera.isTargetVisible() && m_ShooterCamera.getTargetID() == 9) {
+              // If a target is visible, turn to it
+              double targetAngle =
+                  m_ShooterCamera.getTargetYaw(); // Assuming this returns the angle to the target
               m_swerve.drive(0, 0, targetAngle * 0.01, true, 0.02); // Proportional control
             } else {
               // If no target is visible, stop turning
@@ -192,7 +208,7 @@ public class RobotContainer {
     m_Driver_Controller.x().whileTrue(Commands.none());
     m_Driver_Controller.y().whileTrue(Commands.none());
     m_Driver_Controller.leftBumper().whileTrue(slowedDrive).onFalse(normalDrive);
-    m_Driver_Controller.rightBumper().whileTrue(turnToTarget).onFalse(normalDrive);
+    m_Driver_Controller.rightBumper().whileTrue(aimAtTower).onFalse(normalDrive);
 
     // // Copilot Controller binds (Joystick)
     // m_Copilot_Controller.trigger().whileTrue(Commands.runOnce(m_Intake::IntakeFuel,
