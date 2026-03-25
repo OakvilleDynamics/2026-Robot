@@ -230,26 +230,69 @@ public final class Constants {
   /** Constants related to mechanisms, such as CAN IDs, motor speeds, and PID constants */
   public static class MechanismConstants {
     // Subsystem CAN IDs
-    public static final int IntakeRoller = 11;
-    public static final int IntakeHinge = 12;
-    public static final int ShooterMotor = 13;
-    public static final int IndexMotor = 14;
-    public static final int ClimberMotor = 21;
+    public static final int INTAKE_ROLLER_MOTOR = 11;
+    public static final int INTAKE_HINGE_MOTOR = 12;
+    public static final int SHOOTER_MOTOR = 13;
+    public static final int INDEX_MOTOR = 14;
+    public static final int CLIMBER_MOTOR = 21;
 
-    // Inverts
-    public static final InvertedValue ShooterMotor_Inverted =
-        InvertedValue.CounterClockwise_Positive;
-    public static final boolean IntakeRoller_Inverted = false;
-    public static final boolean IntakeHinge_Inverted = false;
-    public static final boolean Index_Inverted = false;
-    public static final boolean ClimberMotor_Inverted = false;
+    /**
+     * Constants related to the operation of the shooter subsystem, such as motor inversion, PID
+     * constants, and designated motor speeds.
+     */
+    public static class ShooterConstants {
+      // PID constants for the shooter motor
+      public static final double P = 0.5;
+      public static final double I = 0.0;
+      public static final double D = 0.0;
 
-    // Motor speeds ~~ Change as needed
-    public static final double Shooter_Speed1 = 0.6;
-    public static final double Shooter_Speed2 = 0.4;
-    public static final double Intake_Speed = 0.8;
-    public static final double Intake_Hinge_Speed = 0.8;
-    public static final double Index_Speed = 0.3;
-    public static final double Climber_Speed = 1.0;
+      // Inversion for the shooter motor
+      public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
+
+      // Designated motor speeds, use as last resort if you are not using PID control for the
+      // shooter, or if you just want to set default speeds for the shooter.
+      public static final double SPEED_MAIN = 0.6;
+      public static final double SPEED_SPIN_UP = 0.4;
+    }
+
+    /**
+     * Constants related to the operation of the intake subsystem, such as motor inversion, PID
+     * constants, and designated motor speeds.
+     */
+    public static class IntakeConstants {
+      // PID constants for the intake hinge motor
+      public static final double P = 0.5;
+      public static final double I = 0.0;
+      public static final double D = 0.0;
+
+      // Inversion for the intake roller and hinge motors
+      public static final boolean ROLLER_INVERTED = false;
+      public static final boolean HINGE_INVERTED = false;
+
+      // Designated motor speeds, use as last resort if you are not using PID control for the intake
+      // hinge, or if you just want to set a default speed for the intake roller.
+      public static final double ROLLER_SPEED = 0.8;
+      public static final double HINGE_SPEED = 0.8;
+    }
+
+    /**
+     * Constants related to the operation of the indexer subsystem, such as motor inversion and
+     * designated motor speed. Note: the indexer subsystem is very simple and does not use PID
+     * control, so there are no PID constants defined here.
+     */
+    public static class IndexerConstants {
+      public static final boolean INVERTED = false;
+      public static final double SPEED = 0.3;
+    }
+
+    /**
+     * Constants related to the operation of the climber subsystem, such as motor inversion and
+     * designated motor speed. Note: the climber subsystem is very simple and does not use PID
+     * control, so there are no PID constants defined here.
+     */
+    public static class ClimberConstants {
+      public static final boolean INVERTED = false;
+      public static final double SPEED = 1.0;
+    }
   }
 }
