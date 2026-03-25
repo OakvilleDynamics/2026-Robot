@@ -23,8 +23,13 @@ public class Vision extends SubsystemBase {
 
   public Vision(String cameraName, boolean isDriverCamera) {
     System.out.println("[Vision] Initializing " + cameraName + " camera...");
+    
+    // Initialize the PhotonCamera with the given name and set it to driver mode if specified
     camera = new PhotonCamera(cameraName);
+
+    // Set the camera to driver mode if specified (disables vision processing and reduces latency)
     camera.setDriverMode(isDriverCamera);
+
     System.out.println("[Vision] Camera " + cameraName + " initialized successfully!");
   }
 
@@ -33,10 +38,15 @@ public class Vision extends SubsystemBase {
     getAprilTagData();
   }
 
+  /**
+   * Get the latest camera result from PhotonVision.
+   * @return A list of all unread results from the camera, with the most recent result at the end of the list.
+   */
   public List<PhotonPipelineResult> getLastCameraResult() {
     return camera.getAllUnreadResults();
   }
 
+  /** Get the AprilTag data from the camera */
   public void getAprilTagData() {
     var results = camera.getAllUnreadResults();
     if (!results.isEmpty()) {
@@ -62,6 +72,9 @@ public class Vision extends SubsystemBase {
     Logger.recordOutput("Vision/" + camera.getName() + "/Target Yaw", targetYaw);
     Logger.recordOutput("Vision/" + camera.getName() + "/Target Pitch", targetPitch);
     Logger.recordOutput("Vision/" + camera.getName() + "/Is Target Visible", isTargetVisible);
+    Logger.recordOutput("Vision/" + camera.getName() + "/Is Valid Tower Target", isValidTowerTarget());
+    Logger.recordOutput("Vision/" + camera.getName() + "/Is Valid Hub Target", isValidHubTarget());
+    Logger.recordOutput("Vision/" + camera.getName() + "/All Unread Results", results.toString());
   }
 
   /** Return the yaw of the target */
