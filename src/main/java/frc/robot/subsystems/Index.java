@@ -1,42 +1,57 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MechanismConstants;
+import frc.robot.Constants.MechanismConstants.IndexerConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class Index extends SubsystemBase {
-  private final SparkFlex IndexMotor =
-      new SparkFlex(MechanismConstants.IndexMotor, SparkLowLevel.MotorType.kBrushless);
+  private SparkFlex m_index;
+  private SparkFlexConfig m_indexConfig;
 
   public Index() {
     System.out.println("[Index] Initializing Index Subsystem...");
-    IndexMotor.setInverted(MechanismConstants.Index_Inverted);
+
+    // Initialize the index motor and its configuration
+    m_index = new SparkFlex(MechanismConstants.INDEX_MOTOR, SparkLowLevel.MotorType.kBrushless);
+    m_indexConfig = new SparkFlexConfig();
+
+    // Set inversion for the index motor
+    m_indexConfig.inverted(IndexerConstants.INVERTED);
+
+    // Apply configuration to the motor, resetting to safe parameters and persisting the new
+    // parameters
+    m_index.configure(
+        m_indexConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     System.out.println("[Index] Index Subsystem Initialized!");
   }
 
   /** Runs the indexer to the shooter */
   public void IndexMove() {
-    IndexMotor.set(MechanismConstants.Index_Speed);
+    m_index.set(IndexerConstants.SPEED);
   }
 
   /** Runs the indexer in reverse to clear jams */
   public void IndexReverse() {
-    IndexMotor.set(-MechanismConstants.Index_Speed);
+    m_index.set(-IndexerConstants.SPEED);
   }
 
   /** Stops the indexer motor */
   public void IndexStop() {
-    IndexMotor.set(0);
+    m_index.set(0);
   }
 
   @Override
   public void periodic() {
     // Index motor telemetry
-    Logger.recordOutput("Index/Output", IndexMotor.get());
-    Logger.recordOutput("Index/Current", IndexMotor.getOutputCurrent(), Units.Amps);
-    Logger.recordOutput("Index/Temperature", IndexMotor.getMotorTemperature(), Units.Celsius);
+    Logger.recordOutput("Index/Output", m_index.get());
+    Logger.recordOutput("Index/Current", m_index.getOutputCurrent(), Units.Amps);
+    Logger.recordOutput("Index/Temperature", m_index.getMotorTemperature(), Units.Celsius);
   }
 }
