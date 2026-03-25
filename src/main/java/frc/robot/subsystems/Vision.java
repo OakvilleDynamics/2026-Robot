@@ -23,7 +23,7 @@ public class Vision extends SubsystemBase {
 
   public Vision(String cameraName, boolean isDriverCamera) {
     System.out.println("[Vision] Initializing " + cameraName + " camera...");
-    
+
     // Initialize the PhotonCamera with the given name and set it to driver mode if specified
     camera = new PhotonCamera(cameraName);
 
@@ -40,7 +40,9 @@ public class Vision extends SubsystemBase {
 
   /**
    * Get the latest camera result from PhotonVision.
-   * @return A list of all unread results from the camera, with the most recent result at the end of the list.
+   *
+   * @return A list of all unread results from the camera, with the most recent result at the end of
+   *     the list.
    */
   public List<PhotonPipelineResult> getLastCameraResult() {
     return camera.getAllUnreadResults();
@@ -72,7 +74,8 @@ public class Vision extends SubsystemBase {
     Logger.recordOutput("Vision/" + camera.getName() + "/Target Yaw", targetYaw);
     Logger.recordOutput("Vision/" + camera.getName() + "/Target Pitch", targetPitch);
     Logger.recordOutput("Vision/" + camera.getName() + "/Is Target Visible", isTargetVisible);
-    Logger.recordOutput("Vision/" + camera.getName() + "/Is Valid Tower Target", isValidTowerTarget());
+    Logger.recordOutput(
+        "Vision/" + camera.getName() + "/Is Valid Tower Target", isValidTowerTarget());
     Logger.recordOutput("Vision/" + camera.getName() + "/Is Valid Hub Target", isValidHubTarget());
     Logger.recordOutput("Vision/" + camera.getName() + "/All Unread Results", results.toString());
   }
