@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DrivebaseConstants;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.ClimberCommand;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Index;
 import frc.robot.subsystems.Intake;
@@ -186,14 +185,30 @@ public class RobotContainer {
     m_Driver_Controller.back().onTrue(Commands.runOnce(m_swerve::zeroGyro, m_swerve));
 
     // Copilot Controller binds (Joystick)
-    m_Copilot_Controller.trigger().whileTrue(Commands.runOnce(m_Intake::IntakeFuel, m_Intake).repeatedly());
-    m_Copilot_Controller.top().whileTrue(Commands.runOnce(m_Intake::IntakeSpit, m_Intake).repeatedly());
-    m_Copilot_Controller.button(3).whileTrue(Commands.runOnce(m_Index::IndexReverse, m_Index).repeatedly());
-    m_Copilot_Controller.button(4).whileTrue(Commands.runOnce(m_Index::IndexMove, m_Index).repeatedly());
-    m_Copilot_Controller.button(7).whileTrue(Commands.runOnce(m_Intake::IntakeUp, m_Intake).repeatedly());
-    m_Copilot_Controller.button(8).whileTrue(Commands.runOnce(m_Intake::IntakeDown, m_Intake).repeatedly());
-    m_Copilot_Controller.button(10).whileTrue(Commands.runOnce(m_Climber::Climb, m_Climber).repeatedly());
-    m_Copilot_Controller.button(11).whileTrue(Commands.runOnce(m_Climber::Descend, m_Climber).repeatedly());
+    m_Copilot_Controller
+        .trigger()
+        .whileTrue(Commands.runOnce(m_Intake::IntakeFuel, m_Intake).repeatedly());
+    m_Copilot_Controller
+        .top()
+        .whileTrue(Commands.runOnce(m_Intake::IntakeSpit, m_Intake).repeatedly());
+    m_Copilot_Controller
+        .button(3)
+        .whileTrue(Commands.runOnce(m_Index::IndexReverse, m_Index).repeatedly());
+    m_Copilot_Controller
+        .button(4)
+        .whileTrue(Commands.runOnce(m_Index::IndexMove, m_Index).repeatedly());
+    m_Copilot_Controller
+        .button(7)
+        .whileTrue(Commands.runOnce(m_Intake::IntakeUp, m_Intake).repeatedly());
+    m_Copilot_Controller
+        .button(8)
+        .whileTrue(Commands.runOnce(m_Intake::IntakeDown, m_Intake).repeatedly());
+    m_Copilot_Controller
+        .button(10)
+        .whileTrue(Commands.runOnce(m_Climber::Climb, m_Climber).repeatedly());
+    m_Copilot_Controller
+        .button(11)
+        .whileTrue(Commands.runOnce(m_Climber::Descend, m_Climber).repeatedly());
   }
 
   /** This method sets subsystem commands */
