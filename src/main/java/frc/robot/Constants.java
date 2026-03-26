@@ -261,7 +261,7 @@ public final class Constants {
      */
     public static class IntakeConstants {
       // PID constants for the intake hinge motor
-      public static final double P = 0.5;
+      public static final double P = 0.2;
       public static final double I = 0.0;
       public static final double D = 0.0;
 
@@ -272,7 +272,7 @@ public final class Constants {
       // Designated motor speeds, use as last resort if you are not using PID control for the intake
       // hinge, or if you just want to set a default speed for the intake roller.
       public static final double ROLLER_SPEED = 0.8;
-      public static final double HINGE_SPEED = 0.8;
+      public static final double HINGE_SPEED = 0.3;
     }
 
     /**
