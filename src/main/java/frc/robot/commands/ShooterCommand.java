@@ -26,10 +26,6 @@ public class ShooterCommand extends Command {
   public void execute() {
     // Check if buttons 5 and 6 are pressed, change a toggle
     // Button 5 will set the shooter to run, Button 6 will stop it
-    if (DriverStation.isDisabled()){
-      isRunning = false;
-    }
-    
     if (ShootJoystick.getRawButton(5)) {
       isRunning = true;
     } else if (ShootJoystick.getRawButton(6)) {

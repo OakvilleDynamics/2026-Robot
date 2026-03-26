@@ -261,7 +261,7 @@ public final class Constants {
      */
     public static class IntakeConstants {
       // PID constants for the intake hinge motor
-      public static final double P = 0.5;
+      public static final double P = 0.2;
       public static final double I = 0.0;
       public static final double D = 0.0;
 
