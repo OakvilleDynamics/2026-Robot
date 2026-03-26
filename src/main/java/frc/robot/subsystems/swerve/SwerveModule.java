@@ -42,7 +42,7 @@ public class SwerveModule {
   private final boolean m_azimuthInverted;
 
   // PID controller for Thrifty encoder (RIO-side control)
-  private final PIDController m_turningPID = new PIDController(0.7, 0.0, 0.01);
+  private final PIDController m_turningPID = new PIDController(0.6, 0.0, 0);
   private Rotation2d m_desiredAngle = new Rotation2d();
 
   // (removed unused m_hasCheckedSavedOffset flag)
@@ -287,7 +287,7 @@ public class SwerveModule {
       m_azimuthMotor.setAbsOffset((int) currentRawTicks);
 
       System.out.println(
-          "[Swerve]"
+          "[Swerve] "
               + m_moduleName
               + " Thrifty encoder zeroed. Java offset: "
               + currentRawTicks
