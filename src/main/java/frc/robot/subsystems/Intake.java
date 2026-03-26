@@ -32,7 +32,7 @@ public class Intake extends SubsystemBase {
     m_intakeHingeConfig = new SparkFlexConfig();
 
     // Initialize the encoders for the intake hinge and configure them
-    m_intakeHingeEncoder = m_intakeHinge.getEncoder();
+    m_intakeHingeEncoder = m_intakeHinge.getExternalEncoder();
 
     // Set inversion for the intake roller and hinge motors, and apply configurations
     m_intakeRollerConfig.inverted(IntakeConstants.ROLLER_INVERTED);
