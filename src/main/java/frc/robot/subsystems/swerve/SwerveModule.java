@@ -90,7 +90,7 @@ public class SwerveModule {
     // Configure turning PID for continuous input (-180 to 180 degrees)
     m_turningPID.enableContinuousInput(-Math.PI, Math.PI);
 
-    System.out.println(m_moduleName + " module initialized successfully!");
+    System.out.println("[Swerve] " + m_moduleName + " module initialized successfully!");
   }
 
   /** Configure the drive motor with PID and feedforward */
@@ -143,7 +143,7 @@ public class SwerveModule {
     //// Set power limits
     // m_azimuthMotor.setMaxCurrent(CurrentType.STATOR, 20);
 
-    System.out.println("[Swerve]" + m_moduleName + " azimuth motor configured successfully!");
+    System.out.println("[Swerve] " + m_moduleName + " azimuth motor configured successfully!");
   }
 
   /** Initialize the encoder offset, prioritizing saved values over constants */
@@ -154,7 +154,8 @@ public class SwerveModule {
       // later in periodic
       m_encoderOffsetTicks = constantsOffsetTicks;
       System.out.println(
-          m_moduleName
+          "[Swerve] "
+              + m_moduleName
               + " Thrifty encoder initialized with constants: "
               + ticksToDegrees(constantsOffsetTicks)
               + " degrees");
@@ -164,12 +165,13 @@ public class SwerveModule {
       if (constantsOffsetTicks != 0) {
         m_azimuthMotor.setAbsOffset((int) constantsOffsetTicks);
         System.out.println(
-            m_moduleName
+            "[Swerve] "
+                + m_moduleName
                 + " Nova encoder set to constants: "
                 + ticksToDegrees(constantsOffsetTicks)
                 + " degrees");
       } else {
-        System.out.println(m_moduleName + " Nova encoder using saved offset");
+        System.out.println("[Swerve] " + m_moduleName + " Nova encoder using saved offset");
       }
 
       // Nova handles offset automatically, Java doesn't need to track it
@@ -264,7 +266,7 @@ public class SwerveModule {
       // Normalize to 0-1 range
       targetRotations = ((targetRotations % 1.0) + 1.0) % 1.0;
       // Log the target rotations
-      System.out.println("Target rotations: " + targetRotations);
+      System.out.println("[Swerve] " + m_moduleName + " Target rotations: " + targetRotations);
       m_azimuthMotor.setPositionAbs(targetRotations);
     }
   }
@@ -395,10 +397,6 @@ public class SwerveModule {
     Logger.recordOutput(
         "Swerve/" + moduleAbbr + "/Drive Motor Stator Current",
         m_driveMotor.getStatorCurrent().getValueAsDouble(),
-        Units.Amps);
-    Logger.recordOutput(
-        "Swerve/" + moduleAbbr + "/Drive Motor Supply Current",
-        m_driveMotor.getSupplyCurrent().getValueAsDouble(),
         Units.Amps);
     Logger.recordOutput(
         "Swerve/" + moduleAbbr + "/Drive Motor Torque Current",
