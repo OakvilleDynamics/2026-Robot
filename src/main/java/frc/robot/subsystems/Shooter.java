@@ -29,10 +29,10 @@ public class Shooter extends SubsystemBase {
     // Set motor inversion
     m_shooterConfig.MotorOutput.Inverted = ShooterConstants.INVERTED;
 
-    // Set PID coefficients for closed-loop control
-    m_shooterConfig.Slot0.kP = ShooterConstants.P;
-    m_shooterConfig.Slot0.kI = ShooterConstants.I;
-    m_shooterConfig.Slot0.kD = ShooterConstants.D;
+    //// Set PID coefficients for closed-loop control
+    //m_shooterConfig.Slot0.kP = ShooterConstants.P;
+    //m_shooterConfig.Slot0.kI = ShooterConstants.I;
+    //m_shooterConfig.Slot0.kD = ShooterConstants.D;
 
     // Apply the configuration to the motor controller
     m_shooterMotor.getConfigurator().apply(m_shooterConfig);

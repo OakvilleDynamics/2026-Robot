@@ -39,14 +39,14 @@ public class Intake extends SubsystemBase {
     m_intakeRollerConfig.inverted(IntakeConstants.ROLLER_INVERTED);
     m_intakeHingeConfig.inverted(IntakeConstants.HINGE_INVERTED);
 
-    // Configure the intake hinge motor for closed-loop control
-    m_intakeHingeConfig
-        .closedLoop
-        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .p(IntakeConstants.P)
-        .i(IntakeConstants.I)
-        .d(IntakeConstants.D)
-        .outputRange(-IntakeConstants.HINGE_SPEED, IntakeConstants.HINGE_SPEED);
+    //// Configure the intake hinge motor for closed-loop control
+    //m_intakeHingeConfig
+    //    .closedLoop
+    //    .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+    //    .p(IntakeConstants.P)
+    //    .i(IntakeConstants.I)
+    //    .d(IntakeConstants.D)
+    //    .outputRange(-IntakeConstants.HINGE_SPEED, IntakeConstants.HINGE_SPEED);
 
     // Apply configurations to the motors, resetting to safe parameters and persisting the new
     // parameters
@@ -97,9 +97,6 @@ public class Intake extends SubsystemBase {
     Logger.recordOutput(
         "Intake/Hinge/Temperature", m_intakeHinge.getMotorTemperature(), Units.Celsius);
     Logger.recordOutput("Intake/Hinge/Encoder", m_intakeHinge.getEncoder().getPosition());
-    Logger.recordOutput(
-        "Intake/Hinge/Velocity", m_intakeHinge.getEncoder().getVelocity(), Units.RPM);
-    Logger.recordOutput("Intake/Hinge/Applied Output", m_intakeHinge.getAppliedOutput());
     Logger.recordOutput(
         "Intake/Hinge/Position", m_intakeHingeEncoder.getPosition(), Units.Rotations);
   }
