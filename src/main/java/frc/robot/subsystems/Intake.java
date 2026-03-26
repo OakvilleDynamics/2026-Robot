@@ -5,8 +5,8 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.FeedbackSensor;
-import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -112,10 +112,7 @@ public class Intake extends SubsystemBase {
 
   /** Set the intake hinge to run to a position and hold it there */
   public Command setIntakeHingePosition(double pos) {
-    return run(
-        () ->
-            ctrl_intakeHingeMotor.setSetpoint(pos, ControlType.kPosition)
-        );
+    return run(() -> ctrl_intakeHingeMotor.setSetpoint(pos, ControlType.kPosition));
   }
 
   /** Resets the intake hinge encoder to 0. */
@@ -137,10 +134,19 @@ public class Intake extends SubsystemBase {
     Logger.recordOutput("Intake/Hinge/Current", m_intakeHinge.getOutputCurrent(), Units.Amps);
     Logger.recordOutput(
         "Intake/Hinge/Temperature", m_intakeHinge.getMotorTemperature(), Units.Celsius);
-    Logger.recordOutput("Intake/Hinge/Internal Encoder Position", m_intakeHinge.getEncoder().getPosition());
     Logger.recordOutput(
-        "Intake/Hinge/External Encoder Position", ex_intakeHingeEncoder.getPosition(), Units.Rotations);
-    Logger.recordOutput("Intake/Hinge/External Encoder Velocity", ex_intakeHingeEncoder.getVelocity(), Units.RotationsPerSecond);
-    Logger.recordOutput("Intake/Hinge/Internal Encoder Velocity", re_intakeHingeEncoder.getVelocity(), Units.RotationsPerSecond);
+        "Intake/Hinge/Internal Encoder Position", m_intakeHinge.getEncoder().getPosition());
+    Logger.recordOutput(
+        "Intake/Hinge/External Encoder Position",
+        ex_intakeHingeEncoder.getPosition(),
+        Units.Rotations);
+    Logger.recordOutput(
+        "Intake/Hinge/External Encoder Velocity",
+        ex_intakeHingeEncoder.getVelocity(),
+        Units.RotationsPerSecond);
+    Logger.recordOutput(
+        "Intake/Hinge/Internal Encoder Velocity",
+        re_intakeHingeEncoder.getVelocity(),
+        Units.RotationsPerSecond);
   }
 }
