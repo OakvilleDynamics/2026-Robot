@@ -144,7 +144,7 @@ public class RobotContainer {
     // Create the NamedCommands that will be used in PathPlanner
     NamedCommands.registerCommand("Climb", Commands.run(m_Climber::Climb, m_Climber));
     NamedCommands.registerCommand("Descend", Commands.run(m_Climber::Descend, m_Climber));
-    // NamedCommands.registerCommand("Shoot", Commands.run(m_Shooter::Shoot, m_Shooter));
+    NamedCommands.registerCommand("Shoot", Commands.run(m_Shooter::Shoot, m_Shooter));
 
     // Have the autoChooser pull in all PathPlanner autos as options
     autoChooser =
@@ -168,7 +168,7 @@ public class RobotContainer {
     // A, B, X, Y buttons
     m_Driver_Controller.a().onTrue(Commands.none());
     m_Driver_Controller.b().onTrue(Commands.none());
-    m_Driver_Controller.x().whileTrue(new InstantCommand(() -> m_swerve.setX()));
+    m_Driver_Controller.x().onTrue(new InstantCommand(() -> m_swerve.setX()));
     m_Driver_Controller.y().onTrue(Commands.none());
 
     // Bumpers
@@ -186,10 +186,10 @@ public class RobotContainer {
     m_Driver_Controller.back().onTrue(new InstantCommand(() -> m_swerve.zeroGyro()));
 
     // Copilot Controller binds (Joystick)
-    m_Copilot_Controller.trigger().onTrue(Commands.runOnce(m_Intake::IntakeFuel, m_Intake));
-    m_Copilot_Controller.top().onTrue(Commands.runOnce(m_Intake::IntakeSpit, m_Intake));
-    m_Copilot_Controller.button(3).onTrue(Commands.runOnce(m_Index::IndexReverse, m_Index));
-    m_Copilot_Controller.button(4).onTrue(Commands.runOnce(m_Index::IndexMove, m_Index));
+    m_Copilot_Controller.trigger().onTrue(Commands.runOnce(m_Intake::IntakeFuel, m_Intake)).onFalse(Commands.runOnce(m_Intake::IntakeRollerStop, m_Intake));
+    m_Copilot_Controller.top().onTrue(Commands.runOnce(m_Intake::IntakeSpit, m_Intake)).onFalse(Commands.runOnce(m_Intake::IntakeRollerStop, m_Intake));
+    m_Copilot_Controller.button(3).onTrue(Commands.runOnce(m_Index::IndexReverse, m_Index)).onFalse(Commands.runOnce(m_Index::IndexStop, m_Index));
+    m_Copilot_Controller.button(4).onTrue(Commands.runOnce(m_Index::IndexMove, m_Index)).onFalse(Commands.runOnce(m_Index::IndexStop, m_Index));
     m_Copilot_Controller
         .button(5)
         .onTrue(Commands.runOnce(m_Shooter::SpinUpShooter, m_Shooter))
@@ -198,10 +198,10 @@ public class RobotContainer {
         .button(6)
         .onTrue(Commands.runOnce(m_Shooter::Shoot, m_Shooter))
         .onFalse(Commands.runOnce(m_Shooter::StopShoot, m_Shooter));
-    m_Copilot_Controller.button(7).onTrue(Commands.runOnce(m_Intake::IntakeUp, m_Intake));
-    m_Copilot_Controller.button(8).onTrue(Commands.runOnce(m_Intake::IntakeDown, m_Intake));
-    m_Copilot_Controller.button(10).onTrue(Commands.runOnce(m_Climber::Climb, m_Climber));
-    m_Copilot_Controller.button(11).onTrue(Commands.runOnce(m_Climber::Descend, m_Climber));
+    m_Copilot_Controller.button(7).onTrue(Commands.runOnce(m_Intake::IntakeUp, m_Intake)).onFalse(Commands.runOnce(m_Intake::IntakeHingeStop, m_Intake));
+    m_Copilot_Controller.button(8).onTrue(Commands.runOnce(m_Intake::IntakeDown, m_Intake)).onFalse(Commands.runOnce(m_Intake::IntakeHingeStop, m_Intake));
+    m_Copilot_Controller.button(10).onTrue(Commands.runOnce(m_Climber::Climb, m_Climber)).onFalse(Commands.runOnce(m_Climber::Stop, m_Climber));
+    m_Copilot_Controller.button(11).onTrue(Commands.runOnce(m_Climber::Descend, m_Climber)).onFalse(Commands.runOnce(m_Climber::Stop, m_Climber));
   }
 
   /** This method sets subsystem commands */

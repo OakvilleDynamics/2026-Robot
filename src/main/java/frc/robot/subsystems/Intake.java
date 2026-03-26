@@ -97,6 +97,18 @@ public class Intake extends SubsystemBase {
     m_intakeHinge.set(0);
   }
 
+  /**
+   * Stops the hinge from moving
+   */
+  public void IntakeHingeStop() {
+    m_intakeHinge.set(0);
+  }
+
+  /** Stops the roller from moving */
+  public void IntakeRollerStop() {
+    m_intakeRoller.set(0);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
