@@ -215,7 +215,7 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(m_Index::IndexMove, m_Index))
         .onFalse(Commands.runOnce(m_Index::IndexStop, m_Index));
     m_Copilot_Controller
-        .button(10)
+        .button(12)
         .onTrue(Commands.runOnce(m_Climber::Climb, m_Climber))
         .onFalse(Commands.runOnce(m_Climber::Stop, m_Climber));
     m_Copilot_Controller
