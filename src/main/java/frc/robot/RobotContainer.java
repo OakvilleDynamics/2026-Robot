@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DrivebaseConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.ShooterCommand;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Index;
 import frc.robot.subsystems.Intake;
@@ -145,6 +146,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Climb", Commands.run(m_Climber::Climb, m_Climber));
     NamedCommands.registerCommand("Descend", Commands.run(m_Climber::Descend, m_Climber));
     NamedCommands.registerCommand("Shoot", Commands.run(m_Shooter::Shoot, m_Shooter));
+    NamedCommands.registerCommand("Index", Commands.run(m_Index::IndexMove, m_Index));
 
     // Have the autoChooser pull in all PathPlanner autos as options
     autoChooser =
@@ -168,7 +170,7 @@ public class RobotContainer {
     // A, B, X, Y buttons
     m_Driver_Controller.a().onTrue(Commands.none());
     m_Driver_Controller.b().onTrue(Commands.none());
-    m_Driver_Controller.x().onTrue(new InstantCommand(() -> m_swerve.setX()));
+    m_Driver_Controller.x().onTrue(Commands.runOnce(m_swerve::setX, m_swerve)).onFalse(normalDrive);
     m_Driver_Controller.y().onTrue(Commands.none());
 
     // Bumpers
