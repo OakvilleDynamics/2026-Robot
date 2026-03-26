@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.config.SparkFlexConfig;
@@ -40,7 +39,7 @@ public class Intake extends SubsystemBase {
     m_intakeHingeConfig.inverted(IntakeConstants.HINGE_INVERTED);
 
     //// Configure the intake hinge motor for closed-loop control
-    //m_intakeHingeConfig
+    // m_intakeHingeConfig
     //    .closedLoop
     //    .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
     //    .p(IntakeConstants.P)

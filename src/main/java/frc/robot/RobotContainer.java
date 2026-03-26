@@ -186,30 +186,14 @@ public class RobotContainer {
     m_Driver_Controller.back().onTrue(new InstantCommand(() -> m_swerve.zeroGyro()));
 
     // Copilot Controller binds (Joystick)
-    m_Copilot_Controller
-        .trigger()
-        .onTrue(Commands.runOnce(m_Intake::IntakeFuel, m_Intake));
-    m_Copilot_Controller
-        .top()
-        .onTrue(Commands.runOnce(m_Intake::IntakeSpit, m_Intake));
-    m_Copilot_Controller
-        .button(3)
-        .onTrue(Commands.runOnce(m_Index::IndexReverse, m_Index));
-    m_Copilot_Controller
-        .button(4)
-        .onTrue(Commands.runOnce(m_Index::IndexMove, m_Index));
-    m_Copilot_Controller
-        .button(7)
-        .onTrue(Commands.runOnce(m_Intake::IntakeUp, m_Intake));
-    m_Copilot_Controller
-        .button(8)
-        .onTrue(Commands.runOnce(m_Intake::IntakeDown, m_Intake));
-    m_Copilot_Controller
-        .button(10)
-        .onTrue(Commands.runOnce(m_Climber::Climb, m_Climber));
-    m_Copilot_Controller
-        .button(11)
-        .onTrue(Commands.runOnce(m_Climber::Descend, m_Climber));
+    m_Copilot_Controller.trigger().onTrue(Commands.runOnce(m_Intake::IntakeFuel, m_Intake));
+    m_Copilot_Controller.top().onTrue(Commands.runOnce(m_Intake::IntakeSpit, m_Intake));
+    m_Copilot_Controller.button(3).onTrue(Commands.runOnce(m_Index::IndexReverse, m_Index));
+    m_Copilot_Controller.button(4).onTrue(Commands.runOnce(m_Index::IndexMove, m_Index));
+    m_Copilot_Controller.button(7).onTrue(Commands.runOnce(m_Intake::IntakeUp, m_Intake));
+    m_Copilot_Controller.button(8).onTrue(Commands.runOnce(m_Intake::IntakeDown, m_Intake));
+    m_Copilot_Controller.button(10).onTrue(Commands.runOnce(m_Climber::Climb, m_Climber));
+    m_Copilot_Controller.button(11).onTrue(Commands.runOnce(m_Climber::Descend, m_Climber));
   }
 
   /** This method sets subsystem commands */
