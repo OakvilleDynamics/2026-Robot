@@ -92,6 +92,11 @@ public class Intake extends SubsystemBase {
     m_intakeRoller.set(0);
   }
 
+  /** Set the intake hinge to run to a position and hold it there */
+  public void setIntakeHingePosition(double pos) {
+    // Do nothing as this isn't set
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
