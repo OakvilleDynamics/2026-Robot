@@ -4,38 +4,40 @@ import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MechanismConstants;
-import org.littletonrobotics.junction.Logger;
+import frc.robot.Constants.MechanismConstants.ClimberConstants;
 
 public class Climber extends SubsystemBase {
-  private final TalonSRX ClimberMotor = new TalonSRX(MechanismConstants.ClimberMotor);
+  private final TalonSRX m_climber;
 
   public Climber() {
-    // Constructor code here, if needed
     System.out.println("[Climber] Initializing Climber Subsystem...");
-    ClimberMotor.setInverted(MechanismConstants.ClimberMotor_Inverted);
+
+    // Initialize the climber motor
+    m_climber = new TalonSRX(MechanismConstants.CLIMBER_MOTOR);
+
+    // Set motor inversion
+    m_climber.setInverted(ClimberConstants.INVERTED);
+
     System.out.println("[Climber] Climber Subsystem Initialized!");
   }
 
   /** Activates the climber motor to move in the forward direction at a predefined speed. */
   public void Climb() {
-    ClimberMotor.set(TalonSRXControlMode.PercentOutput, MechanismConstants.Climber_Speed);
+    m_climber.set(TalonSRXControlMode.PercentOutput, ClimberConstants.SPEED);
   }
 
   /** Activates the climber motor to move in the backward direction at a predefined speed. */
   public void Descend() {
-    ClimberMotor.set(TalonSRXControlMode.PercentOutput, -MechanismConstants.Climber_Speed);
+    m_climber.set(TalonSRXControlMode.PercentOutput, -ClimberConstants.SPEED);
   }
 
   /** Stops the climber motor. */
   public void Stop() {
-    ClimberMotor.set(TalonSRXControlMode.PercentOutput, 0);
+    m_climber.set(TalonSRXControlMode.PercentOutput, 0);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    Logger.recordOutput("Climber/Output", ClimberMotor.getMotorOutputPercent());
-    Logger.recordOutput("Climber/Current", ClimberMotor.getStatorCurrent());
-    Logger.recordOutput("Climber/Motor Temperature", ClimberMotor.getTemperature());
   }
 }

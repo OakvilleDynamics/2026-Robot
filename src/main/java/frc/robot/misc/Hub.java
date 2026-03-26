@@ -3,7 +3,6 @@ package frc.robot.misc;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import java.util.Optional;
-import org.littletonrobotics.junction.AutoLogOutput;
 
 public class Hub {
   /**
@@ -14,15 +13,18 @@ public class Hub {
    * <p>How this specific section of code works, which is pulled from the WPILib documentation for
    * the 2026 game is as follows:
    *
-   * <p>1. Check if we are in autonomous, if so, hub is set to active. 2. Check if we are in teleop,
-   * if not, hub is set to not active. 3. Check if we get game data from the FMS, if not, its active
-   * as we likely just entered teleop and the FMS has not sent data yet. 4. Check the first
-   * character of the game data, if its R, then red won auto, if its B, then blue won auto, if its
-   * anything else, assume hub is active as we have invalid data.
+   * <p>1. Check if we are in autonomous, if so, hub is set to active.
+   *
+   * <p>2. Check if we are in teleop, if not, hub is set to not active.
+   *
+   * <p>3. Check if we get game data from the FMS, if not, its active as we likely just entered
+   * teleop and the FMS has not sent data yet.
+   *
+   * <p>4. Check the first character of the game data, if its R, then red won auto, if its B, then
+   * blue won auto, if its anything else, assume hub is active as we have invalid data.
    *
    * @return true if the hub is active for your alliance, false otherwise
    */
-  @AutoLogOutput(key = "Hub/Active")
   public boolean isHubActive() {
     Optional<Alliance> alliance = DriverStation.getAlliance();
     // If we have no alliance, we cannot be enabled, therefore no hub.

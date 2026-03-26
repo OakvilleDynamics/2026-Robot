@@ -24,6 +24,8 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.*;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -39,7 +41,7 @@ import org.littletonrobotics.junction.Logger;
 
 /** Represents a swerve drive style drivetrain. */
 public class Drivetrain extends SubsystemBase {
-  public static final double kMaxAngularSpeed = Math.PI; // 1/2 rotation per second
+  public static final double kMaxAngularSpeed = Math.PI * 4; // 1/2 rotation per second
   public static final Pigeon2 pigeon = new Pigeon2(1);
 
   private final SwerveModule m_frontLeft =
@@ -175,6 +177,47 @@ public class Drivetrain extends SubsystemBase {
         },
         // Reference to this subsystem to set requirements
         this);
+
+    // Add swerve module states to Elastic
+    SmartDashboard.putData(
+        "Swerve Drive",
+        new Sendable() {
+          @Override
+          public void initSendable(SendableBuilder builder) {
+            builder.setSmartDashboardType("SwerveDrive");
+
+            builder.addDoubleProperty(
+                "Front Left Angle", () -> m_frontLeft.getSwervePosition().angle.getDegrees(), null);
+            builder.addDoubleProperty(
+                "Front Left Velocity",
+                () -> m_frontLeft.getSwerveState().speedMetersPerSecond,
+                null);
+
+            builder.addDoubleProperty(
+                "Front Right Angle",
+                () -> m_frontRight.getSwervePosition().angle.getDegrees(),
+                null);
+            builder.addDoubleProperty(
+                "Front Right Velocity",
+                () -> m_frontRight.getSwerveState().speedMetersPerSecond,
+                null);
+
+            builder.addDoubleProperty(
+                "Back Left Angle", () -> m_backLeft.getSwervePosition().angle.getDegrees(), null);
+            builder.addDoubleProperty(
+                "Back Left Velocity", () -> m_backLeft.getSwerveState().speedMetersPerSecond, null);
+
+            builder.addDoubleProperty(
+                "Back Right Angle", () -> m_backRight.getSwervePosition().angle.getDegrees(), null);
+            builder.addDoubleProperty(
+                "Back Right Velocity",
+                () -> m_backRight.getSwerveState().speedMetersPerSecond,
+                null);
+
+            builder.addDoubleProperty("Robot Angle", () -> m_gyroSupplier.get().getDegrees(), null);
+          }
+        });
+
     System.out.println("[Swerve] Swerve Drive Initialized!");
   }
 
@@ -259,6 +302,11 @@ public class Drivetrain extends SubsystemBase {
     m_backRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
   }
 
+  /** Zeros the gyro to reset the robot's heading to zero. */
+  public void zeroGyro() {
+    pigeon.setYaw(0);
+  }
+
   /** Gets current chassis speeds */
   public ChassisSpeeds getChassisSpeeds() {
     return m_kinematics.toChassisSpeeds(
@@ -281,80 +329,33 @@ public class Drivetrain extends SubsystemBase {
     // Update odometry
     updateOdometry();
 
-    // Update module calibration info on SmartDashboard (no parameters needed)
-    m_frontLeft.updateSmartDashboard();
-    m_frontRight.updateSmartDashboard();
-    m_backLeft.updateSmartDashboard();
-    m_backRight.updateSmartDashboard();
+    // Update logger with module information
+    for (SwerveModule module :
+        new SwerveModule[] {m_frontLeft, m_frontRight, m_backLeft, m_backRight}) {
+      module.updateLogger();
+    }
 
     // Robot pose information
     Pose2d currentPose = getPose();
     Logger.recordOutput("Swerve/Robot X (m)", currentPose.getX());
     Logger.recordOutput("Swerve/Robot Y (m)", currentPose.getY());
-    Logger.recordOutput("Swerve/Robot Rotation (deg)", currentPose.getRotation().getDegrees());
+    Logger.recordOutput(
+        "Swerve/Robot Rotation (deg)", currentPose.getRotation().getDegrees(), Units.Degrees);
 
     // Gyro information
-    Logger.recordOutput("Swerve/Gyro Angle (deg)", m_gyroSupplier.get().getDegrees());
+    Logger.recordOutput(
+        "Swerve/Gyro Angle (deg)", m_gyroSupplier.get().getDegrees(), Units.Degrees);
 
     // Current chassis speeds
     ChassisSpeeds speeds = getChassisSpeeds();
-    Logger.recordOutput("Swerve/Chassis X Speed (m/s)", speeds.vxMetersPerSecond);
-    Logger.recordOutput("Swerve/Chassis Y Speed (m/s)", speeds.vyMetersPerSecond);
-    Logger.recordOutput("Swerve/Chassis Angular Speed (rad/s)", speeds.omegaRadiansPerSecond);
-
-    // Module states for debugging
-    Logger.recordOutput("Swerve/FL/Speed (m/s)", m_frontLeft.getSwerveState().speedMetersPerSecond);
-    Logger.recordOutput("Swerve/FL/Angle (deg)", m_frontLeft.getSwerveState().angle.getDegrees());
-
     Logger.recordOutput(
-        "Swerve/FR/Speed (m/s)", m_frontRight.getSwerveState().speedMetersPerSecond);
-    Logger.recordOutput("Swerve/FR/Angle (deg)", m_frontRight.getSwerveState().angle.getDegrees());
-
-    Logger.recordOutput("Swerve/BL/Speed (m/s)", m_backLeft.getSwerveState().speedMetersPerSecond);
-    Logger.recordOutput("Swerve/BL/Angle (deg)", m_backLeft.getSwerveState().angle.getDegrees());
-
-    Logger.recordOutput("Swerve/BR/Speed (m/s)", m_backRight.getSwerveState().speedMetersPerSecond);
-    Logger.recordOutput("Swerve/BR/Angle (deg)", m_backRight.getSwerveState().angle.getDegrees());
-
-    // Add swerve module states to Elastic
-
-    // Control buttons
-    handleSmartDashboardButtons();
-  }
-
-  /** Handle SmartDashboard button inputs */
-  private void handleSmartDashboardButtons() {
-    // Initialize buttons if they don't exist
-    if (!SmartDashboard.containsKey("Reset Odometry")) {
-      SmartDashboard.putBoolean("Reset Odometry", false);
-    }
-    if (!SmartDashboard.containsKey("Set X Formation")) {
-      SmartDashboard.putBoolean("Set X Formation", false);
-    }
-    if (!SmartDashboard.containsKey("Stop All Modules")) {
-      SmartDashboard.putBoolean("Stop All Modules", false);
-    }
-
-    // Reset odometry button
-    if (SmartDashboard.getBoolean("Reset Odometry", false)) {
-      resetOdometry(new Pose2d());
-      SmartDashboard.putBoolean("Reset Odometry", false);
-      System.out.println("Odometry reset to origin");
-    }
-
-    // X formation button
-    if (SmartDashboard.getBoolean("Set X Formation", false)) {
-      setX();
-      SmartDashboard.putBoolean("Set X Formation", false);
-      System.out.println("Set to X formation");
-    }
-
-    // Stop all modules button
-    if (SmartDashboard.getBoolean("Stop All Modules", false)) {
-      stopModules();
-      SmartDashboard.putBoolean("Stop All Modules", false);
-      System.out.println("All modules stopped");
-    }
+        "Swerve/Chassis X Speed (m per s)", speeds.vxMetersPerSecond, Units.MetersPerSecond);
+    Logger.recordOutput(
+        "Swerve/Chassis Y Speed (m per s)", speeds.vyMetersPerSecond, Units.MetersPerSecond);
+    Logger.recordOutput(
+        "Swerve/Chassis Angular Speed (rad per s)",
+        speeds.omegaRadiansPerSecond,
+        Units.RadiansPerSecond);
   }
 
   /**
@@ -376,8 +377,8 @@ public class Drivetrain extends SubsystemBase {
     SwerveModuleState[] setpointStates = m_kinematics.toSwerveModuleStates(discreteSpeeds);
 
     // Log unoptimized setpoints and setpoint speeds
-    Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
-    Logger.recordOutput("SwerveChassisSpeeds/Setpoints", discreteSpeeds);
+    Logger.recordOutput("Swerve/Swerve States/Setpoints", setpointStates);
+    Logger.recordOutput("Swerve/Chassis Speeds/Setpoints", discreteSpeeds);
 
     // Send setpoints to modules
     m_frontLeft.setDesiredState(setpointStates[0]);
@@ -386,6 +387,6 @@ public class Drivetrain extends SubsystemBase {
     m_backRight.setDesiredState(setpointStates[3]);
 
     // Log optimized setpoints (runSetpoint mutates each state)
-    Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
+    Logger.recordOutput("Swerve/Swerve States/SetpointsOptimized", setpointStates);
   }
 }

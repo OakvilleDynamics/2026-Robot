@@ -1,41 +1,53 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MechanismConstants;
-import org.littletonrobotics.junction.Logger;
+import frc.robot.Constants.MechanismConstants.IndexerConstants;
 
 public class Index extends SubsystemBase {
-  private final SparkFlex IndexMotor =
-      new SparkFlex(MechanismConstants.IndexMotor, SparkLowLevel.MotorType.kBrushless);
+  private SparkFlex m_index;
+  private SparkFlexConfig c_indexConfig;
 
   public Index() {
     System.out.println("[Index] Initializing Index Subsystem...");
-    IndexMotor.setInverted(MechanismConstants.Index_Inverted);
+
+    // Initialize the index motor and its configuration
+    m_index = new SparkFlex(MechanismConstants.INDEX_MOTOR, SparkLowLevel.MotorType.kBrushless);
+    c_indexConfig = new SparkFlexConfig();
+
+    // Set inversion for the index motor
+    c_indexConfig.inverted(IndexerConstants.INVERTED);
+
+    // Apply configuration to the motor, resetting to safe parameters and persisting the new
+    // parameters
+    m_index.configure(
+        c_indexConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
     System.out.println("[Index] Index Subsystem Initialized!");
   }
 
   /** Runs the indexer to the shooter */
   public void IndexMove() {
-    IndexMotor.set(MechanismConstants.Index_Speed);
+    m_index.set(IndexerConstants.SPEED);
   }
 
   /** Runs the indexer in reverse to clear jams */
   public void IndexReverse() {
-    IndexMotor.set(-MechanismConstants.Index_Speed);
+    m_index.set(-IndexerConstants.SPEED);
   }
 
   /** Stops the indexer motor */
   public void IndexStop() {
-    IndexMotor.set(0);
+    m_index.set(0);
   }
 
   @Override
   public void periodic() {
-    // Index motor telemetry
-    Logger.recordOutput("Index/Motor Output", IndexMotor.get());
-    Logger.recordOutput("Index/Current", IndexMotor.getOutputCurrent());
-    Logger.recordOutput("Index/Temperature", IndexMotor.getMotorTemperature());
+    // This method will be called once per scheduler run
   }
 }
