@@ -97,9 +97,7 @@ public class Intake extends SubsystemBase {
     m_intakeHinge.set(0);
   }
 
-  /**
-   * Stops the hinge from moving
-   */
+  /** Stops the hinge from moving */
   public void IntakeHingeStop() {
     m_intakeHinge.set(0);
   }
