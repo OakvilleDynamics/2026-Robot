@@ -175,6 +175,10 @@ public class RobotContainer {
     m_Driver_Controller.leftBumper().onTrue(slowedDrive).onFalse(normalDrive);
     m_Driver_Controller.rightBumper().onTrue(Commands.none());
 
+    // Triggers
+    m_Driver_Controller.leftTrigger().onTrue(Commands.runOnce(m_Intake::IntakeUp, m_Intake)).onFalse(Commands.runOnce(m_Intake::IntakeHingeStop, m_Intake));
+    m_Driver_Controller.rightTrigger().onTrue(Commands.runOnce(m_Intake::IntakeDown, m_Intake)).onFalse(Commands.runOnce(m_Intake::IntakeHingeStop, m_Intake));
+
     // POV (D-pad)
     m_Driver_Controller.povUp().onTrue(Commands.none());
     m_Driver_Controller.povDown().onTrue(Commands.none());
@@ -203,18 +207,6 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(m_Index::IndexMove, m_Index))
         .onFalse(Commands.runOnce(m_Index::IndexStop, m_Index));
     m_Copilot_Controller
-        .button(5)
-        .onTrue(Commands.runOnce(m_Shooter::Shoot, m_Shooter))
-        .onFalse(Commands.runOnce(m_Shooter::SpinUpShooter, m_Shooter));
-    m_Copilot_Controller
-        .button(7)
-        .onTrue(Commands.runOnce(m_Intake::IntakeUp, m_Intake))
-        .onFalse(Commands.runOnce(m_Intake::IntakeHingeStop, m_Intake));
-    m_Copilot_Controller
-        .button(8)
-        .onTrue(Commands.runOnce(m_Intake::IntakeDown, m_Intake))
-        .onFalse(Commands.runOnce(m_Intake::IntakeHingeStop, m_Intake));
-    m_Copilot_Controller
         .button(10)
         .onTrue(Commands.runOnce(m_Climber::Climb, m_Climber))
         .onFalse(Commands.runOnce(m_Climber::Stop, m_Climber));
@@ -228,6 +220,7 @@ public class RobotContainer {
   private void configureDefaultCommands() {
     // Default drive command: run every scheduler cycle in teleop
     m_swerve.setDefaultCommand(normalDrive);
+    m_Shooter.setDefaultCommand(new ShooterCommand(m_Shooter));
   }
 
   /**
