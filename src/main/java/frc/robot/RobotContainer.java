@@ -19,11 +19,13 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DrivebaseConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ShooterCommand;
+import frc.robot.misc.Hub;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Index;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.swerve.Drivetrain;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -38,6 +40,7 @@ public class RobotContainer {
   private final Climber m_Climber = new Climber();
   private final Index m_Index = new Index();
   private final Intake m_Intake = new Intake();
+  private final Hub m_Hub = new Hub();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final CommandXboxController m_Driver_Controller =
@@ -154,6 +157,8 @@ public class RobotContainer {
 
     // Set the default auto (do nothing)
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
+
+    Logger.recordOutput("Hub/Active", m_Hub.isHubActive());
   }
 
   /**
