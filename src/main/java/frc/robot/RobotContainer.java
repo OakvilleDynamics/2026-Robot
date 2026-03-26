@@ -178,8 +178,14 @@ public class RobotContainer {
     m_Driver_Controller.rightBumper().onTrue(Commands.none());
 
     // Triggers
-    m_Driver_Controller.leftTrigger().onTrue(Commands.runOnce(m_Intake::IntakeUp, m_Intake)).onFalse(Commands.runOnce(m_Intake::IntakeHingeStop, m_Intake));
-    m_Driver_Controller.rightTrigger().onTrue(Commands.runOnce(m_Intake::IntakeDown, m_Intake)).onFalse(Commands.runOnce(m_Intake::IntakeHingeStop, m_Intake));
+    m_Driver_Controller
+        .leftTrigger()
+        .onTrue(Commands.runOnce(m_Intake::IntakeUp, m_Intake))
+        .onFalse(Commands.runOnce(m_Intake::IntakeHingeStop, m_Intake));
+    m_Driver_Controller
+        .rightTrigger()
+        .onTrue(Commands.runOnce(m_Intake::IntakeDown, m_Intake))
+        .onFalse(Commands.runOnce(m_Intake::IntakeHingeStop, m_Intake));
 
     // POV (D-pad)
     m_Driver_Controller.povUp().onTrue(Commands.none());

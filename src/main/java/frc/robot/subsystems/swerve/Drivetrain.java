@@ -329,7 +329,7 @@ public class Drivetrain extends SubsystemBase {
     // Update odometry
     updateOdometry();
 
-        // Update logger with module information
+    // Update logger with module information
     for (SwerveModule module :
         new SwerveModule[] {m_frontLeft, m_frontRight, m_backLeft, m_backRight}) {
       module.updateLogger();

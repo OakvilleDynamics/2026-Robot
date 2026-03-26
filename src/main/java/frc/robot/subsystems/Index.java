@@ -5,11 +5,9 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.config.SparkFlexConfig;
-import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MechanismConstants;
 import frc.robot.Constants.MechanismConstants.IndexerConstants;
-import org.littletonrobotics.junction.Logger;
 
 public class Index extends SubsystemBase {
   private SparkFlex m_index;
