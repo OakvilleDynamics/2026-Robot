@@ -29,13 +29,24 @@ public class Shooter extends SubsystemBase {
     // Set motor inversion
     m_shooterConfig.MotorOutput.Inverted = ShooterConstants.INVERTED;
 
-    // Set PID coefficients for closed-loop control
-    m_shooterConfig.Slot0.kP = ShooterConstants.P;
-    m_shooterConfig.Slot0.kI = ShooterConstants.I;
-    m_shooterConfig.Slot0.kD = ShooterConstants.D;
+    //// Set PID coefficients for closed-loop control
+    // m_shooterConfig.Slot0.kP = ShooterConstants.P;
+    // m_shooterConfig.Slot0.kI = ShooterConstants.I;
+    // m_shooterConfig.Slot0.kD = ShooterConstants.D;
 
     // Apply the configuration to the motor controller
     m_shooterMotor.getConfigurator().apply(m_shooterConfig);
+
+    // Shooter motor telemetry
+    Logger.recordOutput("Shooter/Output", m_shooterMotor.get());
+    Logger.recordOutput(
+        "Shooter/Current", m_shooterMotor.getSupplyCurrent().getValueAsDouble(), Units.Amps);
+    Logger.recordOutput(
+        "Shooter/Temperature", m_shooterMotor.getDeviceTemp().getValueAsDouble(), Units.Celsius);
+    Logger.recordOutput(
+        "Shooter/Velocity",
+        m_shooterMotor.getVelocity().getValueAsDouble(),
+        Units.RotationsPerSecond);
 
     System.out.println("[Shooter] Shooter Subsystem Initialized!");
   }
@@ -57,15 +68,6 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // Shooter motor telemetry
-    Logger.recordOutput("Shooter/Output", m_shooterMotor.get());
-    Logger.recordOutput(
-        "Shooter/Current", m_shooterMotor.getSupplyCurrent().getValueAsDouble(), Units.Amps);
-    Logger.recordOutput(
-        "Shooter/Temperature", m_shooterMotor.getDeviceTemp().getValueAsDouble(), Units.Celsius);
-    Logger.recordOutput(
-        "Shooter/Velocity",
-        m_shooterMotor.getVelocity().getValueAsDouble(),
-        Units.RotationsPerSecond);
+    // This method will be called once per scheduler run
   }
 }

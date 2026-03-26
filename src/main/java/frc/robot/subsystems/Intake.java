@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.config.SparkFlexConfig;
@@ -39,14 +38,14 @@ public class Intake extends SubsystemBase {
     m_intakeRollerConfig.inverted(IntakeConstants.ROLLER_INVERTED);
     m_intakeHingeConfig.inverted(IntakeConstants.HINGE_INVERTED);
 
-    // Configure the intake hinge motor for closed-loop control
-    m_intakeHingeConfig
-        .closedLoop
-        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .p(IntakeConstants.P)
-        .i(IntakeConstants.I)
-        .d(IntakeConstants.D)
-        .outputRange(-IntakeConstants.HINGE_SPEED, IntakeConstants.HINGE_SPEED);
+    //// Configure the intake hinge motor for closed-loop control
+    // m_intakeHingeConfig
+    //    .closedLoop
+    //    .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+    //    .p(IntakeConstants.P)
+    //    .i(IntakeConstants.I)
+    //    .d(IntakeConstants.D)
+    //    .outputRange(-IntakeConstants.HINGE_SPEED, IntakeConstants.HINGE_SPEED);
 
     // Apply configurations to the motors, resetting to safe parameters and persisting the new
     // parameters
@@ -54,6 +53,21 @@ public class Intake extends SubsystemBase {
         m_intakeRollerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     m_intakeHinge.configure(
         m_intakeHingeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    // IntakeRoller telemetry
+    Logger.recordOutput("Intake/Roller/Output", m_intakeRoller.get());
+    Logger.recordOutput("Intake/Roller/Current", m_intakeRoller.getOutputCurrent(), Units.Amps);
+    Logger.recordOutput(
+        "Intake/Roller/Temperature", m_intakeRoller.getMotorTemperature(), Units.Celsius);
+
+    // IntakeHinge telemetry
+    Logger.recordOutput("Intake/Hinge/Output", m_intakeHinge.get());
+    Logger.recordOutput("Intake/Hinge/Current", m_intakeHinge.getOutputCurrent(), Units.Amps);
+    Logger.recordOutput(
+        "Intake/Hinge/Temperature", m_intakeHinge.getMotorTemperature(), Units.Celsius);
+    Logger.recordOutput("Intake/Hinge/Encoder", m_intakeHinge.getEncoder().getPosition());
+    Logger.recordOutput(
+        "Intake/Hinge/Position", m_intakeHingeEncoder.getPosition(), Units.Rotations);
 
     System.out.println("[Intake] Intake Subsystem Initialized!");
   }
@@ -85,22 +99,6 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // IntakeRoller telemetry
-    Logger.recordOutput("Intake/Roller/Output", m_intakeRoller.get());
-    Logger.recordOutput("Intake/Roller/Current", m_intakeRoller.getOutputCurrent(), Units.Amps);
-    Logger.recordOutput(
-        "Intake/Roller/Temperature", m_intakeRoller.getMotorTemperature(), Units.Celsius);
-
-    // IntakeHinge telemetry
-    Logger.recordOutput("Intake/Hinge/Output", m_intakeHinge.get());
-    Logger.recordOutput("Intake/Hinge/Current", m_intakeHinge.getOutputCurrent(), Units.Amps);
-    Logger.recordOutput(
-        "Intake/Hinge/Temperature", m_intakeHinge.getMotorTemperature(), Units.Celsius);
-    Logger.recordOutput("Intake/Hinge/Encoder", m_intakeHinge.getEncoder().getPosition());
-    Logger.recordOutput(
-        "Intake/Hinge/Velocity", m_intakeHinge.getEncoder().getVelocity(), Units.RPM);
-    Logger.recordOutput("Intake/Hinge/Applied Output", m_intakeHinge.getAppliedOutput());
-    Logger.recordOutput(
-        "Intake/Hinge/Position", m_intakeHingeEncoder.getPosition(), Units.Rotations);
+    // This method will be called once per scheduler run
   }
 }

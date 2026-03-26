@@ -29,6 +29,12 @@ public class Index extends SubsystemBase {
     // parameters
     m_index.configure(
         m_indexConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    // Index motor telemetry
+    Logger.recordOutput("Index/Output", m_index.get());
+    Logger.recordOutput("Index/Current", m_index.getOutputCurrent(), Units.Amps);
+    Logger.recordOutput("Index/Temperature", m_index.getMotorTemperature(), Units.Celsius);
+
     System.out.println("[Index] Index Subsystem Initialized!");
   }
 
@@ -49,9 +55,6 @@ public class Index extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // Index motor telemetry
-    Logger.recordOutput("Index/Output", m_index.get());
-    Logger.recordOutput("Index/Current", m_index.getOutputCurrent(), Units.Amps);
-    Logger.recordOutput("Index/Temperature", m_index.getMotorTemperature(), Units.Celsius);
+    // This method will be called once per scheduler run
   }
 }
