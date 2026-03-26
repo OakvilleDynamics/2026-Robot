@@ -11,22 +11,22 @@ import frc.robot.Constants.MechanismConstants.IndexerConstants;
 
 public class Index extends SubsystemBase {
   private SparkFlex m_index;
-  private SparkFlexConfig m_indexConfig;
+  private SparkFlexConfig c_indexConfig;
 
   public Index() {
     System.out.println("[Index] Initializing Index Subsystem...");
 
     // Initialize the index motor and its configuration
     m_index = new SparkFlex(MechanismConstants.INDEX_MOTOR, SparkLowLevel.MotorType.kBrushless);
-    m_indexConfig = new SparkFlexConfig();
+    c_indexConfig = new SparkFlexConfig();
 
     // Set inversion for the index motor
-    m_indexConfig.inverted(IndexerConstants.INVERTED);
+    c_indexConfig.inverted(IndexerConstants.INVERTED);
 
     // Apply configuration to the motor, resetting to safe parameters and persisting the new
     // parameters
     m_index.configure(
-        m_indexConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        c_indexConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     System.out.println("[Index] Index Subsystem Initialized!");
   }

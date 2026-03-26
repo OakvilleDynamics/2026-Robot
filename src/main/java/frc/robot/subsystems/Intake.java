@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.config.SparkFlexConfig;
@@ -15,8 +16,8 @@ import org.littletonrobotics.junction.Logger;
 // Very basic intake process, changes to be made accordingly
 public class Intake extends SubsystemBase {
   private SparkFlex m_intakeRoller, m_intakeHinge;
-  private SparkFlexConfig m_intakeHingeConfig, m_intakeRollerConfig;
-  private RelativeEncoder m_intakeHingeEncoder;
+  private SparkFlexConfig c_intakeHingeConfig, c_intakeRollerConfig;
+  private RelativeEncoder re_intakeHingeEncoder;
 
   public Intake() {
     System.out.println("[Intake] Initializing Intake Subsystem...");
@@ -28,31 +29,33 @@ public class Intake extends SubsystemBase {
         new SparkFlex(MechanismConstants.INTAKE_HINGE_MOTOR, SparkLowLevel.MotorType.kBrushless);
 
     // Initialize the configurations for the intake roller and hinge motors
-    m_intakeRollerConfig = new SparkFlexConfig();
-    m_intakeHingeConfig = new SparkFlexConfig();
+    c_intakeRollerConfig = new SparkFlexConfig();
+    c_intakeHingeConfig = new SparkFlexConfig();
 
     // Initialize the encoders for the intake hinge and configure them
-    m_intakeHingeEncoder = m_intakeHinge.getEncoder();
+    re_intakeHingeEncoder = m_intakeHinge.getEncoder();
 
     // Set inversion for the intake roller and hinge motors, and apply configurations
-    m_intakeRollerConfig.inverted(IntakeConstants.ROLLER_INVERTED);
-    m_intakeHingeConfig.inverted(IntakeConstants.HINGE_INVERTED);
+    c_intakeRollerConfig.inverted(IntakeConstants.ROLLER_INVERTED);
+    c_intakeHingeConfig.inverted(IntakeConstants.HINGE_INVERTED);
 
-    //// Configure the intake hinge motor for closed-loop control
-    // m_intakeHingeConfig
-    //    .closedLoop
-    //    .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-    //    .p(IntakeConstants.P)
-    //    .i(IntakeConstants.I)
-    //    .d(IntakeConstants.D)
-    //    .outputRange(-IntakeConstants.HINGE_SPEED, IntakeConstants.HINGE_SPEED);
+    // Configure the intake hinge motor for closed-loop control
+    c_intakeHingeConfig
+        .closedLoop
+        .p(IntakeConstants.P)
+        .i(IntakeConstants.I)
+        .d(IntakeConstants.D)
+        .outputRange(-IntakeConstants.HINGE_SPEED, IntakeConstants.HINGE_SPEED)
+        .feedForward
+        // kV is now in Volts, so we multiply by the nominal voltage (12V)
+        .kV(12.0 / 5767, ClosedLoopSlot.kSlot1);
 
     // Apply configurations to the motors, resetting to safe parameters and persisting the new
     // parameters
     m_intakeRoller.configure(
-        m_intakeRollerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        c_intakeRollerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     m_intakeHinge.configure(
-        m_intakeHingeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        c_intakeHingeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     System.out.println("[Intake] Intake Subsystem Initialized!");
   }
@@ -93,9 +96,7 @@ public class Intake extends SubsystemBase {
   }
 
   /** Set the intake hinge to run to a position and hold it there */
-  public void setIntakeHingePosition(double pos) {
-    // Do nothing as this isn't set
-  }
+  public void setIntakeHingePosition(double pos) {}
 
   @Override
   public void periodic() {
@@ -113,6 +114,6 @@ public class Intake extends SubsystemBase {
         "Intake/Hinge/Temperature", m_intakeHinge.getMotorTemperature(), Units.Celsius);
     Logger.recordOutput("Intake/Hinge/Encoder", m_intakeHinge.getEncoder().getPosition());
     Logger.recordOutput(
-        "Intake/Hinge/Position", m_intakeHingeEncoder.getPosition(), Units.Rotations);
+        "Intake/Hinge/Position", re_intakeHingeEncoder.getPosition(), Units.Rotations);
   }
 }
