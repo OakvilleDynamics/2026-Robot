@@ -204,12 +204,8 @@ public class RobotContainer {
         .onFalse(Commands.runOnce(m_Index::IndexStop, m_Index));
     m_Copilot_Controller
         .button(5)
-        .onTrue(Commands.runOnce(m_Shooter::SpinUpShooter, m_Shooter))
-        .onFalse(Commands.runOnce(m_Shooter::StopShoot, m_Shooter));
-    m_Copilot_Controller
-        .button(6)
         .onTrue(Commands.runOnce(m_Shooter::Shoot, m_Shooter))
-        .onFalse(Commands.runOnce(m_Shooter::StopShoot, m_Shooter));
+        .onFalse(Commands.runOnce(m_Shooter::SpinUpShooter, m_Shooter));
     m_Copilot_Controller
         .button(7)
         .onTrue(Commands.runOnce(m_Intake::IntakeUp, m_Intake))
