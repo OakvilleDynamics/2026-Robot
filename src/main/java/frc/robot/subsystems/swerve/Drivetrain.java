@@ -316,35 +316,6 @@ public class Drivetrain extends SubsystemBase {
         speeds.omegaRadiansPerSecond,
         Units.RadiansPerSecond);
 
-    // Module states for debugging
-    Logger.recordOutput(
-        "Swerve/FL/Speed (m per s)",
-        m_frontLeft.getSwerveState().speedMetersPerSecond,
-        Units.MetersPerSecond);
-    Logger.recordOutput(
-        "Swerve/FL/Angle (deg)", m_frontLeft.getSwerveState().angle.getDegrees(), Units.Degrees);
-
-    Logger.recordOutput(
-        "Swerve/FR/Speed (m per s)",
-        m_frontRight.getSwerveState().speedMetersPerSecond,
-        Units.MetersPerSecond);
-    Logger.recordOutput(
-        "Swerve/FR/Angle (deg)", m_frontRight.getSwerveState().angle.getDegrees(), Units.Degrees);
-
-    Logger.recordOutput(
-        "Swerve/BL/Speed (m per s)",
-        m_backLeft.getSwerveState().speedMetersPerSecond,
-        Units.MetersPerSecond);
-    Logger.recordOutput(
-        "Swerve/BL/Angle (deg)", m_backLeft.getSwerveState().angle.getDegrees(), Units.Degrees);
-
-    Logger.recordOutput(
-        "Swerve/BR/Speed (m per s)",
-        m_backRight.getSwerveState().speedMetersPerSecond,
-        Units.MetersPerSecond);
-    Logger.recordOutput(
-        "Swerve/BR/Angle (deg)", m_backRight.getSwerveState().angle.getDegrees(), Units.Degrees);
-
     // Add swerve module states to Elastic
     SmartDashboard.putData(
         "Swerve Drive",

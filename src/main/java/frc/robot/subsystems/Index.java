@@ -51,7 +51,6 @@ public class Index extends SubsystemBase {
   public void periodic() {
     // Index motor telemetry
     Logger.recordOutput("Index/Output", m_index.get());
-    Logger.recordOutput("Index/Current", m_index.getOutputCurrent(), Units.Amps);
     Logger.recordOutput("Index/Temperature", m_index.getMotorTemperature(), Units.Celsius);
   }
 }
