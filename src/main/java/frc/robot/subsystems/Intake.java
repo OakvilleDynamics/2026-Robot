@@ -54,21 +54,6 @@ public class Intake extends SubsystemBase {
     m_intakeHinge.configure(
         m_intakeHingeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    // IntakeRoller telemetry
-    Logger.recordOutput("Intake/Roller/Output", m_intakeRoller.get());
-    Logger.recordOutput("Intake/Roller/Current", m_intakeRoller.getOutputCurrent(), Units.Amps);
-    Logger.recordOutput(
-        "Intake/Roller/Temperature", m_intakeRoller.getMotorTemperature(), Units.Celsius);
-
-    // IntakeHinge telemetry
-    Logger.recordOutput("Intake/Hinge/Output", m_intakeHinge.get());
-    Logger.recordOutput("Intake/Hinge/Current", m_intakeHinge.getOutputCurrent(), Units.Amps);
-    Logger.recordOutput(
-        "Intake/Hinge/Temperature", m_intakeHinge.getMotorTemperature(), Units.Celsius);
-    Logger.recordOutput("Intake/Hinge/Encoder", m_intakeHinge.getEncoder().getPosition());
-    Logger.recordOutput(
-        "Intake/Hinge/Position", m_intakeHingeEncoder.getPosition(), Units.Rotations);
-
     System.out.println("[Intake] Intake Subsystem Initialized!");
   }
 
@@ -110,5 +95,19 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    // IntakeRoller telemetry
+    Logger.recordOutput("Intake/Roller/Output", m_intakeRoller.get());
+    Logger.recordOutput("Intake/Roller/Current", m_intakeRoller.getOutputCurrent(), Units.Amps);
+    Logger.recordOutput(
+        "Intake/Roller/Temperature", m_intakeRoller.getMotorTemperature(), Units.Celsius);
+
+    // IntakeHinge telemetry
+    Logger.recordOutput("Intake/Hinge/Output", m_intakeHinge.get());
+    Logger.recordOutput("Intake/Hinge/Current", m_intakeHinge.getOutputCurrent(), Units.Amps);
+    Logger.recordOutput(
+        "Intake/Hinge/Temperature", m_intakeHinge.getMotorTemperature(), Units.Celsius);
+    Logger.recordOutput("Intake/Hinge/Encoder", m_intakeHinge.getEncoder().getPosition());
+    Logger.recordOutput(
+        "Intake/Hinge/Position", m_intakeHingeEncoder.getPosition(), Units.Rotations);
   }
 }

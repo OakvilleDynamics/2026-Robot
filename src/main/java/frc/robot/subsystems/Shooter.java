@@ -37,17 +37,6 @@ public class Shooter extends SubsystemBase {
     // Apply the configuration to the motor controller
     m_shooterMotor.getConfigurator().apply(m_shooterConfig);
 
-    // Shooter motor telemetry
-    Logger.recordOutput("Shooter/Output", m_shooterMotor.get());
-    Logger.recordOutput(
-        "Shooter/Current", m_shooterMotor.getSupplyCurrent().getValueAsDouble(), Units.Amps);
-    Logger.recordOutput(
-        "Shooter/Temperature", m_shooterMotor.getDeviceTemp().getValueAsDouble(), Units.Celsius);
-    Logger.recordOutput(
-        "Shooter/Velocity",
-        m_shooterMotor.getVelocity().getValueAsDouble(),
-        Units.RotationsPerSecond);
-
     System.out.println("[Shooter] Shooter Subsystem Initialized!");
   }
 
@@ -69,5 +58,15 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    // Shooter motor telemetry
+    Logger.recordOutput("Shooter/Output", m_shooterMotor.get());
+    Logger.recordOutput(
+        "Shooter/Current", m_shooterMotor.getSupplyCurrent().getValueAsDouble(), Units.Amps);
+    Logger.recordOutput(
+        "Shooter/Temperature", m_shooterMotor.getDeviceTemp().getValueAsDouble(), Units.Celsius);
+    Logger.recordOutput(
+        "Shooter/Velocity",
+        m_shooterMotor.getVelocity().getValueAsDouble(),
+        Units.RotationsPerSecond);
   }
 }
