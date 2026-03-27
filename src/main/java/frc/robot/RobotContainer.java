@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DrivebaseConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.MechanismConstants.IntakeConstants.HingeConstants;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.misc.Hub;
 import frc.robot.subsystems.Climber;
@@ -185,11 +186,11 @@ public class RobotContainer {
     // Triggers
     m_Driver_Controller
         .leftTrigger()
-        .onTrue(Commands.runOnce(m_Intake::IntakeUp, m_Intake))
+        .onTrue(Commands.runOnce(() -> m_Intake.setIntakeHingePosition(HingeConstants.downPos), m_Intake))
         .onFalse(Commands.runOnce(m_Intake::IntakeHingeStop, m_Intake));
     m_Driver_Controller
         .rightTrigger()
-        .onTrue(Commands.runOnce(m_Intake::IntakeDown, m_Intake))
+        .onTrue(Commands.runOnce(() -> m_Intake.setIntakeHingePosition(HingeConstants.upPos), m_Intake))
         .onFalse(Commands.runOnce(m_Intake::IntakeHingeStop, m_Intake));
 
     // POV (D-pad)
