@@ -61,7 +61,7 @@ public class Intake extends SubsystemBase {
     c_intakeHingeConfig.absoluteEncoder.inverted(true).zeroOffset(0).zeroCentered(false);
 
     // Set idle modes and current limits for the motors
-    c_intakeHingeConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(20);
+    c_intakeHingeConfig.idleMode(IdleMode.kBrake);
 
     // Apply configurations to the motors, resetting to safe parameters and persisting the new
     // parameters
@@ -87,13 +87,11 @@ public class Intake extends SubsystemBase {
   /** Sets the hinge of the intake mechanism to move up. */
   public void IntakeUp() {
     m_intakeHinge.set(IntakeConstants.HINGE_SPEED_RAISE);
-    System.out.println("RAISING");
   }
 
   /** Sets the hinge of the intake mechanism to move down. */
   public void IntakeDown() {
     m_intakeHinge.set(-IntakeConstants.HINGE_SPEED_LOWER);
-    System.out.println("LOWERING");
   }
 
   /** Stops the hinge from moving */
