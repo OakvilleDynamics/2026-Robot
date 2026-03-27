@@ -79,5 +79,7 @@ public class Shooter extends SubsystemBase {
         "Shooter/Velocity",
         m_shooterMotor.getVelocity().getValueAsDouble(),
         Units.RotationsPerSecond);
+    Logger.recordOutput("Shooter/Velocity Setpoint", m_request.Velocity);
+    Logger.recordOutput("Shooter/Acceleration Setpoint", m_request.Acceleration);
   }
 }

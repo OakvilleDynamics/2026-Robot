@@ -38,7 +38,7 @@ public class ShooterCommand extends Command {
 
     // Our main toggle system for running the motors
     if (isRunning) {
-      m_ShooterSubsystem.Shoot();
+      m_ShooterSubsystem.RunShooterVelocity();
     } else if (!isRunning) {
       m_ShooterSubsystem.StopShoot();
     }

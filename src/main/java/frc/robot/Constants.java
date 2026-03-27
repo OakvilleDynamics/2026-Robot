@@ -250,14 +250,14 @@ public final class Constants {
        * kI=output per unit of integrated error in velocity (output/rotation)
        * kD=output per unit of error derivative in velocity (output/(rps/s))
        */
-      public static final double P = 0.0; 
+      public static final double P = 0.5;
       public static final double I = 0.0;
-      public static final double D = 0.0;
-      public static final double S = 0.1;
-      public static final double V = 0.6; //5 rps target, *0.12 to estimate voltage
+      public static final double D = 0;
+      public static final double S = 12;
+      public static final double V = 0; // 5 rps target, *0.12 to estimate voltage
 
       // Setpoint for velocity
-      public static final double SetVelocity = 5; //what unit is this?
+      public static final double SetVelocity = 0.3; // what unit is this?
 
       // Inversion for the shooter motor
       public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
