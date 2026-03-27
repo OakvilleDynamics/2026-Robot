@@ -256,17 +256,22 @@ public final class Constants {
      */
     public static class ShooterConstants {
       // PID constants for the shooter motor
-      public static final double P = 0.5;
+      public static final double P = 1.0;
       public static final double I = 0.0;
       public static final double D = 0.0;
+      public static final double S = 0.0;
+      public static final double V = 0.0;
+
+      // Setpoint for velocity
+      public static final double SetVelocity = 0;
 
       // Inversion for the shooter motor
       public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
 
       // Designated motor speeds, use as last resort if you are not using PID control for the
       // shooter, or if you just want to set default speeds for the shooter.
-      public static final double SPEED_MAIN = 0.4;
-      public static final double SPEED_SPIN_UP = 0.2;
+      public static final double SPEED_MAIN = 0.2;
+      public static final double SPEED_SPIN_UP = 0.1;
     }
 
     /**
