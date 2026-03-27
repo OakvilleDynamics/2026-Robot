@@ -242,14 +242,22 @@ public final class Constants {
      */
     public static class ShooterConstants {
       // PID constants for the shooter motor
-      public static final double P = 1.0;
+      /*
+       * From Phoenix docs:
+       * kS=output to overcome static friction
+       * kV=output per unit of requested velocity (output/rps)
+       * kP=output per unit of error in velocity (output/rps)
+       * kI=output per unit of integrated error in velocity (output/rotation)
+       * kD=output per unit of error derivative in velocity (output/(rps/s))
+       */
+      public static final double P = 0.0; 
       public static final double I = 0.0;
       public static final double D = 0.0;
-      public static final double S = 0.0;
-      public static final double V = 0.0;
+      public static final double S = 0.1;
+      public static final double V = 0.6; //5 rps target, *0.12 to estimate voltage
 
       // Setpoint for velocity
-      public static final double SetVelocity = 0;
+      public static final double SetVelocity = 5; //what unit is this?
 
       // Inversion for the shooter motor
       public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
