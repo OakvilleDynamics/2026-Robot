@@ -213,7 +213,7 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(m_Intake::IntakeSpit, m_Intake))
         .onFalse(Commands.runOnce(m_Intake::IntakeRollerStop, m_Intake));
     m_Copilot_Controller
-        .button(3)
+        .button(9)
         .onTrue(Commands.runOnce(m_Index::IndexReverse, m_Index))
         .onFalse(Commands.runOnce(m_Index::IndexStop, m_Index));
     m_Copilot_Controller
