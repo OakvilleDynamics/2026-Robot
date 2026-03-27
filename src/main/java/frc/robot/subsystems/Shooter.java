@@ -5,7 +5,11 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MechanismConstants;
@@ -15,6 +19,7 @@ import org.littletonrobotics.junction.Logger;
 public class Shooter extends SubsystemBase {
   private final TalonFX m_shooterMotor;
   private final TalonFXConfiguration c_shooterConfig;
+  private final VelocityVoltage m_request;
 
   public Shooter() {
     System.out.println("[Shooter] Initializing Shooter Subsystem...");
@@ -29,13 +34,17 @@ public class Shooter extends SubsystemBase {
     // Set motor inversion
     c_shooterConfig.MotorOutput.Inverted = ShooterConstants.INVERTED;
 
-    //// Set PID coefficients for closed-loop control
-    // c_shooterConfig.Slot0.kP = ShooterConstants.P;
-    // c_shooterConfig.Slot0.kI = ShooterConstants.I;
-    // c_shooterConfig.Slot0.kD = ShooterConstants.D;
+    // Set PID coefficients for closed-loop control
+    c_shooterConfig.Slot0.kP = ShooterConstants.P;
+    c_shooterConfig.Slot0.kI = ShooterConstants.I;
+    c_shooterConfig.Slot0.kD = ShooterConstants.D;
+    c_shooterConfig.Slot0.kS = ShooterConstants.S;
+    c_shooterConfig.Slot0.kV = ShooterConstants.V;
 
     // Apply the configuration to the motor controller
     m_shooterMotor.getConfigurator().apply(c_shooterConfig);
+
+    m_request = new VelocityVoltage(0).withSlot(0);
 
     System.out.println("[Shooter] Shooter Subsystem Initialized!");
   }
@@ -53,6 +62,11 @@ public class Shooter extends SubsystemBase {
   /** Stops the shooter motor */
   public void StopShoot() {
     m_shooterMotor.stopMotor();
+  }
+
+  /** Run shooter to a specified velocity */
+  public void RunShooterVelocity() {
+    m_shooterMotor.setControl(m_request.withVelocity(ShooterConstants.SetVelocity));
   }
 
   @Override
