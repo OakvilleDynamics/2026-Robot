@@ -147,7 +147,7 @@ public class RobotContainer {
       new RunCommand(
           () -> {
             // If a target is visible, turn to it
-            if (m_ClimbCamera.isValidTowerTarget()) {
+            if (m_ReverseCamera.isValidTowerTarget()) {
               // Get the angle to the target from the camera, and then invert it because the camera
               // is facing backwards
               double targetAngle =
@@ -184,7 +184,7 @@ public class RobotContainer {
       new RunCommand(
           () -> {
             // If a target is visible, turn to it
-            if (m_ClimbCamera.isValidHubTarget()) {
+            if (m_ShooterCamera.isValidHubTarget()) {
               // Get the angle to the target from the camera, and then invert it because the camera
               // is facing backwards
               double targetAngle =

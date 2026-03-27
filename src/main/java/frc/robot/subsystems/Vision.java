@@ -2,15 +2,22 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.VisionConstants.ClimbCamera;
+import frc.robot.Constants.VisionConstants.ReverseCamera;
+import frc.robot.Constants.VisionConstants.ShooterCamera;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 public class Vision extends SubsystemBase {
   PhotonCamera camera;
+  Transform3d cameraToRobotTransform;
+  PhotonPoseEstimator poseEstimator;
 
   // Target data
   double targetYaw, targetPitch;
@@ -29,6 +36,28 @@ public class Vision extends SubsystemBase {
 
     // Set the camera to driver mode if specified (disables vision processing and reduces latency)
     camera.setDriverMode(isDriverCamera);
+
+    // Get the camera-to-robot transform based on the camera name
+    switch (cameraName) {
+      case "Shooter Camera":
+        cameraToRobotTransform = ShooterCamera.CAMERA_TO_ROBOT_TRANSFORM;
+        break;
+      case "Climber Camera":
+        cameraToRobotTransform = ClimbCamera.CAMERA_TO_ROBOT_TRANSFORM;
+        break;
+      case "Reverse Camera":
+        cameraToRobotTransform = ReverseCamera.CAMERA_TO_ROBOT_TRANSFORM;
+        break;
+      default:
+        // Assume nothing as camera shouldn't exist if the name is invalid, but log an error just in
+        // case
+        System.err.println(
+            "[Vision] Error: Invalid camera name '" + cameraName + "'. No transform found.");
+        break;
+    }
+
+    // Set pose estimator to use the camera-to-robot transform and the field layout
+    poseEstimator.setRobotToCameraTransform(cameraToRobotTransform);
 
     System.out.println("[Vision] Camera " + cameraName + " initialized successfully!");
   }
@@ -76,7 +105,6 @@ public class Vision extends SubsystemBase {
     Logger.recordOutput("Vision/" + camera.getName() + "/Is Target Visible", isTargetVisible);
     Logger.recordOutput(
         "Vision/" + camera.getName() + "/Is Valid Tower Target", isValidTowerTarget());
-    Logger.recordOutput("Vision/" + camera.getName() + "/Is Valid Hub Target", isValidHubTarget());
     Logger.recordOutput("Vision/" + camera.getName() + "/All Unread Results", results.toString());
   }
 
