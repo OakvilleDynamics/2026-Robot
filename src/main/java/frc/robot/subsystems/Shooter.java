@@ -14,28 +14,28 @@ import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
   private final TalonFX m_shooterMotor;
-  private final TalonFXConfiguration m_shooterConfig;
+  private final TalonFXConfiguration c_shooterConfig;
 
   public Shooter() {
     System.out.println("[Shooter] Initializing Shooter Subsystem...");
 
     // Initialize the shooter motor and its configuration
     m_shooterMotor = new TalonFX(MechanismConstants.SHOOTER_MOTOR);
-    m_shooterConfig = new TalonFXConfiguration();
+    c_shooterConfig = new TalonFXConfiguration();
 
     // Factory default to ensure a known starting point
-    m_shooterMotor.getConfigurator().apply(m_shooterConfig);
+    m_shooterMotor.getConfigurator().apply(c_shooterConfig);
 
     // Set motor inversion
-    m_shooterConfig.MotorOutput.Inverted = ShooterConstants.INVERTED;
+    c_shooterConfig.MotorOutput.Inverted = ShooterConstants.INVERTED;
 
     //// Set PID coefficients for closed-loop control
-    // m_shooterConfig.Slot0.kP = ShooterConstants.P;
-    // m_shooterConfig.Slot0.kI = ShooterConstants.I;
-    // m_shooterConfig.Slot0.kD = ShooterConstants.D;
+    // c_shooterConfig.Slot0.kP = ShooterConstants.P;
+    // c_shooterConfig.Slot0.kI = ShooterConstants.I;
+    // c_shooterConfig.Slot0.kD = ShooterConstants.D;
 
     // Apply the configuration to the motor controller
-    m_shooterMotor.getConfigurator().apply(m_shooterConfig);
+    m_shooterMotor.getConfigurator().apply(c_shooterConfig);
 
     System.out.println("[Shooter] Shooter Subsystem Initialized!");
   }

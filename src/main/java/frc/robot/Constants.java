@@ -251,8 +251,8 @@ public final class Constants {
 
       // Designated motor speeds, use as last resort if you are not using PID control for the
       // shooter, or if you just want to set default speeds for the shooter.
-      public static final double SPEED_MAIN = 0.4;
-      public static final double SPEED_SPIN_UP = 0.2;
+      public static final double SPEED_MAIN = 0.2;
+      public static final double SPEED_SPIN_UP = 0.1;
     }
 
     /**
@@ -260,10 +260,18 @@ public final class Constants {
      * constants, and designated motor speeds.
      */
     public static class IntakeConstants {
-      // PID constants for the intake hinge motor
-      public static final double P = 0.2;
-      public static final double I = 0.0;
-      public static final double D = 0.0;
+
+      public static class HingeConstants {
+        // PID constants for the intake hinge motor
+        public static final double P = 0.0;
+        public static final double I = 0.0;
+        public static final double D = 0.0;
+
+        // Positions for the hinge to be at
+        public static final double startPos = 0;
+        public static final double upPos = 0;
+        public static final double downPos = 0;
+      }
 
       // Inversion for the intake roller and hinge motors
       public static final boolean ROLLER_INVERTED = false;
