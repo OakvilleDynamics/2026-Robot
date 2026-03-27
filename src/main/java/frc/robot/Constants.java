@@ -251,8 +251,8 @@ public final class Constants {
 
       // Designated motor speeds, use as last resort if you are not using PID control for the
       // shooter, or if you just want to set default speeds for the shooter.
-      public static final double SPEED_MAIN = 0.4;
-      public static final double SPEED_SPIN_UP = 0.2;
+      public static final double SPEED_MAIN = 0.2;
+      public static final double SPEED_SPIN_UP = 0.1;
     }
 
     /**
