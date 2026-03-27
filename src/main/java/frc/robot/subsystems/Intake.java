@@ -87,11 +87,13 @@ public class Intake extends SubsystemBase {
   /** Sets the hinge of the intake mechanism to move up. */
   public void IntakeUp() {
     m_intakeHinge.set(IntakeConstants.HINGE_SPEED_RAISE);
+    System.out.println("RAISING");
   }
 
   /** Sets the hinge of the intake mechanism to move down. */
   public void IntakeDown() {
     m_intakeHinge.set(-IntakeConstants.HINGE_SPEED_LOWER);
+    System.out.println("LOWERING");
   }
 
   /** Stops the hinge from moving */
