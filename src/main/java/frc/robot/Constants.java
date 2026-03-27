@@ -286,7 +286,7 @@ public final class Constants {
       // hinge, or if you just want to set a default speed for the intake roller.
       public static final double ROLLER_SPEED = 0.8;
       public static final double HINGE_SPEED_LOWER = 0.45;
-      public static final double HINGE_SPEED_RAISE = 0.8;
+      public static final double HINGE_SPEED_RAISE = 0.65;
     }
 
     /**
