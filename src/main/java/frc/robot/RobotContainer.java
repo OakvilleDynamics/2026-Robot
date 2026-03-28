@@ -18,11 +18,14 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DrivebaseConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.ShooterCommand;
+import frc.robot.misc.Hub;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Index;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.swerve.Drivetrain;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -37,6 +40,7 @@ public class RobotContainer {
   private final Climber m_Climber = new Climber();
   private final Index m_Index = new Index();
   private final Intake m_Intake = new Intake();
+  private final Hub m_Hub = new Hub();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final CommandXboxController m_Driver_Controller =
@@ -144,7 +148,8 @@ public class RobotContainer {
     // Create the NamedCommands that will be used in PathPlanner
     NamedCommands.registerCommand("Climb", Commands.run(m_Climber::Climb, m_Climber));
     NamedCommands.registerCommand("Descend", Commands.run(m_Climber::Descend, m_Climber));
-    // NamedCommands.registerCommand("Shoot", Commands.run(m_Shooter::Shoot, m_Shooter));
+    NamedCommands.registerCommand("Shoot", Commands.run(m_Shooter::Shoot, m_Shooter));
+    NamedCommands.registerCommand("Index", Commands.run(m_Index::IndexMove, m_Index));
 
     // Have the autoChooser pull in all PathPlanner autos as options
     autoChooser =
@@ -152,6 +157,8 @@ public class RobotContainer {
 
     // Set the default auto (do nothing)
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
+
+    Logger.recordOutput("Hub/Active", m_Hub.isHubActive());
   }
 
   /**
@@ -168,12 +175,25 @@ public class RobotContainer {
     // A, B, X, Y buttons
     m_Driver_Controller.a().onTrue(Commands.none());
     m_Driver_Controller.b().onTrue(Commands.none());
-    m_Driver_Controller.x().whileTrue(new InstantCommand(() -> m_swerve.setX()));
+    m_Driver_Controller
+        .x()
+        .onTrue(Commands.runOnce(() -> m_swerve.setX(), m_swerve))
+        .onFalse(normalDrive);
     m_Driver_Controller.y().onTrue(Commands.none());
 
     // Bumpers
     m_Driver_Controller.leftBumper().onTrue(slowedDrive).onFalse(normalDrive);
     m_Driver_Controller.rightBumper().onTrue(Commands.none());
+
+    // Triggers
+    m_Driver_Controller
+        .leftTrigger()
+        .onTrue(Commands.runOnce(m_Intake::IntakeUp, m_Intake))
+        .onFalse(Commands.runOnce(m_Intake::IntakeHingeStop, m_Intake));
+    m_Driver_Controller
+        .rightTrigger()
+        .onTrue(Commands.runOnce(m_Intake::IntakeDown, m_Intake))
+        .onFalse(Commands.runOnce(m_Intake::IntakeHingeStop, m_Intake));
 
     // POV (D-pad)
     m_Driver_Controller.povUp().onTrue(Commands.none());
@@ -186,28 +206,37 @@ public class RobotContainer {
     m_Driver_Controller.back().onTrue(new InstantCommand(() -> m_swerve.zeroGyro()));
 
     // Copilot Controller binds (Joystick)
-    m_Copilot_Controller.trigger().onTrue(Commands.runOnce(m_Intake::IntakeFuel, m_Intake));
-    m_Copilot_Controller.top().onTrue(Commands.runOnce(m_Intake::IntakeSpit, m_Intake));
-    m_Copilot_Controller.button(3).onTrue(Commands.runOnce(m_Index::IndexReverse, m_Index));
-    m_Copilot_Controller.button(4).onTrue(Commands.runOnce(m_Index::IndexMove, m_Index));
     m_Copilot_Controller
-        .button(5)
-        .onTrue(Commands.runOnce(m_Shooter::SpinUpShooter, m_Shooter))
-        .onFalse(Commands.runOnce(m_Shooter::StopShoot, m_Shooter));
+        .trigger()
+        .onTrue(Commands.runOnce(m_Intake::IntakeFuel, m_Intake))
+        .onFalse(Commands.runOnce(m_Intake::IntakeRollerStop, m_Intake));
     m_Copilot_Controller
-        .button(6)
-        .onTrue(Commands.runOnce(m_Shooter::Shoot, m_Shooter))
-        .onFalse(Commands.runOnce(m_Shooter::StopShoot, m_Shooter));
-    m_Copilot_Controller.button(7).onTrue(Commands.runOnce(m_Intake::IntakeUp, m_Intake));
-    m_Copilot_Controller.button(8).onTrue(Commands.runOnce(m_Intake::IntakeDown, m_Intake));
-    m_Copilot_Controller.button(10).onTrue(Commands.runOnce(m_Climber::Climb, m_Climber));
-    m_Copilot_Controller.button(11).onTrue(Commands.runOnce(m_Climber::Descend, m_Climber));
+        .top()
+        .onTrue(Commands.runOnce(m_Intake::IntakeSpit, m_Intake))
+        .onFalse(Commands.runOnce(m_Intake::IntakeRollerStop, m_Intake));
+    m_Copilot_Controller
+        .button(9)
+        .onTrue(Commands.runOnce(m_Index::IndexReverse, m_Index))
+        .onFalse(Commands.runOnce(m_Index::IndexStop, m_Index));
+    m_Copilot_Controller
+        .button(4)
+        .onTrue(Commands.runOnce(m_Index::IndexMove, m_Index))
+        .onFalse(Commands.runOnce(m_Index::IndexStop, m_Index));
+    m_Copilot_Controller
+        .button(12)
+        .onTrue(Commands.runOnce(m_Climber::Climb, m_Climber))
+        .onFalse(Commands.runOnce(m_Climber::Stop, m_Climber));
+    m_Copilot_Controller
+        .button(11)
+        .onTrue(Commands.runOnce(m_Climber::Descend, m_Climber))
+        .onFalse(Commands.runOnce(m_Climber::Stop, m_Climber));
   }
 
   /** This method sets subsystem commands */
   private void configureDefaultCommands() {
     // Default drive command: run every scheduler cycle in teleop
     m_swerve.setDefaultCommand(normalDrive);
+    m_Shooter.setDefaultCommand(new ShooterCommand(m_Shooter));
   }
 
   /**

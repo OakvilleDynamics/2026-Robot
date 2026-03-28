@@ -5,35 +5,28 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.config.SparkFlexConfig;
-import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MechanismConstants;
 import frc.robot.Constants.MechanismConstants.IndexerConstants;
-import org.littletonrobotics.junction.Logger;
 
 public class Index extends SubsystemBase {
   private SparkFlex m_index;
-  private SparkFlexConfig m_indexConfig;
+  private SparkFlexConfig c_indexConfig;
 
   public Index() {
     System.out.println("[Index] Initializing Index Subsystem...");
 
     // Initialize the index motor and its configuration
     m_index = new SparkFlex(MechanismConstants.INDEX_MOTOR, SparkLowLevel.MotorType.kBrushless);
-    m_indexConfig = new SparkFlexConfig();
+    c_indexConfig = new SparkFlexConfig();
 
     // Set inversion for the index motor
-    m_indexConfig.inverted(IndexerConstants.INVERTED);
+    c_indexConfig.inverted(IndexerConstants.INVERTED);
 
     // Apply configuration to the motor, resetting to safe parameters and persisting the new
     // parameters
     m_index.configure(
-        m_indexConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-    // Index motor telemetry
-    Logger.recordOutput("Index/Output", m_index.get());
-    Logger.recordOutput("Index/Current", m_index.getOutputCurrent(), Units.Amps);
-    Logger.recordOutput("Index/Temperature", m_index.getMotorTemperature(), Units.Celsius);
+        c_indexConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     System.out.println("[Index] Index Subsystem Initialized!");
   }

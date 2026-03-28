@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj.RobotController;
  */
 public final class Constants {
   // Robot physical constants
-  public static final double ROBOT_MASS = Units.lbsToKilograms(110);
+  public static final double ROBOT_MASS = Units.lbsToKilograms(128.5);
   // Approximation of moment of inertia for a 24" square robot
   public static final double ROBOT_MOI = ROBOT_MASS * Math.pow(Units.inchesToMeters(12), 2);
 
@@ -49,7 +49,7 @@ public final class Constants {
 
     // Electrical constants
     public static final double MAX_DRIVE_CURRENT_SUPPLY_AMPS = 60.0;
-    public static final double MAX_DRIVE_CURRENT_STATOR_AMPS = 60.0;
+    public static final double MAX_DRIVE_CURRENT_STATOR_AMPS = 80.0;
 
     // Module locations from center of robot
     private static final double HALF_WIDTH = DRIVE_BASE_WIDTH_METERS / 2.0;
@@ -242,17 +242,30 @@ public final class Constants {
      */
     public static class ShooterConstants {
       // PID constants for the shooter motor
+      /*
+       * From Phoenix docs:
+       * kS=output to overcome static friction
+       * kV=output per unit of requested velocity (output/rps)
+       * kP=output per unit of error in velocity (output/rps)
+       * kI=output per unit of integrated error in velocity (output/rotation)
+       * kD=output per unit of error derivative in velocity (output/(rps/s))
+       */
       public static final double P = 0.5;
       public static final double I = 0.0;
-      public static final double D = 0.0;
+      public static final double D = 0;
+      public static final double S = 12;
+      public static final double V = 0; // 5 rps target, *0.12 to estimate voltage
+
+      // Setpoint for velocity
+      public static final double SetVelocity = 0.3; // what unit is this?
 
       // Inversion for the shooter motor
       public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
 
       // Designated motor speeds, use as last resort if you are not using PID control for the
       // shooter, or if you just want to set default speeds for the shooter.
-      public static final double SPEED_MAIN = 0.6;
-      public static final double SPEED_SPIN_UP = 0.4;
+      public static final double SPEED_MAIN = 0.4;
+      public static final double SPEED_SPIN_UP = 0.2;
     }
 
     /**
@@ -260,10 +273,18 @@ public final class Constants {
      * constants, and designated motor speeds.
      */
     public static class IntakeConstants {
-      // PID constants for the intake hinge motor
-      public static final double P = 0.5;
-      public static final double I = 0.0;
-      public static final double D = 0.0;
+
+      public static class HingeConstants {
+        // PID constants for the intake hinge motor
+        public static final double P = 0.0;
+        public static final double I = 0.0;
+        public static final double D = 0.0;
+
+        // Positions for the hinge to be at
+        public static final double startPos = 0;
+        public static final double upPos = 0;
+        public static final double downPos = 0;
+      }
 
       // Inversion for the intake roller and hinge motors
       public static final boolean ROLLER_INVERTED = false;
@@ -272,7 +293,8 @@ public final class Constants {
       // Designated motor speeds, use as last resort if you are not using PID control for the intake
       // hinge, or if you just want to set a default speed for the intake roller.
       public static final double ROLLER_SPEED = 0.8;
-      public static final double HINGE_SPEED = 0.8;
+      public static final double HINGE_SPEED_LOWER = 0.45;
+      public static final double HINGE_SPEED_RAISE = 0.65;
     }
 
     /**

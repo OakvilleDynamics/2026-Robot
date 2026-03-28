@@ -178,34 +178,6 @@ public class Drivetrain extends SubsystemBase {
         // Reference to this subsystem to set requirements
         this);
 
-    // Update logger with module information
-    for (SwerveModule module :
-        new SwerveModule[] {m_frontLeft, m_frontRight, m_backLeft, m_backRight}) {
-      module.updateLogger();
-    }
-
-    // Robot pose information
-    Pose2d currentPose = getPose();
-    Logger.recordOutput("Swerve/Robot X (m)", currentPose.getX());
-    Logger.recordOutput("Swerve/Robot Y (m)", currentPose.getY());
-    Logger.recordOutput(
-        "Swerve/Robot Rotation (deg)", currentPose.getRotation().getDegrees(), Units.Degrees);
-
-    // Gyro information
-    Logger.recordOutput(
-        "Swerve/Gyro Angle (deg)", m_gyroSupplier.get().getDegrees(), Units.Degrees);
-
-    // Current chassis speeds
-    ChassisSpeeds speeds = getChassisSpeeds();
-    Logger.recordOutput(
-        "Swerve/Chassis X Speed (m per s)", speeds.vxMetersPerSecond, Units.MetersPerSecond);
-    Logger.recordOutput(
-        "Swerve/Chassis Y Speed (m per s)", speeds.vyMetersPerSecond, Units.MetersPerSecond);
-    Logger.recordOutput(
-        "Swerve/Chassis Angular Speed (rad per s)",
-        speeds.omegaRadiansPerSecond,
-        Units.RadiansPerSecond);
-
     // Add swerve module states to Elastic
     SmartDashboard.putData(
         "Swerve Drive",
@@ -356,6 +328,34 @@ public class Drivetrain extends SubsystemBase {
   public void periodic() {
     // Update odometry
     updateOdometry();
+
+    // Update logger with module information
+    for (SwerveModule module :
+        new SwerveModule[] {m_frontLeft, m_frontRight, m_backLeft, m_backRight}) {
+      module.updateLogger();
+    }
+
+    // Robot pose information
+    Pose2d currentPose = getPose();
+    Logger.recordOutput("Swerve/Robot X (m)", currentPose.getX());
+    Logger.recordOutput("Swerve/Robot Y (m)", currentPose.getY());
+    Logger.recordOutput(
+        "Swerve/Robot Rotation (deg)", currentPose.getRotation().getDegrees(), Units.Degrees);
+
+    // Gyro information
+    Logger.recordOutput(
+        "Swerve/Gyro Angle (deg)", m_gyroSupplier.get().getDegrees(), Units.Degrees);
+
+    // Current chassis speeds
+    ChassisSpeeds speeds = getChassisSpeeds();
+    Logger.recordOutput(
+        "Swerve/Chassis X Speed (m per s)", speeds.vxMetersPerSecond, Units.MetersPerSecond);
+    Logger.recordOutput(
+        "Swerve/Chassis Y Speed (m per s)", speeds.vyMetersPerSecond, Units.MetersPerSecond);
+    Logger.recordOutput(
+        "Swerve/Chassis Angular Speed (rad per s)",
+        speeds.omegaRadiansPerSecond,
+        Units.RadiansPerSecond);
   }
 
   /**

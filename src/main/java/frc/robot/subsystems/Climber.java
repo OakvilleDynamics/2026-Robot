@@ -2,11 +2,9 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MechanismConstants;
 import frc.robot.Constants.MechanismConstants.ClimberConstants;
-import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
   private final TalonSRX m_climber;
@@ -19,11 +17,6 @@ public class Climber extends SubsystemBase {
 
     // Set motor inversion
     m_climber.setInverted(ClimberConstants.INVERTED);
-
-    // Telemetry for the climber motor
-    Logger.recordOutput("Climber/Output", m_climber.getMotorOutputPercent());
-    Logger.recordOutput("Climber/Current", m_climber.getStatorCurrent(), Units.Amps);
-    Logger.recordOutput("Climber/Temperature", m_climber.getTemperature(), Units.Celsius);
 
     System.out.println("[Climber] Climber Subsystem Initialized!");
   }
