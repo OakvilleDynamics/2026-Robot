@@ -26,8 +26,7 @@ public class SwerveModule {
   private final ThriftyNova m_azimuthMotor;
 
   // Motor configs
-  private final TalonFXConfiguration c_driveMotorConfigNormal = new TalonFXConfiguration();
-  private TalonFXConfiguration c_driveMotorConfigTurbo = new TalonFXConfiguration();
+  private final TalonFXConfiguration c_driveMotorConfig = new TalonFXConfiguration();
 
   // Encoder (only used for Thrifty absolute encoder)
   private final AnalogEncoder re_thriftyEncoder;
@@ -102,9 +101,9 @@ public class SwerveModule {
 
     // Configure drive PID and feedforward
     // PID tuned for rotation units instead of ticks (scaled up by NEO_ENCODER_TICKS_PER_REV = 42)
-    c_driveMotorConfigNormal.Slot0.kP = 0.1;
-    c_driveMotorConfigNormal.Slot0.kI = 0.0;
-    c_driveMotorConfigNormal.Slot0.kD = 0.0;
+    c_driveMotorConfig.Slot0.kP = 0.1;
+    c_driveMotorConfig.Slot0.kI = 0.0;
+    c_driveMotorConfig.Slot0.kD = 0.0;
 
     // Set feedforward based on mechanism characteristics:
     // FF = 1.0 / maxRevPerSec (for velocity control in rotations/sec)
@@ -115,22 +114,16 @@ public class SwerveModule {
                 * Math.PI
                 / DrivebaseConstants.DRIVE_GEAR_RATIO);
     // m_driveMotor.pid0.setFF(1.0 / maxRevPerSec);
-    c_driveMotorConfigNormal.MotorOutput.Inverted = v_driveInverted;
+    c_driveMotorConfig.MotorOutput.Inverted = v_driveInverted;
 
     // Set current limits
-    c_driveMotorConfigNormal.CurrentLimits.StatorCurrentLimit =
+    c_driveMotorConfig.CurrentLimits.StatorCurrentLimit =
         DrivebaseConstants.MAX_DRIVE_CURRENT_STATOR_AMPS;
-    c_driveMotorConfigNormal.CurrentLimits.SupplyCurrentLimit =
-        DrivebaseConstants.MAX_DRIVE_CURRENT_SUPPLY_AMPS;
-
-    c_driveMotorConfigTurbo = c_driveMotorConfigNormal;
-    c_driveMotorConfigTurbo.CurrentLimits.StatorCurrentLimit =
-        DrivebaseConstants.MAX_DRIVE_CURRENT_STATOR_AMPS;
-    c_driveMotorConfigTurbo.CurrentLimits.SupplyCurrentLimit =
+    c_driveMotorConfig.CurrentLimits.SupplyCurrentLimit =
         DrivebaseConstants.MAX_DRIVE_CURRENT_SUPPLY_AMPS;
 
     // Apply motor configuration
-    m_driveMotor.getConfigurator().apply(c_driveMotorConfigNormal);
+    m_driveMotor.getConfigurator().apply(c_driveMotorConfig);
 
     System.out.println("[Swerve] " + v_moduleName + " drive motor configured successfully!");
   }
@@ -434,13 +427,5 @@ public class SwerveModule {
 
   private double ticksToDegrees(double ticks) {
     return (ticks / v_encoderTicksPerRevolution) * 360.0;
-  }
-
-  public void setTurboMode(boolean turbo) {
-    if (turbo) {
-      m_driveMotor.getConfigurator().apply(c_driveMotorConfigTurbo);
-    } else {
-      m_driveMotor.getConfigurator().apply(c_driveMotorConfigNormal);
-    }
   }
 }

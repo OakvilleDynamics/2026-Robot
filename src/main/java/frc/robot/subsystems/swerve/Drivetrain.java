@@ -114,8 +114,6 @@ public class Drivetrain extends SubsystemBase {
               1),
           getModuleTranslations());
 
-  private boolean isTurboMode = false;
-
   /**
    * Constructs the Drivetrain with a supplier that returns the current robot heading.
    *
@@ -253,7 +251,7 @@ public class Drivetrain extends SubsystemBase {
 
     // Horrible hack to get the modules to stop spinning if no drive input.
     // Another horrible hack to check if we are in auto or teleop
-    if (DriverStation.isTeleop() && ((xSpeed <= 0.2) || (ySpeed <= 0.2) || (rot <= 0.2))) {
+    if (DriverStation.isTeleop() && ((xSpeed == 0) && (ySpeed == 0) && (rot == 0))) {
       stopModules();
     }
   }
@@ -390,19 +388,5 @@ public class Drivetrain extends SubsystemBase {
 
     // Log optimized setpoints (runSetpoint mutates each state)
     Logger.recordOutput("Swerve/Swerve States/SetpointsOptimized", setpointStates);
-
-    Logger.recordOutput("Swerve/Drive Mode", isTurboMode ? "Turbo" : "Normal");
-  }
-
-  public void setTurboMode(boolean turbo) {
-    m_frontLeft.setTurboMode(turbo);
-    m_frontRight.setTurboMode(turbo);
-    m_backLeft.setTurboMode(turbo);
-    m_backRight.setTurboMode(turbo);
-    isTurboMode = turbo;
-  }
-
-  public boolean isTurboMode() {
-    return isTurboMode;
   }
 }
