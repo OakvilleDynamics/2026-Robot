@@ -48,8 +48,12 @@ public final class Constants {
         TOP_SPEED_MOTOR_RPM * WHEEL_DIAMETER_METERS * Math.PI / DRIVE_GEAR_RATIO / 60; // = 5.51 m/s
 
     // Electrical constants
-    public static final double MAX_DRIVE_CURRENT_SUPPLY_AMPS = 60.0;
-    public static final double MAX_DRIVE_CURRENT_STATOR_AMPS = 60.0;
+    public static final double NORMAL_DRIVE_CURRENT_SUPPLY_AMPS = 60.0;
+    public static final double NORMAL_DRIVE_CURRENT_STATOR_AMPS = 60.0;
+    public static final double MAX_DRIVE_CURRENT_SUPPLY_AMPS = 70.0;
+    public static final double MAX_DRIVE_CURRENT_STATOR_AMPS = 120.0;
+
+
 
     // Module locations from center of robot
     private static final double HALF_WIDTH = DRIVE_BASE_WIDTH_METERS / 2.0;

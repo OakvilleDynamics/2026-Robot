@@ -176,8 +176,8 @@ public class RobotContainer {
     // A, B, X, Y buttons
     m_Driver_Controller.a().onTrue(Commands.none());
     m_Driver_Controller.b().onTrue(Commands.none());
-    m_Driver_Controller.x().onTrue(Commands.runOnce(m_swerve::setX, m_swerve)).onFalse(normalDrive);
-    m_Driver_Controller.y().onTrue(Commands.none());
+    m_Driver_Controller.x().onTrue(Commands.runOnce(() -> m_swerve.setX(), m_swerve)).onFalse(normalDrive);
+    m_Driver_Controller.y().onTrue(Commands.runOnce(() -> m_swerve.setTurboMode(true), m_swerve)).onFalse(Commands.runOnce(() -> m_swerve.setTurboMode(false), m_swerve));
 
     // Bumpers
     m_Driver_Controller.leftBumper().onTrue(slowedDrive).onFalse(normalDrive);
