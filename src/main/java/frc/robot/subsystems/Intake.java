@@ -58,7 +58,7 @@ public class Intake extends SubsystemBase {
         // kV is now in Volts, so we multiply by the nominal voltage (12V)
         .kV(12.0 / 5767, ClosedLoopSlot.kSlot1);
 
-    c_intakeHingeConfig.absoluteEncoder.inverted(true).zeroOffset(0).zeroCentered(false);
+    c_intakeHingeConfig.absoluteEncoder.inverted(IntakeConstants.HINGE_INVERTED).zeroOffset(0).zeroCentered(false);
 
     // Set idle modes and current limits for the motors
     c_intakeHingeConfig.idleMode(IdleMode.kBrake);
