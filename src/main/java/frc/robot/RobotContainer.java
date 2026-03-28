@@ -181,7 +181,7 @@ public class RobotContainer {
         .onFalse(normalDrive);
     m_Driver_Controller
         .y()
-        .onTrue(Commands.runOnce(() -> m_swerve.setTurboMode(true), m_swerve))
+        .onTrue(Commands.runOnce(() -> m_swerve.setTurboMode(true), m_swerve).alongWith(Commands.runOnce(() -> ShooterCommand.setRunningMode(false), m_Shooter)));
         .onFalse(Commands.runOnce(() -> m_swerve.setTurboMode(false), m_swerve));
 
     // Bumpers

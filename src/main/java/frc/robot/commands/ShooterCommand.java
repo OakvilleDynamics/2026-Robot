@@ -12,7 +12,7 @@ public class ShooterCommand extends Command {
 
   private final Joystick ShootJoystick = new Joystick(OperatorConstants.kCOPILOT_CONTROLLER);
 
-  private boolean isRunning = false;
+  private static boolean isRunning = false;
 
   public ShooterCommand(Shooter subsystem) {
     m_ShooterSubsystem = subsystem;
@@ -44,5 +44,9 @@ public class ShooterCommand extends Command {
     }
 
     Logger.recordOutput("Shooter/", isRunning);
+  }
+
+  public static void setRunningMode(boolean runMode) {
+    isRunning = runMode;
   }
 }

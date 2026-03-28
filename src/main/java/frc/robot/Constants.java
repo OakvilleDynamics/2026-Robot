@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj.RobotController;
  */
 public final class Constants {
   // Robot physical constants
-  public static final double ROBOT_MASS = Units.lbsToKilograms(110);
+  public static final double ROBOT_MASS = Units.lbsToKilograms(128.5);
   // Approximation of moment of inertia for a 24" square robot
   public static final double ROBOT_MOI = ROBOT_MASS * Math.pow(Units.inchesToMeters(12), 2);
 
