@@ -124,8 +124,10 @@ public class SwerveModule {
         DrivebaseConstants.MAX_DRIVE_CURRENT_SUPPLY_AMPS;
 
     c_driveMotorConfigTurbo = c_driveMotorConfigNormal;
-    c_driveMotorConfigTurbo.CurrentLimits.StatorCurrentLimit = DrivebaseConstants.MAX_DRIVE_CURRENT_STATOR_AMPS;
-    c_driveMotorConfigTurbo.CurrentLimits.SupplyCurrentLimit = DrivebaseConstants.MAX_DRIVE_CURRENT_SUPPLY_AMPS;
+    c_driveMotorConfigTurbo.CurrentLimits.StatorCurrentLimit =
+        DrivebaseConstants.MAX_DRIVE_CURRENT_STATOR_AMPS;
+    c_driveMotorConfigTurbo.CurrentLimits.SupplyCurrentLimit =
+        DrivebaseConstants.MAX_DRIVE_CURRENT_SUPPLY_AMPS;
 
     // Apply motor configuration
     m_driveMotor.getConfigurator().apply(c_driveMotorConfigNormal);

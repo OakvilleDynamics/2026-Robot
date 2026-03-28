@@ -113,7 +113,7 @@ public class Drivetrain extends SubsystemBase {
               DrivebaseConstants.MAX_DRIVE_CURRENT_SUPPLY_AMPS,
               1),
           getModuleTranslations());
-  
+
   private boolean isTurboMode = false;
 
   /**

@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DrivebaseConstants;
-import frc.robot.Constants.MechanismConstants.IntakeConstants.HingeConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.misc.Hub;
@@ -176,8 +175,14 @@ public class RobotContainer {
     // A, B, X, Y buttons
     m_Driver_Controller.a().onTrue(Commands.none());
     m_Driver_Controller.b().onTrue(Commands.none());
-    m_Driver_Controller.x().onTrue(Commands.runOnce(() -> m_swerve.setX(), m_swerve)).onFalse(normalDrive);
-    m_Driver_Controller.y().onTrue(Commands.runOnce(() -> m_swerve.setTurboMode(true), m_swerve)).onFalse(Commands.runOnce(() -> m_swerve.setTurboMode(false), m_swerve));
+    m_Driver_Controller
+        .x()
+        .onTrue(Commands.runOnce(() -> m_swerve.setX(), m_swerve))
+        .onFalse(normalDrive);
+    m_Driver_Controller
+        .y()
+        .onTrue(Commands.runOnce(() -> m_swerve.setTurboMode(true), m_swerve))
+        .onFalse(Commands.runOnce(() -> m_swerve.setTurboMode(false), m_swerve));
 
     // Bumpers
     m_Driver_Controller.leftBumper().onTrue(slowedDrive).onFalse(normalDrive);
@@ -187,11 +192,11 @@ public class RobotContainer {
     m_Driver_Controller
         .leftTrigger()
         .onTrue(Commands.runOnce(m_Intake::IntakeUp, m_Intake))
-        .onFalse(Commands.runOnce(m_Intake::IntakeRollerStop, m_Intake));
+        .onFalse(Commands.runOnce(m_Intake::IntakeHingeStop, m_Intake));
     m_Driver_Controller
         .rightTrigger()
         .onTrue(Commands.runOnce(m_Intake::IntakeDown, m_Intake))
-        .onFalse(Commands.runOnce(m_Intake::IntakeRollerStop, m_Intake));
+        .onFalse(Commands.runOnce(m_Intake::IntakeHingeStop, m_Intake));
 
     // POV (D-pad)
     m_Driver_Controller.povUp().onTrue(Commands.none());

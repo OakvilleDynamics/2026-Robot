@@ -53,8 +53,6 @@ public final class Constants {
     public static final double MAX_DRIVE_CURRENT_SUPPLY_AMPS = 70.0;
     public static final double MAX_DRIVE_CURRENT_STATOR_AMPS = 120.0;
 
-
-
     // Module locations from center of robot
     private static final double HALF_WIDTH = DRIVE_BASE_WIDTH_METERS / 2.0;
     private static final double HALF_LENGTH = DRIVE_BASE_LENGTH_METERS / 2.0;
