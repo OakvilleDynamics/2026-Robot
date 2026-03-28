@@ -186,15 +186,12 @@ public class RobotContainer {
     // Triggers
     m_Driver_Controller
         .leftTrigger()
-        .onTrue(
-            Commands.runOnce(
-                () -> m_Intake.setIntakeHingePosition(HingeConstants.downPos), m_Intake))
-        .onFalse(Commands.runOnce(m_Intake::IntakeHingeStop, m_Intake));
+        .onTrue(Commands.runOnce(m_Intake::IntakeUp, m_Intake))
+        .onFalse(Commands.runOnce(m_Intake::IntakeRollerStop, m_Intake));
     m_Driver_Controller
         .rightTrigger()
-        .onTrue(
-            Commands.runOnce(() -> m_Intake.setIntakeHingePosition(HingeConstants.upPos), m_Intake))
-        .onFalse(Commands.runOnce(m_Intake::IntakeHingeStop, m_Intake));
+        .onTrue(Commands.runOnce(m_Intake::IntakeDown, m_Intake))
+        .onFalse(Commands.runOnce(m_Intake::IntakeRollerStop, m_Intake));
 
     // POV (D-pad)
     m_Driver_Controller.povUp().onTrue(Commands.none());
