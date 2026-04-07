@@ -25,6 +25,7 @@ import frc.robot.subsystems.Index;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.swerve.Drivetrain;
+import frc.robot.subsystems.swerve.Gyro;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -49,11 +50,11 @@ public class RobotContainer {
       new CommandJoystick(OperatorConstants.kCOPILOT_CONTROLLER);
 
   // Gyro supplier created via factory and constants
-  private final GyroSupplier m_gyro =
-      GyroFactory.createGyro(
-          DrivebaseConstants.GyroConstants.GYRO_TYPE, DrivebaseConstants.GyroConstants.GYRO_PARAMS);
+  private final Gyro m_gyro =
+      new Gyro(); // Create an instance of the Gyro class to access the Pigeon2 gyro
   // Swerve drivetrain subsystem
-  private final Drivetrain m_swerve = new Drivetrain(m_gyro::getRotation2d, new Pose2d());
+  private final Drivetrain m_swerve =
+      new Drivetrain(() -> Gyro.getPigeon().getRotation2d(), new Pose2d());
   // private final SimDrivetrain m_simSwerve = new SimDrivetrain(new Pose2d());
 
   // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.

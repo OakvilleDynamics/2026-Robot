@@ -138,8 +138,7 @@ public final class Constants {
 
     // Gyro constants
     public static final class GyroConstants {
-      public static final GyroType GYRO_TYPE = GyroType.PIGEON2;
-      public static final Object[] GYRO_PARAMS = new Object[] {}; // No parameters needed for NavX
+      public static final int PIGEON2_CAN_ID = 1;
     }
   }
 

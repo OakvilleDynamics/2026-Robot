@@ -42,7 +42,7 @@ import org.littletonrobotics.junction.Logger;
 /** Represents a swerve drive style drivetrain. */
 public class Drivetrain extends SubsystemBase {
   public static final double kMaxAngularSpeed = Math.PI * 4; // 1/2 rotation per second
-  public static final Pigeon2 pigeon = new Pigeon2(1);
+  public static Pigeon2 pigeon;
 
   private final SwerveModule m_frontLeft =
       new SwerveModule(
@@ -123,6 +123,7 @@ public class Drivetrain extends SubsystemBase {
   public Drivetrain(Supplier<Rotation2d> gyroSupplier, Pose2d initialPose) {
     System.out.println("[Swerve] Initializing Swerve Drive...");
     this.m_gyroSupplier = gyroSupplier;
+    pigeon = Gyro.getPigeon(); // Initialize the Pigeon2 gyro using the Gyro class
 
     m_lastPos =
         new SwerveModulePosition[] {
@@ -254,6 +255,16 @@ public class Drivetrain extends SubsystemBase {
     if (DriverStation.isTeleop() && ((xSpeed == 0) && (ySpeed == 0) && (rot == 0))) {
       stopModules();
     }
+  }
+
+  /**
+   * Provides access to the Pigeon2 gyro for use in commands that need it (like auto builders or
+   * custom commands that use the gyro for heading control).
+   *
+   * @return The Pigeon2 gyro instance used by the drivetrain
+   */
+  public Pigeon2 getPigeon() {
+    return pigeon;
   }
 
   /** Updates the field relative position of the robot. */
