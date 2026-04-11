@@ -76,7 +76,6 @@ public class Robot extends LoggedRobot {
           case UNKNOWN ->
               LoggedPowerDistribution.getInstance(HardwareConstants.REV_PDH_ID, ModuleType.kRev);
         }
-        ;
 
         // Check git status and alert if there are uncommitted changes or if not on main branch
         if (BuildConstants.DIRTY == 1) {

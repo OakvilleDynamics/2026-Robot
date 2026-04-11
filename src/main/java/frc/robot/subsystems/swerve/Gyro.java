@@ -4,20 +4,20 @@ import com.ctre.phoenix6.hardware.Pigeon2;
 import frc.robot.Constants.DrivebaseConstants.GyroConstants;
 
 public class Gyro {
-  private static Pigeon2 pigeon;
+  private static Pigeon2 m_pigeon;
 
   public Gyro() {
     // Private constructor to prevent instantiation
-    pigeon =
+    m_pigeon =
         new Pigeon2(
             GyroConstants.PIGEON2_CAN_ID); // Initialize the Pigeon2 gyro with CAN ID from constants
   }
 
   public static Pigeon2 getInstance() {
-    if (pigeon == null) {
+    if (m_pigeon == null) {
       new Gyro(); // Initialize the singleton instance
     }
-    return pigeon;
+    return m_pigeon;
   }
 
   /**

@@ -49,9 +49,6 @@ public class RobotContainer {
   final CommandJoystick m_Copilot_Controller =
       new CommandJoystick(OperatorConstants.kCOPILOT_CONTROLLER);
 
-  // Gyro supplier created via factory and constants
-  private final Gyro m_gyro =
-      new Gyro(); // Create an instance of the Gyro class to access the Pigeon2 gyro
   // Swerve drivetrain subsystem
   private final Drivetrain m_swerve =
       new Drivetrain(() -> Gyro.getPigeon().getRotation2d(), new Pose2d());
