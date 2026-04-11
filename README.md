@@ -4,8 +4,8 @@
 
 ## Build Status
 
-| Action   | Status                                                                                                                                                                                                            |
-| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Action   | Status                                                                                                                                                                                            |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | CI       | [![Build](https://github.com/OakvilleDynamics/2026-Robot/actions/workflows/ci.yml/badge.svg)](https://github.com/OakvilleDynamics/2026-Robot/actions/workflows/ci.yml)                            |
 | Qodana   | [![Qodana](https://github.com/OakvilleDynamics/2026-Robot/actions/workflows/qodana.yml/badge.svg)](https://github.com/OakvilleDynamics/2026-Robot/actions/workflows/qodana.yml)                   |
 | CodeQL   | [![CodeQL Scanning](https://github.com/OakvilleDynamics/2026-Robot/actions/workflows/codeql.yml/badge.svg)](https://github.com/OakvilleDynamics/2026-Robot/actions/workflows/codeql.yml)          |
