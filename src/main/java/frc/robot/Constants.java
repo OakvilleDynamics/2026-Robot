@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
-
 import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -244,16 +242,16 @@ public final class Constants {
       // PID constants for the shooter motor
       /*
        * From Phoenix docs:
-       * kS=output to overcome static friction
-       * kV=output per unit of requested velocity (output/rps)
        * kP=output per unit of error in velocity (output/rps)
        * kI=output per unit of integrated error in velocity (output/rotation)
        * kD=output per unit of error derivative in velocity (output/(rps/s))
+       * kS=output to overcome static friction
+       * kV=output per unit of requested velocity (output/rps)
        */
-      public static final double P = 0.5;
+      public static final double P = 0.7;
       public static final double I = 0.0;
       public static final double D = 0;
-      public static final double S = 12;
+      public static final double S = 20;
       public static final double V = 0; // 5 rps target, *0.12 to estimate voltage
 
       // Setpoint for velocity
@@ -294,7 +292,7 @@ public final class Constants {
       // hinge, or if you just want to set a default speed for the intake roller.
       public static final double ROLLER_SPEED = 0.8;
       public static final double HINGE_SPEED_LOWER = 0.45;
-      public static final double HINGE_SPEED_RAISE = 0.65;
+      public static final double HINGE_SPEED_RAISE = 0.55;
     }
 
     /**
