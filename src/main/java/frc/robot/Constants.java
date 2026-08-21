@@ -4,11 +4,15 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
-
 import com.ctre.phoenix6.signals.InvertedValue;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
@@ -27,7 +31,7 @@ public final class Constants {
   // Approximation of moment of inertia for a 24" square robot
   public static final double ROBOT_MOI = ROBOT_MASS * Math.pow(Units.inchesToMeters(12), 2);
 
-  /** Constants related to the drivebase, such as dimensions */
+  /** Constants related to the drivebase, pertaining to the swerve drivetrain */
   public static final class DrivebaseConstants {
     // Drive base dimensions
     public static final double DRIVE_BASE_WIDTH_METERS = Units.inchesToMeters(24);
@@ -163,9 +167,6 @@ public final class Constants {
    * Constants related to hardware, such as CAN IDs, serial numbers, and other constants related to
    * the physical robot
    *
-   * <p>Note: these should be constants that are not expected to change between different physical
-   * robots, such as the Kenobi and Vader drivebases.
-   *
    * <p>Constants that are expected to change between different physical robots should be placed in
    * the RobotContainer class, where they can be set at runtime based on the detected hardware.
    */
@@ -206,9 +207,6 @@ public final class Constants {
 
     // REV Power Distribution Hub CAN ID, this is only used for the Kenobi drivebase.
     public static final int REV_PDH_ID = 10;
-
-    // CTRE Power Distribution Panel CAN ID, this is only used for the Vader drivebase.
-    public static final int CTRE_PDP_ID = 20;
   }
 
   public static class RuntimeConstants {
@@ -228,6 +226,106 @@ public final class Constants {
   }
 
   /** Constants related to mechanisms, such as CAN IDs, motor speeds, and PID constants */
+  /**
+   * Constants related to the vision system, such as camera names, target IDs, and other constants
+   */
+  public static class VisionConstants {
+    /** Constants for the climb camera */
+    public static class ClimbCamera {
+      public static final String NAME = "ClimbCamera";
+      public static final boolean IS_DRIVER_CAMERA = true;
+
+      // Location of the climb camera on the robot, in meters from the center of the robot.
+      // USE WPI COORDINATE SYSTEM
+      public static class Location {
+        public static final double X_LOCATION_METERS = Units.inchesToMeters(0);
+        public static final double Y_LOCATION_METERS = Units.inchesToMeters(0);
+        public static final double Z_LOCATION_METERS = Units.inchesToMeters(0);
+      }
+
+      // Rotation of the climb camera on the robot, in degrees.
+      // USE WPI COORDINATE SYSTEM
+      // Pitch is rot around Y axis, yaw is rot around Z axis, roll is rot around X axis
+      public static class Rotation {
+        public static final double PITCH_DEGREES = 0;
+        public static final double YAW_DEGREES = 0;
+        public static final double ROLL_DEGREES = 0;
+      }
+
+      public static final Transform3d CAMERA_TO_ROBOT_TRANSFORM =
+          new Transform3d(
+              Location.X_LOCATION_METERS,
+              Location.Y_LOCATION_METERS,
+              Location.Z_LOCATION_METERS,
+              new Rotation3d(Rotation.PITCH_DEGREES, Rotation.YAW_DEGREES, Rotation.ROLL_DEGREES));
+    }
+
+    /** Constants for the shooter camera */
+    public static class ShooterCamera {
+      public static final String NAME = "ShooterCamera";
+      public static final boolean IS_DRIVER_CAMERA = false;
+
+      // Location of the shooter camera on the robot, in meters from the center of the robot.
+      // USE WPI COORDINATE SYSTEM
+      public static class Location {
+        public static final double X_LOCATION_METERS = Units.inchesToMeters(0);
+        public static final double Y_LOCATION_METERS = Units.inchesToMeters(0);
+        public static final double Z_LOCATION_METERS = Units.inchesToMeters(0);
+      }
+
+      // Rotation of the shooter camera on the robot, in degrees.
+      // USE WPI COORDINATE SYSTEM
+      // Pitch is rot around Y axis, yaw is rot around Z axis, roll is rot around X axis
+      public static class Rotation {
+        public static final double PITCH_DEGREES = 0;
+        public static final double YAW_DEGREES = 0;
+        public static final double ROLL_DEGREES = 0;
+      }
+
+      public static final Transform3d CAMERA_TO_ROBOT_TRANSFORM =
+          new Transform3d(
+              Location.X_LOCATION_METERS,
+              Location.Y_LOCATION_METERS,
+              Location.Z_LOCATION_METERS,
+              new Rotation3d(Rotation.PITCH_DEGREES, Rotation.YAW_DEGREES, Rotation.ROLL_DEGREES));
+    }
+
+    /** Constants for the reverse camera */
+    public static class ReverseCamera {
+      public static final String NAME = "ReverseCamera";
+      public static final boolean IS_DRIVER_CAMERA = false;
+
+      // Location of the reverse camera on the robot, in meters from the center of the robot.
+      // USE WPI COORDINATE SYSTEM
+      public static class Location {
+        public static final double X_LOCATION_METERS = Units.inchesToMeters(-8.5);
+        public static final double Y_LOCATION_METERS = Units.inchesToMeters(-4.5);
+        public static final double Z_LOCATION_METERS = Units.inchesToMeters(15.5);
+      }
+
+      // Rotation of the reverse camera on the robot, in degrees.
+      // USE WPI COORDINATE SYSTEM
+      // Pitch is rot around Y axis, yaw is rot around Z axis, roll is rot around X axis
+      public static class Rotation {
+        public static final double PITCH_DEGREES = 0;
+        public static final double YAW_DEGREES = 180;
+        public static final double ROLL_DEGREES = 0;
+      }
+
+      public static final Transform3d CAMERA_TO_ROBOT_TRANSFORM =
+          new Transform3d(
+              Location.X_LOCATION_METERS,
+              Location.Y_LOCATION_METERS,
+              Location.Z_LOCATION_METERS,
+              new Rotation3d(Rotation.PITCH_DEGREES, Rotation.YAW_DEGREES, Rotation.ROLL_DEGREES));
+    }
+
+    // The standard deviations of our vision estimated poses, which affect correction rate
+    // Pulled from sample, please change
+    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
+    public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+  }
+
   public static class MechanismConstants {
     // Subsystem CAN IDs
     public static final int INTAKE_ROLLER_MOTOR = 11;

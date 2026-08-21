@@ -24,6 +24,7 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Index;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.swerve.Drivetrain;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -41,6 +42,8 @@ public class RobotContainer {
   private final Index m_Index = new Index();
   private final Intake m_Intake = new Intake();
   private final Hub m_Hub = new Hub();
+  private final Vision m_ShooterCamera = new Vision("ShooterCamera", false);
+  private final Vision m_ReverseCamera = new Vision("ReverseCamera", false);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final CommandXboxController m_Driver_Controller =
@@ -136,6 +139,80 @@ public class RobotContainer {
             // Command the drivetrain. 0.02 is the nominal TimedRobot loop period (20 ms).
             m_swerve.drive(xSpeed, ySpeed, rot, true, 0.02);
             // m_simSwerve.drive(xSpeed, ySpeed, rot, true, 0.02);
+          },
+          m_swerve);
+
+  /** Aims at the tower while driving */
+  RunCommand aimAtTower =
+      new RunCommand(
+          () -> {
+            // If a target is visible, turn to it
+            if (m_ReverseCamera.isValidTowerTarget()) {
+              // Get the angle to the target from the camera, and then invert it because the camera
+              // is facing backwards
+              double targetAngle =
+                  m_ReverseCamera.getTargetYaw()
+                      * -1
+                      * Math.PI
+                      * 2; // Assuming this returns the angle to the target, and inverting it
+              // because the camera is facing backwards
+
+              // Get the x speed. We are inverting this because Xbox controllers return
+              // negative values when we push forward.
+              final var xSpeed =
+                  -m_xspeedLimiter.calculate(
+                          MathUtil.applyDeadband(
+                              m_Driver_Controller.getLeftY(), OperatorConstants.kDEADBAND))
+                      * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC;
+
+              // Get the y speed or sideways/strafe speed. We are inverting this because
+              // we want a positive value when we pull to the left. Xbox controllers
+              // return positive values when you pull to the right by default.
+              final var ySpeed =
+                  -m_yspeedLimiter.calculate(
+                          MathUtil.applyDeadband(
+                              m_Driver_Controller.getLeftX(), OperatorConstants.kDEADBAND))
+                      * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC;
+
+              m_swerve.drive(xSpeed, ySpeed, targetAngle, true, 0.02); // Proportional control
+            }
+          },
+          m_swerve);
+
+  /** Aims at the hub while driving */
+  RunCommand aimAtHub =
+      new RunCommand(
+          () -> {
+            // If a target is visible, turn to it
+            if (m_ShooterCamera.isValidHubTarget()) {
+              // Get the angle to the target from the camera, and then invert it because the camera
+              // is facing backwards
+              double targetAngle =
+                  m_ReverseCamera.getTargetYaw()
+                      * -1
+                      * Math.PI
+                      * 2; // Assuming this returns the angle to the target, and inverting it
+              // because the camera is facing backwards
+
+              // Get the x speed. We are inverting this because Xbox controllers return
+              // negative values when we push forward.
+              final var xSpeed =
+                  -m_xspeedLimiter.calculate(
+                          MathUtil.applyDeadband(
+                              m_Driver_Controller.getLeftY(), OperatorConstants.kDEADBAND))
+                      * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC;
+
+              // Get the y speed or sideways/strafe speed. We are inverting this because
+              // we want a positive value when we pull to the left. Xbox controllers
+              // return positive values when you pull to the right by default.
+              final var ySpeed =
+                  -m_yspeedLimiter.calculate(
+                          MathUtil.applyDeadband(
+                              m_Driver_Controller.getLeftX(), OperatorConstants.kDEADBAND))
+                      * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC;
+
+              m_swerve.drive(xSpeed, ySpeed, targetAngle, true, 0.02); // Proportional control
+            }
           },
           m_swerve);
 
