@@ -42,7 +42,7 @@ public class SwerveModule {
   private final boolean v_azimuthInverted;
 
   // PID controller for Thrifty encoder (RIO-side control)
-  private final PIDController v_turningPID = new PIDController(0.6075, 0.0, 0.0);
+  private final PIDController v_turningPID = new PIDController(0.6075, 0.0, 0.01);
   private Rotation2d v_desiredAngle = new Rotation2d();
 
   // (removed unused m_hasCheckedSavedOffset flag)
