@@ -71,7 +71,7 @@ public class RobotContainer {
             final var xSpeed =
                 -m_xspeedLimiter.calculate(
                         MathUtil.applyDeadband(
-                            m_Driver_Controller.getLeftY(), OperatorConstants.kDEADBAND))
+                            -m_Driver_Controller.getLeftY(), OperatorConstants.kDEADBAND))
                     * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC;
 
             // Get the y speed or sideways/strafe speed. We are inverting this because
@@ -80,7 +80,7 @@ public class RobotContainer {
             final var ySpeed =
                 -m_yspeedLimiter.calculate(
                         MathUtil.applyDeadband(
-                            m_Driver_Controller.getLeftX(), OperatorConstants.kDEADBAND))
+                            -m_Driver_Controller.getLeftX(), OperatorConstants.kDEADBAND))
                     * DrivebaseConstants.TOP_SPEED_METERS_PER_SEC;
 
             // Get the rate of angular rotation. We are inverting this because we want a
