@@ -90,7 +90,7 @@ public class RobotContainer {
             final var rot =
                 -m_rotLimiter.calculate(
                         MathUtil.applyDeadband(
-                            m_Driver_Controller.getRightX(), OperatorConstants.kDEADBAND))
+                            -m_Driver_Controller.getRightX(), OperatorConstants.kDEADBAND))
                     * Drivetrain.kMaxAngularSpeed;
 
             // Command the drivetrain. 0.02 is the nominal TimedRobot loop period (20 ms).
