@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
-
 import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -250,14 +248,14 @@ public final class Constants {
        * kI=output per unit of integrated error in velocity (output/rotation)
        * kD=output per unit of error derivative in velocity (output/(rps/s))
        */
-      public static final double P = 0.5;
+      public static final double P = 0.9;
       public static final double I = 0.0;
       public static final double D = 0;
-      public static final double S = 12;
+      public static final double S = 0;
       public static final double V = 0; // 5 rps target, *0.12 to estimate voltage
 
       // Setpoint for velocity
-      public static final double SetVelocity = 0.3; // what unit is this?
+      public static final double SetVelocity = 28; // what unit is this?
 
       // Inversion for the shooter motor
       public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
@@ -281,9 +279,9 @@ public final class Constants {
         public static final double D = 0.0;
 
         // Positions for the hinge to be at
-        public static final double startPos = 0;
-        public static final double upPos = 0;
-        public static final double downPos = 0;
+        public static final double startPos = 0.04541015625;
+        public static final double upPos = 0.203369140625;
+        public static final double downPos = 0.60791015625;
       }
 
       // Inversion for the intake roller and hinge motors
@@ -304,7 +302,7 @@ public final class Constants {
      */
     public static class IndexerConstants {
       public static final boolean INVERTED = false;
-      public static final double SPEED = 0.3;
+      public static final double SPEED = 0.4;
     }
 
     /**
